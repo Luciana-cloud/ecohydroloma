@@ -1,4 +1,4 @@
-setwd("C:/UCI/Project_1 (ecohydrology)/Scots idea/new_data/final_datasets")
+setwd("C:/UCI/Project_1 (ecohydrology)/ecohydroloma/datasets")
 
 # Data Processing
 

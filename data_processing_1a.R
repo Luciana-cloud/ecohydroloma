@@ -182,6 +182,46 @@ ggplot(temp, aes(x = as.character(temp$orden), y = temp$mean_v, fill = temp$leve
        theme(text = element_text(size=25)) + 
        scale_fill_manual(values=c("#ec7014", "#fec44f", "#993404"),name = "") 
 
+# New statistics with 
+#library(stats)
+#weight.means_c  = aggregate(clay_p~depth*plant, texture_2, mean)
+#friedman.test(clay_p~depth | plant, weight.means_c)
+#weight.means_s  = aggregate(silt_p~depth*plant, texture_2, mean)
+#friedman.test(silt_p~depth | plant, weight.means_s)
+#weight.means_sa = aggregate(sand_p~depth*plant, texture_2, mean)
+#friedman.test(sand_p~depth | plant, weight.means_sa)
+
+# Boxplot
+boxplot((clay_p)~plant*depth,data=texture_2,ylab = "Clay content")
+boxplot((silt_p)~plant*depth,data=texture_2,ylab = "Silt content")
+boxplot((sand_p)~plant*depth,data=texture_2,ylab = "Sand content")
+
+# Interaction plot
+with(texture_2,interaction.plot(plant,depth,clay_p))
+with(texture_2,interaction.plot(plant,depth,silt_p))
+with(texture_2,interaction.plot(plant,depth,sand_p))
+
+# Aligned rank transform ART procedure
+# It does not follow normal distribution so testing some additional methods
+#library(ARTool)
+#m = art(asin(sqrt(clay_p))~as.factor(plant)*as.factor(depth),data=texture_2) #Uses a linear mixed model
+#anova(m)
+#shapiro.test(residuals(m))
+#qqnorm(residuals(m)):qqline(residuals(m))
+
+library(RNOmni)
+# https://link.springer.com/article/10.3758/s13428-021-01587-5
+# RankNorm has worked for silt layer
+model_silt  = aov(RankNorm(silt_p)~plant+as.character(depth)+plant*as.character(depth), data = texture_2)
+par(mfrow=c(2,2))
+plot(model_silt)
+par(mfrow=c(1,1))
+shapiro.test(rstandard(model_silt))
+summary(model_silt)
+TukeyHSD(model_silt, conf.level=.95)
+
+library(LambertW)
+
 # theme_zoom_L() Para hacer zoom
 # SOIL WATER CONTENT
 

@@ -157,6 +157,31 @@ shrub_T = shrub %>% ggtern(aes(x = sand_p,y = clay_p,z = silt_p,color = -1*depth
           theme(plot.title = element_text(hjust = 0.5))
 grid.arrange(grass_T, shrub_T, nrow = 1)
 
+# STACKED BARS
+
+mean_clay    = texture_2 %>% group_by(plant,depth) %>% summarise(mean = mean(clay_p))
+mean_silt    = texture_2 %>% group_by(plant,depth) %>% summarise(mean = mean(silt_p))
+mean_sand    = texture_2 %>% group_by(plant,depth) %>% summarise(mean = mean(sand_p))
+sd_clay      = texture_2 %>% group_by(plant,depth) %>% summarise(sd = sd(clay_p))
+sd_silt      = texture_2 %>% group_by(plant,depth) %>% summarise(sd = sd(silt_p))
+sd_sand      = texture_2 %>% group_by(plant,depth) %>% summarise(sd = sd(sand_p))
+
+temp         = rbind(cbind(mean_sand,sd_sand$sd,rep("sand",times=nrow(mean_sand)),rep(c(6,5,4,3,2,1),times=2)),
+                     cbind(mean_silt,sd_silt$sd,rep("silt",times=nrow(mean_silt)),rep(c(6,5,4,3,2,1),times=2)),
+                     cbind(mean_clay,sd_clay$sd,rep("clay",times=nrow(mean_clay)),rep(c(6,5,4,3,2,1),times=2)))
+colnames(temp) = c("plant","depth","mean_v","std","level","orden")
+
+temp           = temp %>% mutate(plant = replace(plant, plant == "G", "Grassland"))
+temp           = temp %>% mutate(plant = replace(plant, plant == "CS", "Shrubland"))
+
+# Plot
+ggplot(temp, aes(x = as.character(temp$orden), y = temp$mean_v, fill = temp$level)) + 
+       geom_bar(stat = "identity") + facet_grid(~temp$plant) + coord_flip() + 
+       labs(y = "", x = "Depth (cm)") + 
+       scale_x_discrete(labels=c("6" = "0", "5" = "-15","4" = "-30","3" = "-45","2" = "-100","1" = "-200")) + 
+       theme(text = element_text(size=25)) + 
+       scale_fill_manual(values=c("#ec7014", "#fec44f", "#993404"),name = "") 
+
 # theme_zoom_L() Para hacer zoom
 # SOIL WATER CONTENT
 

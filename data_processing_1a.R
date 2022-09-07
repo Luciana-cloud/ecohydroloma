@@ -655,73 +655,76 @@ df1 = df %>% filter(Treat_N == "X")
 
 # Statistical analysis
 temp1b = df1 %>% mutate(biomass_g = biomass_g/(0.5*0.14))
-temp2b = temp1b %>% filter(Year > 2009)
+temp2b = temp1b %>% filter(Year > 2007)
 count(temp2b, "Year")
+temp2b1 = temp2b %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A","added"))
+temp2b2 = temp2b1 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X","ambient"))
+temp2b3 = temp2b2 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R","drought"))
 
 # ANOVA analysis (Parametric test)
-model_1g = lm((biomass_g)~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
-summary.aov(model_1g)
 
+model_1g = lm((biomass_g)~as.character(Year)+Treat_W, data = temp2b3)
+summary.aov(model_1g)
 par(mfrow=c(2,2))
 plot(model_1g)
 par(mfrow=c(1,1))
-ri<-rstandard(model_1g)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_1g))
+leveneTest(biomass_g~as.factor(Year)*Treat_W,data=temp2b3)
+# I have checked different transformations of data but none of them work and 
+# therefore I am opting for a non-parametric friedman test
 
-model_2g = lm(log(biomass_g+1)~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
-summary.aov(model_2g)
-par(mfrow=c(2,2))
-plot(model_2g)
-par(mfrow=c(1,1))
-ri<-rstandard(model_2g)
-shar<-shapiro.test(ri)
-shar
+#model_1g = lm(sqrt(biomass_g)~as.character(Year)+Treat_W, data = temp2b)
+#summary.aov(model_1g)
+#par(mfrow=c(2,2))
+#plot(model_1g)
+#par(mfrow=c(1,1))
+#shapiro.test(residuals(model_1g))
 
-model_1g = lm((biomass_g+1)~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
-boxcox(model_1g)
-bc = boxcox(model_1g)
-(lambda = bc$x[which.max(bc$y)])
-y = temp2b$biomass_g+1
-model_3g = lm((((y^lambda-1)/lambda))~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
-par(mfrow=c(2,2))
-plot(model_3g)
-par(mfrow=c(1,1))
-ri<-rstandard(model_3g)
-shar<-shapiro.test(ri)
-shar
+#model_2g = lm(log(biomass_g+1)~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
+#summary.aov(model_2g)
+#par(mfrow=c(2,2))
+#plot(model_2g)
+#par(mfrow=c(1,1))
+#shapiro.test(residuals(model_2g))
+
+#model_1g = lm((biomass_g+1)~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
+#boxcox(model_1g)
+#bc = boxcox(model_1g)
+#(lambda = bc$x[which.max(bc$y)])
+#y = temp2b$biomass_g+1
+#model_3g = lm((((y^lambda-1)/lambda))~as.character(Year)+Treat_W+as.character(Year)*Treat_W, data = temp2b)
+#par(mfrow=c(2,2))
+#plot(model_3g)
+#par(mfrow=c(1,1))
+#shapiro.test(residuals(model_3g))
 
 # Non-parametric statistical analysis
 #  and multiple comparison of treatments
 # https://search.r-project.org/CRAN/refmans/agricolae/html/friedman.html
 
 # Differences between water treatments
-out<-with(temp2b,friedman(Year,Treat_W,biomass_g,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-a = plot(out,variation="IQR")
+treatments<-with(temp2b3,friedman(Year,Treat_W,biomass_g,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
 
 # Differences between plant communities
-out1<-with(temp2b,friedman(Treat_W,Year,biomass_g,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-b = plot(out1,variation="IQR")
+#out2<-with(temp2b,friedman(Treat_W,Year,biomass_g,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#b = plot(out2,variation="IQR")
 
 # Plotting grassland biomass statistics
-par(mfrow = c(1, 2))
-plot(out,variation="IQR",main= "water treatments",cex=2,cex.axis = 2,cex.lab=2,
-     cex.names=2,cex.main=2,ylim=c(0,800))
-plot(out1,variation="IQR",main= "plant communities",cex=2,cex.axis = 2,
-     cex.lab=2,cex.names=2,cex.main=2,ylim=c(0,800))
-par(mfrow = c(1, 1)) #reset this parameter
+#par(mfrow = c(1, 2))
+#plot(out,variation="IQR",main= "water treatments",cex=2,cex.axis = 2,cex.lab=2,
+#     cex.names=2,cex.main=2,ylim=c(0,800))
+#plot(out1,variation="IQR",main= "plant communities",cex=2,cex.axis = 2,
+#     cex.lab=2,cex.names=2,cex.main=2,ylim=c(0,800))
+#par(mfrow = c(1, 1)) #reset this parameter
 
 # Preliminary calculations
-temp3b = temp1b %>% group_by(Year,Treat_W) %>% summarise(mean_bio = mean(biomass_g))
-temp4b = temp1b %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g))
-temp5b = temp3b %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A","added"))
-temp6b = temp5b %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X","ambient"))
-temp7b = temp6b %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R","restricted"))
+temp3b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(mean_bio = mean(biomass_g))
+temp4b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g))
 
 # Plotting
-ggplot(data=temp7b, aes(x=Year, y=mean_bio, fill=Treat_W)) + 
+ggplot(data=temp3b, aes(x=Year, y=mean_bio, fill=Treat_W)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=temp7b$mean_bio-temp4b$sd_bio, ymax=temp7b$mean_bio+temp4b$sd_bio), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=temp3b$mean_bio-temp4b$sd_bio, ymax=temp3b$mean_bio+temp4b$sd_bio), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("$Biomass (g/m^2)$")) + theme(text = element_text(size=25)) + 
   scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "")
 

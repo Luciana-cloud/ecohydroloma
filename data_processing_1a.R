@@ -220,11 +220,46 @@ shapiro.test(rstandard(model_silt))
 summary(model_silt)
 TukeyHSD(model_silt, conf.level=.95)
 
-library(fitdistrplus)
-moded = fitdist(texture_2$sand_p,"nbinom")
-plot(moded)
-ks.test(texture_2$sand_p, "gamma")
+# Sand data
+#library(fitdistrplus)
+#f1 = fitdist(texture_2$sand_p,"logis")
+#f2 = fitdist(texture_2$sand_p,"cauchy")
+#plot(f1)
+#g = gofstat(list(f1,f2),fitnames = c("logis","cauchy"))
+#denscomp(list(f1,f2),legendtext = c("logis","cauchy"))
+#g$chisqpvalue
+#g$chisqtable
+#g$adtest
+#g$cvmtest
+#g$kstest
+# Logistic distribution is chosen
+#model_sand = glm((sand_p)~plant+as.character(depth)+plant*as.character(depth),
+#                 data=texture_2,family=binomial(link = "logit"))
 
+# Sand and Clay data are non-normal but have homogeneity of variances. Non-parametric 
+# methods are also failing to provide something equivalent to a ANOVA result and 
+# generalized linear models are also not fully suitable for what I have, I am using the same 
+# RankNorm data transformation and accepting the small deviation of normality assuming  
+# that the amount of data is large enough to assume normality and due to the robustness
+# of anova analysis even with non-normal data
+
+# RankNorm for clay layer
+model_clay  = aov(RankNorm(clay_p)~plant+as.character(depth)+plant*as.character(depth), data = texture_2)
+par(mfrow=c(2,2))
+plot(model_clay)
+par(mfrow=c(1,1))
+shapiro.test(rstandard(model_clay))
+summary(model_clay)
+TukeyHSD(model_clay, conf.level=.95)
+
+# RankNorm for sand layer
+model_sand  = aov(RankNorm(sand_p)~plant+as.character(depth)+plant*as.character(depth), data = texture_2)
+par(mfrow=c(2,2))
+plot(model_sand)
+par(mfrow=c(1,1))
+shapiro.test(rstandard(model_sand))
+summary(model_sand)
+TukeyHSD(model_sand, conf.level=.95)
 
 # theme_zoom_L() Para hacer zoom
 # SOIL WATER CONTENT
@@ -577,6 +612,29 @@ grass_R_Fig
 dev.off()
 
 # PRECIPITATION
+
+# New precipitation
+
+# Water year is defined by the January of that wet season
+# E.g. Water Year 2020 goes from 2019-10-01 to 2020-09-30
+FullPrecipLoma = read.csv("FullPrecipLoma.csv") %>%
+  mutate(Day = as.Date(Day,format="%m/%d/%Y"))%>%
+  mutate(Year = as.numeric(format(Day,"%Y"))) %>%
+  mutate(Month = as.numeric(format(Day,"%m"))) %>%
+  mutate(WaterYear = ifelse(Month %in% 1:9,Year,Year+1)) %>%
+  group_by(WaterYear) %>%
+  mutate(CumAmbient = cumsum(Ambient), CumReduced = cumsum(Reduced), CumAdded = cumsum(Added))
+
+# This subsets per water year to help with visualzation 
+FullPrecipLoma1 = filter(FullPrecipLoma, Year >= "2009-01-03" & Day <= "2016-12-31")
+
+# Plot
+d <- ggplot(FullPrecipLoma1, aes(x=Day,y=CumAdded)) + geom_line(color="#2166ac", size=2.0) + 
+  geom_line(aes(x=Day,y=CumReduced), color="#99d594", size=2.0) +
+  geom_line(aes(x=Day,y=CumAmbient), color="#67a9cf", size=2.0) + 
+  scale_linetype_manual("",breaks = c("added", "drought", "ambient"),values = c("#2166ac", "#99d594", "#67a9cf"))
+d + facet_grid(~WaterYear, scales = "free_x") + theme(legend.position="top",text = element_text(size=25)) + 
+  labs(x = "",y = "Water input (mm)") + theme(axis.text.x = element_blank(),axis.ticks.x = element_blank())
 
 # Calling data
 winput = read.delim("water_input.txt")

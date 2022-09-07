@@ -220,7 +220,11 @@ shapiro.test(rstandard(model_silt))
 summary(model_silt)
 TukeyHSD(model_silt, conf.level=.95)
 
-library(LambertW)
+library(fitdistrplus)
+moded = fitdist(texture_2$sand_p,"nbinom")
+plot(moded)
+ks.test(texture_2$sand_p, "gamma")
+
 
 # theme_zoom_L() Para hacer zoom
 # SOIL WATER CONTENT

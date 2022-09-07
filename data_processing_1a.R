@@ -725,8 +725,8 @@ temp4b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g)
 ggplot(data=temp3b, aes(x=Year, y=mean_bio, fill=Treat_W)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
   geom_errorbar(aes(ymin=temp3b$mean_bio-temp4b$sd_bio, ymax=temp3b$mean_bio+temp4b$sd_bio), width=.2,position=position_dodge(.9)) +
-  labs(x="", y = TeX("$Biomass (g/m^2)$")) + theme(text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "")
+  labs(x="", y = TeX("$Biomass (g/m^2)$")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added (a)", "ambient (b)", "drought (c)"))
 
 # SHRUB BIOMASS
 
@@ -916,7 +916,7 @@ final_X = final_X %>% filter(headings=="LOSC" | headings=="ARCA" | headings=="ba
 
 # ADDED
 final_A_new = final_A %>% mutate(headings = replace(headings,headings=="BRMA","Bromus madritensis"))
-final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LUBI","Laccaria bicolor"))
+final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LUBI","Lespedeza bicolor"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="SAME","Salvia mellifera"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LECO","Elymus condensatus"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="bare.ground","Bare ground"))
@@ -937,7 +937,7 @@ final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="SAME
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="ARCA","Artemisia californica"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="MALA","Malosma laurina"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="EUCH","Eucrypta chrysanthemifolia"))
-final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="LUBI","Laccaria bicolor"))
+final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="LUBI","Lespedeza bicolor"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="VUMY","Vulpia myuros"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="MAFA","Malacothamnus fasciculatus"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="HASQ","Hazardia squarrosa"))
@@ -946,7 +946,7 @@ final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="LOSC
 
 # AMBIENT
 final_X_new = final_X %>% mutate(headings = replace(headings,headings=="BRMA","Bromus madritensis"))
-final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LUBI","Laccaria bicolor"))
+final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LUBI","Lespedeza bicolor"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LECO","Elymus condensatus"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="SAME","Salvia mellifera"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LOSC","Acmispon glaber"))
@@ -964,7 +964,7 @@ colnames(final_R_new)[3:4] = c("Mean","STD")
 colnames(final_X_new)[3:4] = c("Mean","STD")
 #temp9    = c("Added","Reduced","Ambient")
 A = cbind(rep("Added",times=nrow(final_A_new)),final_A_new)
-R = cbind(rep("Restricted",times=nrow(final_R_new)),final_R_new)
+R = cbind(rep("Drought",times=nrow(final_R_new)),final_R_new)
 X = cbind(rep("Ambient",times=nrow(final_X_new)),final_X_new)
 colnames(A)[1] = "Treatment"
 colnames(R)[1] = "Treatment"
@@ -983,221 +983,143 @@ comp_shrub
 
 # Statistical analysis of the dominant soil covers - Parameteric analysis
 
-# "BRMA","Bromus madritensis"
-model_BRMA = lm((BRMA+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_BRMA)
+library(car)
 
+df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A", "added"))
+df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X", "ambient"))
+df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R", "drought"))
+
+# "BRMA","Bromus madritensis"
+model_BRMA = lm(RankNorm(BRMA)~as.character(Year)+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_BRMA)
 par(mfrow=c(1,1))
-ri<-rstandard(model_BRMA)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_BRMA))
+leveneTest(RankNorm(BRMA)~as.character(Year)*Treat_W,data=df_nor)
+summary.aov(model_BRMA)
+# Friedman statistics
+BRMA = with(df_nor,friedman(Year,Treat_W,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+# ambient and drought = a; added = b
+plot(BRMA)
 
-boxcox(model_BRMA)
-bc = boxcox(model_BRMA)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$BRMA + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
-
-# "LUBI","Laccaria bicolor"
-model_LUBI = lm((LUBI+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_LUBI)
-
+# "LUBI","Lespedeza bicolor"
+model_LUBI = lm((LUBI)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_LUBI)
 par(mfrow=c(1,1))
-ri<-rstandard(model_LUBI)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_LUBI)
-bc = boxcox(model_LUBI)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$LUBI + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_LUBI))
+leveneTest(RankNorm(LUBI)~as.character(Year)*Treat_W,data=df_nor)
+summary.aov(model_LUBI)
+# Friedman statistics
+LUBI = with(df_nor,friedman(Year,Treat_W,LUBI,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+# ambient and drought and added = a
+plot(LUBI)
 
 # "SAME","Salvia mellifera"
-model_SAME = lm((SAME+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_SAME)
-
+model_SAME = lm(RankNorm(SAME)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_SAME)
 par(mfrow=c(1,1))
-ri<-rstandard(model_SAME)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_SAME)
-bc = boxcox(model_SAME)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$SAME + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_SAME))
+leveneTest(RankNorm(SAME)~as.character(Year)*Treat_W,data=df_nor)
+summary.aov(model_LUBI)
+model_SAME = aov(RankNorm(SAME)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_SAME, conf.level=.95)
+# Friedman statistics
+SAME = with(df_nor,friedman(Year,Treat_W,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(SAME)
+# added = a, ambient = b, drought = c
 
 # "LECO","Elymus condensatus"
-model_LECO = lm((LECO+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_LECO)
-
+model_LECO = lm(RankNorm(LECO)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_LECO)
 par(mfrow=c(1,1))
-ri<-rstandard(model_LECO)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_LECO)
-bc = boxcox(model_LECO)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$LECO + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_LECO))
+leveneTest(RankNorm(LECO)~as.character(Year)*Treat_W,data=df_nor)
+summary.aov(model_LECO)
+model_LECO = aov(RankNorm(LECO)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_LECO, conf.level=.95)
+# Friedman statistics
+LECO = with(df_nor,friedman(Year,Treat_W,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(LECO)
+# added = b, ambient,drought = a
 
 # "bare.ground","Bare ground"
-model_bare = lm((bare.ground+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_bare)
-
+model_bare = lm(RankNorm(bare.ground)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_bare)
 par(mfrow=c(1,1))
-ri<-rstandard(model_bare)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_bare)
-bc = boxcox(model_bare)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$bare.ground + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_bare))
+leveneTest(RankNorm(bare.ground)~as.character(Year)*Treat_W,data=df_nor)
+summary.aov(model_bare)
+# Friedman statistics
+BARE = with(df_nor,friedman(Year,Treat_W,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(BARE)
+# added,ambient = b, drought = a
 
 # "LOSC","Acmispon glaber"
-model_LOSC = lm((LOSC+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_LOSC)
-
+model_LOSC = lm(RankNorm(LOSC)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_LOSC)
 par(mfrow=c(1,1))
-ri<-rstandard(model_LOSC)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_LOSC)
-bc = boxcox(model_LOSC)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$LOSC + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_LOSC))
+leveneTest(RankNorm(LOSC)~as.character(Year)*Treat_W,data=df_nor)
+summary.aov(model_LOSC)
+model_LOSC = aov(RankNorm(LOSC)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_LOSC, conf.level=.95)
+# Friedman statistics
+LOSC = with(df_nor,friedman(Year,Treat_W,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(LOSC)
+# added,ambient = a, drought = b
 
 # "MALA","Malosma laurina"
-model_MALA = lm((MALA+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_MALA)
-
+model_MALA = lm(RankNorm(MALA)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_MALA)
 par(mfrow=c(1,1))
-ri<-rstandard(model_MALA)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_MALA)
-bc = boxcox(model_MALA)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$MALA + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_MALA))
+leveneTest(RankNorm(MALA)~as.character(Year)*Treat_W,data=df_nor)
+model_MALA = aov(RankNorm(MALA)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_MALA, conf.level=.95)
+# Friedman statistics
+MALA = with(df_nor,friedman(Year,Treat_W,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(MALA)
+boxplot((MALA)~as.character(Year)+Treat_W, data = df_nor)
+# added = a,ambient = ab, drought = c
 
 # "ARCA","Artemisia californica"
-model_ARCA = lm((ARCA+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_ARCA)
-
+model_ARCA = lm(RankNorm(ARCA)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_ARCA)
 par(mfrow=c(1,1))
-ri<-rstandard(model_ARCA)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_ARCA))
+leveneTest(RankNorm(ARCA)~as.character(Year)*Treat_W,data=df_nor)
+model_MALA = aov(RankNorm(ARCA)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_MALA, conf.level=.95)
+# Friedman statistics
+ARCA = with(df_nor,friedman(Year,Treat_W,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(ARCA)
+boxplot((ARCA)~as.character(Year)+Treat_W, data = df_nor)
+# added = ab,ambient = b, drought = a
 
-boxcox(model_ARCA)
-bc = boxcox(model_ARCA)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$ARCA + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
 
 # "litter","Litter"
-model_litter = lm((litter+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_litter)
-
+model_litter = lm(RankNorm(litter)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_litter)
 par(mfrow=c(1,1))
-ri<-rstandard(model_litter)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_litter))
+leveneTest(RankNorm(litter)~as.character(Year)*Treat_W,data=df_nor)
+model_litter = aov(RankNorm(litter)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_litter, conf.level=.95)
+# Friedman statistics
+litter = with(df_nor,friedman(Year,Treat_W,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(litter)
+boxplot((litter)~as.character(Year)+Treat_W, data = df_nor)
+# added,ambient = b, drought = a
 
-boxcox(model_litter)
-bc = boxcox(model_litter)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$litter + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
 
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
 
 # "NALE","Solidago lepida"
 model_NALE = lm((NALE+1)~Year+Treat_W+Year*Treat_W, data = df_nor)

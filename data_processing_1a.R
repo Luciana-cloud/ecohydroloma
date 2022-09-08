@@ -284,8 +284,9 @@ linear_1 = lm(as.numeric(V4)~as.numeric(V2),data=temp3)
 summary(linear_1)
 
 ggplot(temp3,aes(as.numeric(V2), as.numeric(V4))) + geom_point() + geom_smooth(method='lm') + 
-       labs(x='old observations', y='new observations') + stat_cor(aes(label=..rr.label..), label.y = 20,size = 10) + 
-       stat_regline_equation(label.y = 21,size = 10) + theme(text = element_text(size=25))
+       labs(x='old soil water content (%)', y='new soil water content (%)') + stat_cor(aes(label=..rr.label..), label.y = 20,size = 10) + 
+       stat_regline_equation(label.y = 21,size = 10) + theme(aspect.ratio=1,text = element_text(size=25)) + 
+       scale_x_continuous(limits = c(5, 23)) + scale_y_continuous(limits = c(5, 23))
 
 # Preliminary calculations (linear regression of data taken by old Davis device)
 a2    = 1.129838

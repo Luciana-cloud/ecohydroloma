@@ -1086,7 +1086,7 @@ TukeyHSD(model_MALA, conf.level=.95)
 MALA = with(df_nor,friedman(Year,Treat_W,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
 plot(MALA)
 boxplot((MALA)~as.character(Year)+Treat_W, data = df_nor)
-# added = a,ambient = ab, drought = c
+# added = a,ambient = b, drought = c
 
 # "ARCA","Artemisia californica"
 model_ARCA = lm(RankNorm(ARCA)~Year+Treat_W, data = df_nor)
@@ -1103,7 +1103,6 @@ plot(ARCA)
 boxplot((ARCA)~as.character(Year)+Treat_W, data = df_nor)
 # added = ab,ambient = b, drought = a
 
-
 # "litter","Litter"
 model_litter = lm(RankNorm(litter)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
@@ -1119,107 +1118,87 @@ plot(litter)
 boxplot((litter)~as.character(Year)+Treat_W, data = df_nor)
 # added,ambient = b, drought = a
 
-
-
 # "NALE","Solidago lepida"
-model_NALE = lm((NALE+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_NALE)
-
+model_NALE = lm(RankNorm(NALE)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
 plot(model_NALE)
 par(mfrow=c(1,1))
-ri<-rstandard(model_NALE)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_NALE)
-bc = boxcox(model_NALE)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$NALE + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_NALE))
+leveneTest(RankNorm(NALE)~as.character(Year)*Treat_W,data=df_nor)
+model_NALE = aov((NALE)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_NALE, conf.level=.95)
+# Friedman statistics
+NALE = with(df_nor,friedman(Year,Treat_W,NALE,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(NALE)
+boxplot((NALE)~as.character(Year)+Treat_W, data = df_nor)
+# added,ambient,drought = a
 
 # "EUCH","Eucrypta chrysanthemifolia"
-model_EUCH = lm((EUCH+1)~Year+Treat_W+Year*Treat_W, data = df_nor)
-summary.aov(model_EUCH)
-
+model_EUCH = lm(RankNorm(EUCH)~Year+Treat_W, data = df_nor)
 par(mfrow=c(2,2))
-plot(model_EUCH)
+plot(model_NALE)
 par(mfrow=c(1,1))
-ri<-rstandard(model_EUCH)
-shar<-shapiro.test(ri)
-shar
-
-boxcox(model_EUCH)
-bc = boxcox(model_EUCH)
-(lambda = bc$x[which.max(bc$y)])
-y = df_nor$EUCH + 1
-model_1d = lm((((y^lambda-1)/lambda))~Year+Treat_W+Year*Treat_W, data = df_nor)
-par(mfrow=c(2,2))
-plot(model_1d)
-par(mfrow=c(1,1))
-
-ri<-rstandard(model_1d)
-shar<-shapiro.test(ri)
-shar
+shapiro.test(residuals(model_EUCH))
+leveneTest(RankNorm(EUCH)~as.character(Year)*Treat_W,data=df_nor)
+model_EUCH = aov((EUCH)~Year+Treat_W, data = df_nor)
+TukeyHSD(model_EUCH, conf.level=.95)
+# Friedman statistics
+EUCH = with(df_nor,friedman(Year,Treat_W,EUCH,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+plot(EUCH)
+boxplot((EUCH)~as.character(Year)+Treat_W, data = df_nor)
+# added,ambient,drought = a
 
 # Non-parametric statistical analysis
 #  and multiple comparison of treatments
 # https://search.r-project.org/CRAN/refmans/agricolae/html/friedman.html
 
-df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A", "added"))
-df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X", "ambient"))
-df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R", "restricted"))
+#df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A", "added"))
+#df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X", "ambient"))
+#df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R", "restricted"))
 
 # Statistical analysis of the dominant soil covers - Treatment
-LOSC = with(df_nor,friedman(Year,Treat_W,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-ARCA = with(df_nor,friedman(Year,Treat_W,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-bare = with(df_nor,friedman(Year,Treat_W,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-BRMA = with(df_nor,friedman(Year,Treat_W,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-LECO = with(df_nor,friedman(Year,Treat_W,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-litter = with(df_nor,friedman(Year,Treat_W,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-MALA = with(df_nor,friedman(Year,Treat_W,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-SAME = with(df_nor,friedman(Year,Treat_W,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#LOSC = with(df_nor,friedman(Year,Treat_W,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#ARCA = with(df_nor,friedman(Year,Treat_W,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#bare = with(df_nor,friedman(Year,Treat_W,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#BRMA = with(df_nor,friedman(Year,Treat_W,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#LECO = with(df_nor,friedman(Year,Treat_W,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#litter = with(df_nor,friedman(Year,Treat_W,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#MALA = with(df_nor,friedman(Year,Treat_W,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#SAME = with(df_nor,friedman(Year,Treat_W,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
 
 
 # Plotting dominant soil covers
-par(mfrow = c(2, 4))
-plot(LOSC,variation="IQR",main= "Acmispon glaber",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(ARCA,variation="IQR",main= "Artemisia californica",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(bare,variation="IQR",main= "Bare ground",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(BRMA,variation="IQR",main= "Bromus madritensis",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(LECO,variation="IQR",main= "Elymus condensatus",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(litter,variation="IQR",main= "Litter",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(MALA,variation="IQR",main= "Malosma laurina",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(SAME,variation="IQR",main= "Salvia mellifera",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-par(mfrow = c(1, 1)) #reset this parameter
+#par(mfrow = c(2, 4))
+#plot(LOSC,variation="IQR",main= "Acmispon glaber",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(ARCA,variation="IQR",main= "Artemisia californica",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(bare,variation="IQR",main= "Bare ground",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(BRMA,variation="IQR",main= "Bromus madritensis",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(LECO,variation="IQR",main= "Elymus condensatus",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(litter,variation="IQR",main= "Litter",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(MALA,variation="IQR",main= "Malosma laurina",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(SAME,variation="IQR",main= "Salvia mellifera",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#par(mfrow = c(1, 1)) #reset this parameter
 
 # Statistical analysis of the dominant soil covers - Year
-LOSC = with(df_nor,friedman(Treat_W,Year,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-ARCA = with(df_nor,friedman(Treat_W,Year,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-bare = with(df_nor,friedman(Treat_W,Year,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-BRMA = with(df_nor,friedman(Treat_W,Year,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-LECO = with(df_nor,friedman(Treat_W,Year,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-litter = with(df_nor,friedman(Treat_W,Year,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-MALA = with(df_nor,friedman(Treat_W,Year,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-SAME = with(df_nor,friedman(Treat_W,Year,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#LOSC = with(df_nor,friedman(Treat_W,Year,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#ARCA = with(df_nor,friedman(Treat_W,Year,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#bare = with(df_nor,friedman(Treat_W,Year,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#BRMA = with(df_nor,friedman(Treat_W,Year,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#LECO = with(df_nor,friedman(Treat_W,Year,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#litter = with(df_nor,friedman(Treat_W,Year,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#MALA = with(df_nor,friedman(Treat_W,Year,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#SAME = with(df_nor,friedman(Treat_W,Year,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
 
 
 # Plotting dominant soil covers
-par(mfrow = c(2, 4))
-plot(LOSC,variation="IQR",main= "Acmispon glaber",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(ARCA,variation="IQR",main= "Artemisia californica",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(bare,variation="IQR",main= "Bare ground",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(BRMA,variation="IQR",main= "Bromus madritensis",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(LECO,variation="IQR",main= "Elymus condensatus",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(litter,variation="IQR",main= "Litter",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(MALA,variation="IQR",main= "Malosma laurina",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-plot(SAME,variation="IQR",main= "Salvia mellifera",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
-par(mfrow = c(1, 1)) #reset this parameter
+#par(mfrow = c(2, 4))
+#plot(LOSC,variation="IQR",main= "Acmispon glaber",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(ARCA,variation="IQR",main= "Artemisia californica",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(bare,variation="IQR",main= "Bare ground",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(BRMA,variation="IQR",main= "Bromus madritensis",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(LECO,variation="IQR",main= "Elymus condensatus",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(litter,variation="IQR",main= "Litter",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(MALA,variation="IQR",main= "Malosma laurina",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#plot(SAME,variation="IQR",main= "Salvia mellifera",cex=2,cex.axis = 2,cex.lab=2,cex.names=2,cex.main = 3)
+#par(mfrow = c(1, 1)) #reset this parameter
 

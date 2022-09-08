@@ -379,6 +379,7 @@ grass_R = rbind((temp_11 %>% filter(Plant=="G"&Water=="R")),(temp_12 %>% filter(
 
 set.seed(44)
 
+
 # Using a dummy variable to replace the time
 shrub_X$date = as.POSIXct(strptime(shrub_X$Date, format="%d/%m/%Y", tz="GMT"))
 shrub_X$date = decimal_date(shrub_X$date)
@@ -386,15 +387,15 @@ shrub_X$depth = as.integer(shrub_X$depth)
 mba = mba.surf(shrub_X[,c('date','depth','new_mean')], 300, 300)
 dimnames(mba$xyz.est$z) = list(mba$xyz.est$x, mba$xyz.est$y)
 df3 = melt(mba$xyz.est$z, varnames = c('date', 'depth'), value.name = 'new_mean')
-df3 = df3 %>% filter(date > 2011.602)
-df3 = df3 %>% filter(date < 2015.138)
+df3 = df3 %>% filter(date > 2012.061)
+df3 = df3 %>% filter(date < 2015.121)
 coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
 # Fitting the semi variogram
 lzn.vgm = variogram((new_mean)~1, df3)
-lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 5000, 1))
+lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 1000, 1))
 shrub_Xplot = plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20,main= "shrubland + ambient")
 pdf("shrub_Xplot.pdf")
 shrub_Xplot
@@ -405,10 +406,11 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
 # Reconverting to data frame
 dt <- as.data.frame(df3)
-
-#write.csv(df, file = "df.csv")
+write.csv(dt, file = "shrub_amb.csv")
 
 # Plotting
+dt <- read.csv("shrub_amb.csv")
+
 shrub_X_Fig =  ggplot(data=dt, aes(date, depth)) + 
   geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = new_mean)) + 
@@ -419,7 +421,7 @@ pdf("shrub_X_Fig.pdf")
 shrub_X_Fig
 dev.off()
 
-# Using a dummy variable to replace the time
+# Using a dummy variable to replace the time***
 shrub_A$date = as.POSIXct(strptime(shrub_A$Date, format="%d/%m/%Y", tz="GMT"))
 shrub_A$date = decimal_date(shrub_A$date)
 shrub_A$depth = as.integer(shrub_A$depth)
@@ -434,7 +436,7 @@ bbox(df3)
 
 # Fitting the semi variogram
 lzn.vgm = variogram((new_mean)~1, df3)
-lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 5000, 1))
+lzn.fit = fit.variogram(lzn.vgm, model=vgm(psill = NA, "Gau", range = NA, 1))
 shrub_Aplot =plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20,main= "shrubland + added")
 pdf("shrub_Aplot.pdf")
 shrub_Aplot
@@ -445,6 +447,7 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
 # Reconverting to data frame
 dt <- as.data.frame(df3)
+write.csv(dt, file = "shrub_added.csv")
 
 # Plotting
 shrub_A_Fig =  ggplot(data=dt, aes(date, depth)) + 
@@ -483,6 +486,7 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
 # Reconverting to data frame
 dt <- as.data.frame(df3)
+write.csv(dt, file = "shrub_rest.csv")
 
 # Plotting
 shrub_R_Fig =  ggplot(data=dt, aes(date, depth)) + 
@@ -503,8 +507,8 @@ grass_X    = grass_X %>% filter(!new_mean %in% "NaN")
 mba = mba.surf(grass_X[,c('date','depth','new_mean')], 300, 300)
 dimnames(mba$xyz.est$z) = list(mba$xyz.est$x, mba$xyz.est$y)
 df3 = melt(mba$xyz.est$z, varnames = c('date', 'depth'), value.name = 'new_mean')
-df3 = df3 %>% filter(date > 2011.929)
-df3 = df3 %>% filter(date < 2015.159)
+df3 = df3 %>% filter(date > 2012.061)
+df3 = df3 %>% filter(date < 2015.140)
 coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
@@ -522,6 +526,7 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
 # Reconverting to data frame
 dt <- as.data.frame(df3)
+write.csv(dt, file = "grass_amb.csv")
 
 # Plotting
 grass_X_Fig =  ggplot(data=dt, aes(date, depth)) + 
@@ -561,6 +566,7 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
 # Reconverting to data frame
 dt <- as.data.frame(df3)
+write.csv(dt, file = "grass_add.csv")
 
 # Plotting
 grass_A_Fig =  ggplot(data=dt, aes(date, depth)) + 
@@ -600,6 +606,7 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
 # Reconverting to data frame
 dt <- as.data.frame(df3)
+write.csv(dt, file = "grass_red.csv")
 
 # Plotting
 grass_R_Fig =  ggplot(data=dt, aes(date, depth)) + 

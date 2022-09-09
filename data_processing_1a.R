@@ -323,6 +323,53 @@ temp9   = temp8 %>% mutate(Output_1 = 100*(-0.8094*Output_1^3 + 3.4428*Output_1^
 water_T = temp9 %>% mutate(Mean_W = (Output_1+Output_2+Output_3+Output_4)/4)
 temp10  = water_T %>% filter(Nitrogen == "X")
 
+# Statistical analysis 
+
+statis = as.data.frame(rbind(cbind(temp10$Date,temp10$Plant,temp10$Water,temp10$Mean_W,(rep(-12.5,each=nrow(temp10)))),
+               cbind(water$Date,water$Plant,water$Water,water$X25cm,rep(-25,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X50cm,rep(-50,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X75cm,rep(-75,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X100cm,rep(-100,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X125cm,rep(-125,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X150cm,rep(-150,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X175cm,rep(-175,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Water,water$X200cm,rep(-200,each=nrow(water)))))
+colnames(statis) <- c('Date','Plant','Water',"Mean_water","Depth")
+date <-  as.Date(statis$Date,'%d/%m/%Y')
+
+statis = as.data.frame(cbind(statis,date))
+statis  = statis %>% filter(date > "2011-12-3")
+year <- as.numeric(format(statis$date,'%Y'))
+month <- as.numeric(format(statis$date,'%m'))
+statis = as.data.frame(cbind(statis,year,month))
+
+#water_stat = lm((as.numeric(Mean_water))~Plant+Water+as.character(Depth)+as.character(year)+as.character(month) +
+#                Plant*Water+Plant*as.character(Depth)+Plant*as.character(year)+Plant*as.character(month) + 
+#                Water*as.character(Depth)+Water*as.character(year)++Water*as.character(month) +
+#                as.character(Depth)*as.character(year)+as.character(Depth)*as.character(month) + 
+#                as.character(year)*as.character(month) + 
+#                Plant*Water*as.character(Depth)+Plant*Water*as.character(year)+Plant*Water*as.character(month) +
+#                Plant*as.character(Depth)*as.character(year)+Plant*as.character(Depth)*as.character(month) + 
+#                Plant*as.character(year)*as.character(month) +
+#                Water*as.character(Depth)*as.character(year)+Water*as.character(Depth)*as.character(month) +
+#                Plant*Water*as.character(Depth)*as.character(year)+Plant*Water*as.character(Depth)*as.character(month) + 
+#                Water*as.character(Depth)*as.character(year)*as.character(month) + 
+#                Plant*Water*as.character(Depth)*as.character(year)*as.character(month),data=statis)
+water_stat2 = lm((as.numeric(Mean_water))~Plant+Water+as.character(Depth)+as.character(year)+as.character(month) +
+                   Plant*Water+Plant*as.character(Depth)+Plant*as.character(year)+Plant*as.character(month) + 
+                   Water*as.character(Depth)+Water*as.character(year)+Water*as.character(month) +
+                   as.character(Depth)*as.character(year)+as.character(Depth)*as.character(month) + 
+                   as.character(year)*as.character(month) + 
+                   Plant*Water*as.character(Depth)+
+                   Plant*as.character(Depth)*as.character(year),data=statis)
+summary.aov(water_stat2)
+par(mfrow=c(2,2))
+plot(water_stat2)
+par(mfrow=c(1,1))
+water_stat.av <- aov(water_stat2)
+test_tukey = TukeyHSD(water_stat.av)
+test_tukey
+
 # Data preparation superficial water content
 temp_11 = temp10 %>% group_by(Date,Plant,Water) %>% summarise(new_mean = mean((Mean_W),na.rm = TRUE)) 
 temp_11 = temp_11 %>% add_column(depth = rep(-12.5,each=nrow(temp_11)))

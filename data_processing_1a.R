@@ -408,19 +408,6 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 dt <- as.data.frame(df3)
 write.csv(dt, file = "shrub_amb.csv")
 
-# Plotting
-dt <- read.csv("shrub_amb.csv")
-
-shrub_X_Fig =  ggplot(data=dt, aes(date, depth)) + 
-  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
-  geom_contour(aes(z = new_mean)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
-  labs(title= "Shrubland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
-  theme(text = element_text(size=25))
-pdf("shrub_X_Fig.pdf")
-shrub_X_Fig
-dev.off()
-
 # Using a dummy variable to replace the time***
 shrub_A$date = as.POSIXct(strptime(shrub_A$Date, format="%d/%m/%Y", tz="GMT"))
 shrub_A$date = decimal_date(shrub_A$date)
@@ -448,17 +435,6 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 # Reconverting to data frame
 dt <- as.data.frame(df3)
 write.csv(dt, file = "shrub_added.csv")
-
-# Plotting
-shrub_A_Fig =  ggplot(data=dt, aes(date, depth)) + 
-  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
-  geom_contour(aes(z = new_mean)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
-  labs(title= "Shrubland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
-  theme(text = element_text(size=25))
-pdf("shrub_A_Fig.pdf")
-shrub_A_Fig
-dev.off()
 
 # Using a dummy variable to replace the time
 shrub_R$date = as.POSIXct(strptime(shrub_R$Date, format="%d/%m/%Y", tz="GMT"))
@@ -488,16 +464,6 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 dt <- as.data.frame(df3)
 write.csv(dt, file = "shrub_rest.csv")
 
-# Plotting
-shrub_R_Fig =  ggplot(data=dt, aes(date, depth)) + 
-  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
-  geom_contour(aes(z = new_mean)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
-  labs(title= "Shrubland+Reduced", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
-  theme(text = element_text(size=25))
-pdf("shrub_R_Fig.pdf")
-shrub_R_Fig
-dev.off()
 
 # Using a dummy variable to replace the time
 grass_X$date = as.POSIXct(strptime(grass_X$Date, format="%d/%m/%Y", tz="GMT"))
@@ -528,16 +494,6 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 dt <- as.data.frame(df3)
 write.csv(dt, file = "grass_amb.csv")
 
-# Plotting
-grass_X_Fig =  ggplot(data=dt, aes(date, depth)) + 
-  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
-  geom_contour(aes(z = new_mean)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
-  labs(title= "Grassland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
-  theme(text = element_text(size=25))
-pdf("grass_X_Fig.pdf")
-grass_X_Fig
-dev.off()
 
 # Using a dummy variable to replace the time
 grass_A$date = as.POSIXct(strptime(grass_A$Date, format="%d/%m/%Y", tz="GMT"))
@@ -568,16 +524,6 @@ lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 dt <- as.data.frame(df3)
 write.csv(dt, file = "grass_add.csv")
 
-# Plotting
-grass_A_Fig =  ggplot(data=dt, aes(date, depth)) + 
-  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
-  geom_contour(aes(z = new_mean)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
-  labs(title= "Grassland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
-  theme(text = element_text(size=25))
-pdf("grass_A_Fig.pdf")
-grass_A_Fig
-dev.off()
 
 # Using a dummy variable to replace the time
 grass_R$date = as.POSIXct(strptime(grass_R$Date, format="%d/%m/%Y", tz="GMT"))
@@ -609,15 +555,176 @@ dt <- as.data.frame(df3)
 write.csv(dt, file = "grass_red.csv")
 
 # Plotting
-grass_R_Fig =  ggplot(data=dt, aes(date, depth)) + 
+
+# Shrubland ambient
+dts <- read.csv("shrub_amb.csv")
+dts = dts %>% filter(date > 2012.061)
+dts = dts %>% filter(date < 2015.121)
+
+shrub_X_Fig =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = new_mean)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
+  labs(title= "Shrubland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_X_Fig
+#pdf("shrub_X_Fig.pdf")
+#shrub_X_Fig
+#dev.off()
+
+
+# Shrubland added
+dtsa <- read.csv("shrub_added.csv")
+dtsa = dtsa %>% filter(date > 2012.061)
+dtsa = dtsa %>% filter(date < 2015.121)
+
+shrub_A_Fig =  ggplot(data=dtsa, aes(date, depth)) + 
+  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = new_mean)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
+  labs(title= "Shrubland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_A_Fig
+#pdf("shrub_A_Fig.pdf")
+#shrub_A_Fig
+#dev.off()
+
+
+# Shrubland drought
+dtsd <- read.csv("shrub_rest.csv")
+dtsd = dtsd %>% filter(date > 2012.061)
+dtsd = dtsd %>% filter(date < 2015.121)
+
+shrub_R_Fig =  ggplot(data=dtsd, aes(date, depth)) + 
+  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = new_mean)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
+  labs(title= "Shrubland+Reduced", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_R_Fig
+#pdf("shrub_R_Fig.pdf")
+#shrub_R_Fig
+#dev.off()
+
+
+# Grassland ambient
+dtg <- read.csv("grass_amb.csv")
+dtg = dtg %>% filter(date > 2012.061)
+dtg = dtg %>% filter(date < 2015.121)
+
+grass_X_Fig =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = new_mean)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
+  labs(title= "Grassland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_X_Fig
+#pdf("grass_X_Fig.pdf")
+#grass_X_Fig
+#dev.off()
+
+
+# Grassland added
+dtga <- read.csv("grass_add.csv")
+dtga = dtga %>% filter(date > 2012.061)
+dtga = dtga %>% filter(date < 2015.121)
+
+grass_A_Fig =  ggplot(data=dtga, aes(date, depth)) + 
+  geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = new_mean)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
+  labs(title= "Grassland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_A_Fig
+#pdf("grass_A_Fig.pdf")
+#grass_A_Fig
+#dev.off()
+
+
+# Grassland drought
+dtgd <- read.csv("grass_red.csv")
+dtgd = dtgd %>% filter(date > 2012.061)
+dtgd = dtgd %>% filter(date < 2015.121)
+
+grass_R_Fig =  ggplot(data=dtgd, aes(date, depth)) + 
   geom_raster(aes(fill = new_mean), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = new_mean)) + 
   scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(30,0)) + 
   labs(title= "Grassland+Reduced", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
-pdf("grass_R_Fig.pdf")
 grass_R_Fig
-dev.off()
+#pdf("grass_R_Fig.pdf")
+#grass_R_Fig
+#dev.off()
+
+# Shrubland - Grassland (Ambient)
+
+shrub_grass = dts$new_mean-dtg$new_mean
+dts$shrub_grass <- shrub_grass
+
+grass_s_g =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = shrub_grass), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = shrub_grass)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(12,-12)) + # ,limits=c(-15,15)
+  labs(title= "Shrubland-Grassland", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_s_g 
+
+# Shrubland : added - ambient
+
+added_ambient = dtsa$new_mean-dts$new_mean
+dts$added_ambient <- added_ambient
+
+shrub_a_a =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = added_ambient)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
+  labs(title= "Added - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_a_a 
+
+
+# Shrubland : drought - ambient
+
+drought_ambient = dtsd$new_mean-dts$new_mean
+dts$drought_ambient <- drought_ambient
+
+shrub_d_a =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = drought_ambient)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
+  labs(title= "Drought - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_d_a 
+
+
+# Grassland : added - ambient
+
+added_ambient = dtga$new_mean-dtg$new_mean
+dtg$added_ambient <- added_ambient
+
+grass_a_a =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = added_ambient)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
+  labs(title= "Added - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_a_a 
+
+
+# Shrubland : drought - ambient
+
+drought_ambient = dtgd$new_mean-dtg$new_mean
+dtg$drought_ambient <- drought_ambient
+
+shrub_d_a =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  geom_contour(aes(z = drought_ambient)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
+  labs(title= "Drought - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_d_a 
+
 
 # PRECIPITATION
 

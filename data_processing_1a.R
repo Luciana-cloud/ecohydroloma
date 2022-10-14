@@ -706,13 +706,15 @@ grass_R_Fig
 
 # Shrubland - Grassland (Ambient)
 
+library(pals)
+
 shrub_grass = dts$new_mean-dtg$new_mean
 dts$shrub_grass <- shrub_grass
 
 grass_s_g =  ggplot(data=dts, aes(date, depth)) + 
   geom_raster(aes(fill = shrub_grass), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = shrub_grass)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(12,-12)) + # ,limits=c(-15,15)
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-12,12)) + # ,limits=c(-15,15)
   labs(title= "Shrubland-Grassland", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 grass_s_g 
@@ -725,8 +727,8 @@ dts$added_ambient <- added_ambient
 shrub_a_a =  ggplot(data=dts, aes(date, depth)) + 
   geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = added_ambient)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
-  labs(title= "Added - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-8,8)) + # ,limits=c(-15,15)
+  labs(title= "Added - Ambient(S)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 shrub_a_a 
 
@@ -739,8 +741,8 @@ dts$drought_ambient <- drought_ambient
 shrub_d_a =  ggplot(data=dts, aes(date, depth)) + 
   geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = drought_ambient)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
-  labs(title= "Drought - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-8,8)) + # ,limits=c(-15,15)
+  labs(title= "Drought - Ambient(S)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 shrub_d_a 
 
@@ -753,8 +755,8 @@ dtg$added_ambient <- added_ambient
 grass_a_a =  ggplot(data=dtg, aes(date, depth)) + 
   geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = added_ambient)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
-  labs(title= "Added - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-8,8)) + # ,limits=c(-15,15)
+  labs(title= "Added - Ambient (G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 grass_a_a 
 
@@ -767,8 +769,8 @@ dtg$drought_ambient <- drought_ambient
 shrub_d_a =  ggplot(data=dtg, aes(date, depth)) + 
   geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   geom_contour(aes(z = drought_ambient)) + 
-  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(8,-8)) + # ,limits=c(-15,15)
-  labs(title= "Drought - Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-8,8)) + # ,limits=c(-15,15)
+  labs(title= "Drought - Ambient (G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 shrub_d_a 
 
@@ -798,6 +800,12 @@ d <- ggplot(FullPrecipLoma1, aes(x=Day,y=CumAdded)) + geom_line(color="#2166ac",
 d + facet_grid(~WaterYear, scales = "free_x") + theme(legend.position="top",text = element_text(size=25)) + 
   labs(x = "",y = "Water input (mm)") + theme(axis.text.x = element_blank(),axis.ticks.x = element_blank())
 
+# Mean precipitation 
+
+Mean_prec = FullPrecipLoma %>% group_by(Year) %>% summarize(sum = sum(Ambient))
+
+mean(Mean_prec$sum[2:15])
+
 # Calling data
 winput = read.delim("water_input.txt")
 
@@ -817,15 +825,27 @@ df1 = df %>% filter(Treat_N == "X")
 
 # Statistical analysis
 temp1b = df1 %>% mutate(biomass_g = biomass_g/(0.5*0.14))
-temp2b = temp1b %>% filter(Year > 2007)
+temp2b = temp1b %>% filter(Year > 2013)
 count(temp2b, "Year")
 temp2b1 = temp2b %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A","added"))
 temp2b2 = temp2b1 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X","ambient"))
 temp2b3 = temp2b2 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R","drought"))
+temp2b4 = temp2b3 %>% mutate(Block = substr(Plot,4,4))
+
+# Mixed effects model
+
+library(lme4)
+library(Rcpp)
+library(nloptr)
+
+fit.bio <- lmer(biomass_g ~ Year * Treat_W + (1 | Block) + 
+                   (1 | Year:Treat_W:Block), data = temp2b4,
+                control = lmerControl(optimizer = "nlopt", calc.derivs = FALSE))
 
 # ANOVA analysis (Parametric test)
 
-model_1g = lm((biomass_g)~as.character(Year)+Treat_W, data = temp2b3)
+model_1g = lm((biomass_g)~as.character(Year)+Treat_W, data = temp2b3,
+              control = lmerControl(optimizer = "nlopt", calc.derivs = FALSE))
 summary.aov(model_1g)
 par(mfrow=c(2,2))
 plot(model_1g)

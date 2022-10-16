@@ -774,7 +774,6 @@ shrub_d_a =  ggplot(data=dtg, aes(date, depth)) +
   theme(text = element_text(size=25))
 shrub_d_a 
 
-
 # PRECIPITATION
 
 # New precipitation
@@ -825,22 +824,92 @@ df1 = df %>% filter(Treat_N == "X")
 
 # Statistical analysis
 temp1b = df1 %>% mutate(biomass_g = biomass_g/(0.5*0.14))
-temp2b = temp1b %>% filter(Year > 2013)
+temp2b = temp1b %>% filter(Year > 2007)
 count(temp2b, "Year")
 temp2b1 = temp2b %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A","added"))
 temp2b2 = temp2b1 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X","ambient"))
 temp2b3 = temp2b2 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R","drought"))
 temp2b4 = temp2b3 %>% mutate(Block = substr(Plot,4,4))
 
+boxplot(biomass_g ~ (Treat_W*as.factor(Year)),data = temp2b4,xlab = "Treatment-Year",ylab = "Biomass")
+boxplot(biomass_g ~ (Treat_W),data = temp2b4,xlab = "Treatment-Year",ylab = "Biomass")
+
+# Explore data and checking the assumptions
+
+library(plyr)
+
+ddply(temp2b4,~Treat_W * Year, function(data) summary(data$biomass_g))
+ddply(temp2b4,~Treat_W * Year, summarise, biomass_mean = mean(biomass_g), biomass_std = sd(biomass_g))
+
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2008",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2008")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2009",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2009")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2010",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2010")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2011",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2011")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2012",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2012")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2013",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2013")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2014",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2014")
+hist(temp2b4[temp2b4$Treat_W == "ambient" & temp2b4$Year == "2015",]$biomass_g,xlab = "", ylab = "",main = "Ambient-2015")
+
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2008",]$biomass_g,xlab = "", ylab = "",main = "Drought-2008")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2009",]$biomass_g,xlab = "", ylab = "",main = "Drought-2009")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2010",]$biomass_g,xlab = "", ylab = "",main = "Drought-2010")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2011",]$biomass_g,xlab = "", ylab = "",main = "Drought-2011")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2012",]$biomass_g,xlab = "", ylab = "",main = "Drought-2012")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2013",]$biomass_g,xlab = "", ylab = "",main = "Drought-2013")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2014",]$biomass_g,xlab = "", ylab = "",main = "Drought-2014")
+hist(temp2b4[temp2b4$Treat_W == "drought" & temp2b4$Year == "2015",]$biomass_g,xlab = "", ylab = "",main = "Drought-2015")
+
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2008",]$biomass_g,xlab = "", ylab = "",main = "Added-2008")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2009",]$biomass_g,xlab = "", ylab = "",main = "Added-2009")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2010",]$biomass_g,xlab = "", ylab = "",main = "Added-2010")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2011",]$biomass_g,xlab = "", ylab = "",main = "Added-2011")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2012",]$biomass_g,xlab = "", ylab = "",main = "Added-2012")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2013",]$biomass_g,xlab = "", ylab = "",main = "Added-2013")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2014",]$biomass_g,xlab = "", ylab = "",main = "Added-2014")
+hist(temp2b4[temp2b4$Treat_W == "added" & temp2b4$Year == "2015",]$biomass_g,xlab = "", ylab = "",main = "Added-2015")
+
 # Mixed effects model
 
+library(tidyverse)
 library(lme4)
 library(Rcpp)
-library(nloptr)
+library(car)
+library(multcomp)
+library(lsmeans)
 
-fit.bio <- lmer(biomass_g ~ Year * Treat_W + (1 | Block) + 
-                   (1 | Year:Treat_W:Block), data = temp2b4,
-                control = lmerControl(optimizer = "nlopt", calc.derivs = FALSE))
+fit.bio <- lmer(biomass_g ~ (Treat_W*as.factor(Year)) + (1|Block), data = temp2b4)
+summary(fit.bio)
+Anova(fit.bio)
+
+# Pairwise comparison
+
+summary(glht(fit.bio,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Plotting assumptions
+
+devtools::install_github("goodekat/redres")
+library(redres)
+
+# Save assumption plots - Constant variances
+pdf("plot_fit.pdf")
+plot_redres(fit.bio)
+dev.off() 
+
+pdf("plot_fit_treatment.pdf")
+plot_redres(fit.bio, xvar = "Treat_W")
+dev.off() 
+
+pdf("plot_fit_f.pdf")
+plot_redres(fit.bio, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("plot_fit_N.pdf")
+plot_resqq(fit.bio)
+dev.off() 
 
 # ANOVA analysis (Parametric test)
 

@@ -1,0 +1,61 @@
+> fit.silt <- lmer(silt_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
+boundary (singular) fit: see help('isSingular')
+> summary(fit.silt)
+Linear mixed model fit by REML ['lmerMod']
+Formula: silt_p ~ (plant * as.factor(depth)) + (1 | Block)
+   Data: texture_2
+
+REML criterion at convergence: 1083
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-9.0276 -0.4046 -0.0033  0.4573  5.2953
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept) 0.000    0.000
+ Residual             3.716    1.928
+Number of obs: 264, groups:  Block, 4
+
+Fixed effects:
+                            Estimate Std. Error t value
+(Intercept)                 7.586571   0.410959  18.461
+plantG                      0.772712   0.581184   1.330
+as.factor(depth)15         -0.388151   0.581184  -0.668
+as.factor(depth)30          0.301804   0.581184   0.519
+as.factor(depth)45          0.090500   0.581184   0.156
+as.factor(depth)100        -0.378640   0.581184  -0.651
+as.factor(depth)200        -0.004915   0.581184  -0.008
+plantG:as.factor(depth)15   0.384077   0.821919   0.467
+plantG:as.factor(depth)30  -0.811109   0.821919  -0.987
+plantG:as.factor(depth)45  -0.447787   0.821919  -0.545
+plantG:as.factor(depth)100 -1.293543   0.821919  -1.574
+plantG:as.factor(depth)200 -0.439234   0.821919  -0.534
+
+Correlation of Fixed Effects:
+            (Intr) plantG a.()15 a.()30 a.()45 a.()10 a.()20 pG:.()15 pG:.()3
+plantG      -0.707
+as.fctr()15 -0.707  0.500
+as.fctr()30 -0.707  0.500  0.500
+as.fctr()45 -0.707  0.500  0.500  0.500
+as.fct()100 -0.707  0.500  0.500  0.500  0.500
+as.fct()200 -0.707  0.500  0.500  0.500  0.500  0.500
+plntG:.()15  0.500 -0.707 -0.707 -0.354 -0.354 -0.354 -0.354
+plntG:.()30  0.500 -0.707 -0.354 -0.707 -0.354 -0.354 -0.354  0.500
+plntG:.()45  0.500 -0.707 -0.354 -0.354 -0.707 -0.354 -0.354  0.500    0.500
+plnG:.()100  0.500 -0.707 -0.354 -0.354 -0.354 -0.707 -0.354  0.500    0.500
+plnG:.()200  0.500 -0.707 -0.354 -0.354 -0.354 -0.354 -0.707  0.500    0.500
+            pG:.()4 pG:.()10
+plantG
+as.fctr()15
+as.fctr()30
+as.fctr()45
+as.fct()100
+as.fct()200
+plntG:.()15
+plntG:.()30
+plntG:.()45
+plnG:.()100  0.500
+plnG:.()200  0.500   0.500
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')

@@ -1,0 +1,59 @@
+> summary(fit.sand)
+Linear mixed model fit by REML ['lmerMod']
+Formula: sand_p ~ (plant * as.factor(depth)) + (1 | Block)
+   Data: texture_2
+
+REML criterion at convergence: 1360.6
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-6.6126 -0.4316  0.0711  0.4916  4.4852
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept)  0.00    0.000
+ Residual             11.18    3.344
+Number of obs: 264, groups:  Block, 4
+
+Fixed effects:
+                           Estimate Std. Error t value
+(Intercept)                82.53192    0.71289 115.771
+plantG                     -0.39613    1.00818  -0.393
+as.factor(depth)15         -0.54955    1.00818  -0.545
+as.factor(depth)30         -1.48732    1.00818  -1.475
+as.factor(depth)45         -1.62811    1.00818  -1.615
+as.factor(depth)100        -3.81604    1.00818  -3.785
+as.factor(depth)200        -3.04477    1.00818  -3.020
+plantG:as.factor(depth)15   0.05555    1.42578   0.039
+plantG:as.factor(depth)30   0.77358    1.42578   0.543
+plantG:as.factor(depth)45  -0.02990    1.42578  -0.021
+plantG:as.factor(depth)100 -2.15079    1.42578  -1.509
+plantG:as.factor(depth)200 -2.45303    1.42578  -1.720
+
+Correlation of Fixed Effects:
+            (Intr) plantG a.()15 a.()30 a.()45 a.()10 a.()20 pG:.()15 pG:.()3
+plantG      -0.707
+as.fctr()15 -0.707  0.500
+as.fctr()30 -0.707  0.500  0.500
+as.fctr()45 -0.707  0.500  0.500  0.500
+as.fct()100 -0.707  0.500  0.500  0.500  0.500
+as.fct()200 -0.707  0.500  0.500  0.500  0.500  0.500
+plntG:.()15  0.500 -0.707 -0.707 -0.354 -0.354 -0.354 -0.354
+plntG:.()30  0.500 -0.707 -0.354 -0.707 -0.354 -0.354 -0.354  0.500
+plntG:.()45  0.500 -0.707 -0.354 -0.354 -0.707 -0.354 -0.354  0.500    0.500
+plnG:.()100  0.500 -0.707 -0.354 -0.354 -0.354 -0.707 -0.354  0.500    0.500
+plnG:.()200  0.500 -0.707 -0.354 -0.354 -0.354 -0.354 -0.707  0.500    0.500
+            pG:.()4 pG:.()10
+plantG
+as.fctr()15
+as.fctr()30
+as.fctr()45
+as.fct()100
+as.fct()200
+plntG:.()15
+plntG:.()30
+plntG:.()45
+plnG:.()100  0.500
+plnG:.()200  0.500   0.500
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')

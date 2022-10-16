@@ -1,0 +1,8 @@
+> Anova(fit.silt)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: silt_p
+                        Chisq Df Pr(>Chisq)
+plant                  2.0307  1     0.1541
+as.factor(depth)       8.2505  5     0.1430
+plant:as.factor(depth) 5.1479  5     0.3981

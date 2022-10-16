@@ -1,0 +1,81 @@
+> summary(glht(fit.sand,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
+Note: df set to 251
+
+         Simultaneous Tests for General Linear Hypotheses
+
+Fit: lmer(formula = sand_p ~ (plant * as.factor(depth)) + (1 | Block),
+    data = texture_2)
+
+Linear Hypotheses:
+                               Estimate Std. Error t value Pr(>|t|)
+CS depth0 - G depth0 == 0        0.3961     1.0082   0.393   1.0000
+CS depth0 - CS depth15 == 0      0.5496     1.0082   0.545   1.0000
+CS depth0 - G depth15 == 0       0.8901     1.0082   0.883   0.9992
+CS depth0 - CS depth30 == 0      1.4873     1.0082   1.475   0.9461
+CS depth0 - G depth30 == 0       1.1099     1.0082   1.101   0.9944
+CS depth0 - CS depth45 == 0      1.6281     1.0082   1.615   0.9023
+CS depth0 - G depth45 == 0       2.0541     1.0082   2.037   0.6671
+CS depth0 - CS depth100 == 0     3.8160     1.0082   3.785   0.0101 *
+CS depth0 - G depth100 == 0      6.3630     1.0082   6.311    <0.01 ***
+CS depth0 - CS depth200 == 0     3.0448     1.0082   3.020   0.1093
+CS depth0 - G depth200 == 0      5.8939     1.0082   5.846    <0.01 ***
+G depth0 - CS depth15 == 0       0.1534     1.0082   0.152   1.0000
+G depth0 - G depth15 == 0        0.4940     1.0082   0.490   1.0000
+G depth0 - CS depth30 == 0       1.0912     1.0082   1.082   0.9952
+G depth0 - G depth30 == 0        0.7137     1.0082   0.708   0.9999
+G depth0 - CS depth45 == 0       1.2320     1.0082   1.222   0.9868
+G depth0 - G depth45 == 0        1.6580     1.0082   1.645   0.8903
+G depth0 - CS depth100 == 0      3.4199     1.0082   3.392   0.0372 *
+G depth0 - G depth100 == 0       5.9668     1.0082   5.918    <0.01 ***
+G depth0 - CS depth200 == 0      2.6486     1.0082   2.627   0.2711
+G depth0 - G depth200 == 0       5.4978     1.0082   5.453    <0.01 ***
+CS depth15 - G depth15 == 0      0.3406     1.0082   0.338   1.0000
+CS depth15 - CS depth30 == 0     0.9378     1.0082   0.930   0.9987
+CS depth15 - G depth30 == 0      0.5603     1.0082   0.556   1.0000
+CS depth15 - CS depth45 == 0     1.0786     1.0082   1.070   0.9956
+CS depth15 - G depth45 == 0      1.5046     1.0082   1.492   0.9417
+CS depth15 - CS depth100 == 0    3.2665     1.0082   3.240   0.0591 .
+CS depth15 - G depth100 == 0     5.8134     1.0082   5.766    <0.01 ***
+CS depth15 - CS depth200 == 0    2.4952     1.0082   2.475   0.3604
+CS depth15 - G depth200 == 0     5.3444     1.0082   5.301    <0.01 ***
+G depth15 - CS depth30 == 0      0.5972     1.0082   0.592   1.0000
+G depth15 - G depth30 == 0       0.2197     1.0082   0.218   1.0000
+G depth15 - CS depth45 == 0      0.7380     1.0082   0.732   0.9999
+G depth15 - G depth45 == 0       1.1640     1.0082   1.155   0.9917
+G depth15 - CS depth100 == 0     2.9259     1.0082   2.902   0.1466
+G depth15 - G depth100 == 0      5.4728     1.0082   5.428    <0.01 ***
+G depth15 - CS depth200 == 0     2.1546     1.0082   2.137   0.5954
+G depth15 - G depth200 == 0      5.0038     1.0082   4.963    <0.01 ***
+CS depth30 - G depth30 == 0     -0.3775     1.0082  -0.374   1.0000
+CS depth30 - CS depth45 == 0     0.1408     1.0082   0.140   1.0000
+CS depth30 - G depth45 == 0      0.5668     1.0082   0.562   1.0000
+CS depth30 - CS depth100 == 0    2.3287     1.0082   2.310   0.4722
+CS depth30 - G depth100 == 0     4.8756     1.0082   4.836    <0.01 ***
+CS depth30 - CS depth200 == 0    1.5575     1.0082   1.545   0.9264
+CS depth30 - G depth200 == 0     4.4066     1.0082   4.371    <0.01 **
+G depth30 - CS depth45 == 0      0.5183     1.0082   0.514   1.0000
+G depth30 - G depth45 == 0       0.9443     1.0082   0.937   0.9987
+G depth30 - CS depth100 == 0     2.7062     1.0082   2.684   0.2401
+G depth30 - G depth100 == 0      5.2531     1.0082   5.210    <0.01 ***
+G depth30 - CS depth200 == 0     1.9349     1.0082   1.919   0.7467
+G depth30 - G depth200 == 0      4.7841     1.0082   4.745    <0.01 ***
+CS depth45 - G depth45 == 0      0.4260     1.0082   0.423   1.0000
+CS depth45 - CS depth100 == 0    2.1879     1.0082   2.170   0.5728
+CS depth45 - G depth100 == 0     4.7348     1.0082   4.696    <0.01 ***
+CS depth45 - CS depth200 == 0    1.4167     1.0082   1.405   0.9616
+CS depth45 - G depth200 == 0     4.2658     1.0082   4.231    <0.01 **
+G depth45 - CS depth100 == 0     1.7619     1.0082   1.748   0.8441
+G depth45 - G depth100 == 0      4.3088     1.0082   4.274    <0.01 **
+G depth45 - CS depth200 == 0     0.9906     1.0082   0.983   0.9979
+G depth45 - G depth200 == 0      3.8398     1.0082   3.809    <0.01 **
+CS depth100 - G depth100 == 0    2.5469     1.0082   2.526   0.3292
+CS depth100 - CS depth200 == 0  -0.7713     1.0082  -0.765   0.9998
+CS depth100 - G depth200 == 0    2.0779     1.0082   2.061   0.6508
+G depth100 - CS depth200 == 0   -3.3182     1.0082  -3.291   0.0510 .
+G depth100 - G depth200 == 0    -0.4690     1.0082  -0.465   1.0000
+CS depth200 - G depth200 == 0    2.8492     1.0082   2.826   0.1769
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Adjusted p values reported -- single-step method)
+
+There were 17 warnings (use warnings() to see them)

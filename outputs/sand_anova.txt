@@ -1,0 +1,10 @@
+> Anova(fit.sand)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: sand_p
+                         Chisq Df Pr(>Chisq)
+plant                   6.2653  1    0.01231 *
+as.factor(depth)       81.1091  5  4.918e-16 ***
+plant:as.factor(depth)  8.6905  5    0.12207
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

@@ -1,0 +1,10 @@
+> Anova(fit.clay)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: clay_p
+                          Chisq Df Pr(>Chisq)
+plant                    4.3205  1  0.0376552 *
+as.factor(depth)       163.2828  5  < 2.2e-16 ***
+plant:as.factor(depth)  20.7431  5  0.0009057 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

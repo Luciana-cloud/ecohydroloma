@@ -1,0 +1,47 @@
+> summary(fit.bio)
+Linear mixed model fit by REML ['lmerMod']
+Formula: biomass_g ~ (Treat_W * as.factor(Year)) + (1 | Block)
+   Data: temp2b4
+
+REML criterion at convergence: 8764.6
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-2.7251 -0.4673 -0.0607  0.4070  6.1652
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept)   752.5   27.43
+ Residual             37872.5  194.61
+Number of obs: 673, groups:  Block, 2
+
+Fixed effects:
+                                    Estimate Std. Error t value
+(Intercept)                         563.6935    51.0315  11.046
+Treat_Wambient                     -185.9613    67.7865  -2.743
+Treat_Wdrought                     -355.5417    67.7865  -5.245
+as.factor(Year)2009                  97.9842    67.8202   1.445
+as.factor(Year)2010                  31.8413    58.4471   0.545
+as.factor(Year)2011                 -71.3908    58.4471  -1.221
+as.factor(Year)2012                -103.8194    58.4471  -1.776
+as.factor(Year)2013                 -78.6765    58.4471  -1.346
+as.factor(Year)2014                -357.6899    58.4471  -6.120
+as.factor(Year)2015                -261.8060    58.4471  -4.479
+Treat_Wambient:as.factor(Year)2009   98.9265    96.6108   1.024
+Treat_Wdrought:as.factor(Year)2009  -89.2521    96.6108  -0.924
+Treat_Wambient:as.factor(Year)2010  119.6587    83.4662   1.434
+Treat_Wdrought:as.factor(Year)2010  240.7167    83.4662   2.884
+Treat_Wambient:as.factor(Year)2011  265.9444    83.4662   3.186
+Treat_Wdrought:as.factor(Year)2011  299.7078    83.4662   3.591
+Treat_Wambient:as.factor(Year)2012   -0.8279    83.4662  -0.010
+Treat_Wdrought:as.factor(Year)2012   49.8462    83.4662   0.597
+Treat_Wambient:as.factor(Year)2013 -131.4396    83.4662  -1.575
+Treat_Wdrought:as.factor(Year)2013  -86.2431    83.4662  -1.033
+Treat_Wambient:as.factor(Year)2014  150.1542    83.4662   1.799
+Treat_Wdrought:as.factor(Year)2014  151.7613    83.4662   1.818
+Treat_Wambient:as.factor(Year)2015  113.8149    83.4662   1.364
+Treat_Wdrought:as.factor(Year)2015  245.7256    83.4662   2.944
+
+Correlation matrix not shown by default, as p = 24 > 12.
+Use print(x, correlation=TRUE)  or
+    vcov(x)        if you need it

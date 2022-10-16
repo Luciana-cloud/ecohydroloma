@@ -1,0 +1,10 @@
+> Anova(fit.bio)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: biomass_g
+                          Chisq Df Pr(>Chisq)
+Treat_W                 160.977  2  < 2.2e-16 ***
+as.factor(Year)         365.856  7  < 2.2e-16 ***
+Treat_W:as.factor(Year)  79.119 14  4.121e-11 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

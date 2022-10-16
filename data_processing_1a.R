@@ -18,6 +18,13 @@ library(sp)
 library(gstat)
 library(ggpubr)
 library(latex2exp)
+library(lme4)
+library(Rcpp)
+library(car)
+library(multcomp)
+library(lsmeans)
+# devtools::install_github("goodekat/redres")
+library(redres)
 
 # TEXTURE ANALYSIS
 
@@ -37,6 +44,48 @@ texture    = cbind(df,clay_p,silt_p,sand_p)
 set.seed(42)
 texture_1  = texture %>% group_by(plant,depth) %>% sample_n(22, replace = FALSE)
 texture_2  = texture_1 %>% filter(depth==0|depth==15|depth==30|depth==45|depth==100|depth==200)
+texture_3  = texture_2 %>% filter(plant=="CS") %>% mutate(Block = substr(plot,5,5))
+texture_4  = texture_2 %>% filter(plant=="G") %>% mutate(Block = substr(plot,4,4))
+texture_2  = as.data.frame(rbind(texture_3,texture_4))
+
+# Mixed effects model
+
+library(tidyverse)
+library(lme4)
+library(Rcpp)
+library(car)
+library(multcomp)
+library(lsmeans)
+library(redres)
+
+fit.texture <- lmer(biomass_g ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
+summary(fit.texture)
+Anova(fit.texture)
+
+# Pairwise comparison
+
+summary(glht(fit.texture,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("fit.texture.pdf")
+plot_redres(fit.texture)
+dev.off() 
+
+pdf("fit.texturet_treatment.pdf")
+plot_redres(fit.texture, xvar = "plant")
+dev.off() 
+
+pdf("fit.texture_f.pdf")
+plot_redres(fit.texture, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("fit.texture_N.pdf")
+plot_resqq(fit.texture)
+dev.off() 
 
 # ANOVA analysis (Parametric test)
 

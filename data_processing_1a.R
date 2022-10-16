@@ -58,33 +58,97 @@ library(multcomp)
 library(lsmeans)
 library(redres)
 
-fit.texture <- lmer(biomass_g ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
-summary(fit.texture)
-Anova(fit.texture)
+# Clay
+
+fit.clay <- lmer(clay_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
+summary(fit.clay)
+Anova(fit.clay)
 
 # Pairwise comparison
 
-summary(glht(fit.texture,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
+summary(glht(fit.clay,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
 
 # Save assumption plots - Constant variances
-pdf("fit.texture.pdf")
-plot_redres(fit.texture)
+pdf("fit_clay.pdf")
+plot_redres(fit.clay)
 dev.off() 
 
-pdf("fit.texturet_treatment.pdf")
-plot_redres(fit.texture, xvar = "plant")
+pdf("fit_clay_treatment.pdf")
+plot_redres(fit.clay, xvar = "plant")
 dev.off() 
 
-pdf("fit.texture_f.pdf")
-plot_redres(fit.texture, type = "pearson_cond") +
+pdf("fit_clay_f.pdf")
+plot_redres(fit.clay, type = "pearson_cond") +
   geom_smooth(method = "loess") +
   theme_classic() +
   labs(title = "Residual Plot")
 dev.off()
 
 # Save assumption plots - Normality of errors
-pdf("fit.texture_N.pdf")
-plot_resqq(fit.texture)
+pdf("fit_clay_N.pdf")
+plot_resqq(fit.clay)
+dev.off() 
+
+# Silt
+
+fit.silt <- lmer(silt_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
+summary(fit.silt)
+Anova(fit.silt)
+
+# Pairwise comparison
+
+summary(glht(fit.silt,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("fit_silt.pdf")
+plot_redres(fit.silt)
+dev.off() 
+
+pdf("fit_silt_treatment.pdf")
+plot_redres(fit.silt, xvar = "plant")
+dev.off() 
+
+pdf("fit_silt_f.pdf")
+plot_redres(fit.silt, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("fit_silt_N.pdf")
+plot_resqq(fit.silt)
+dev.off() 
+
+# Sand
+
+fit.sand <- lmer(sand_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
+summary(fit.sand)
+Anova(fit.sand)
+
+# Pairwise comparison
+
+summary(glht(fit.sand,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("fit_sand.pdf")
+plot_redres(fit.sand)
+dev.off() 
+
+pdf("fit_sand_treatment.pdf")
+plot_redres(fit.sand, xvar = "plant")
+dev.off() 
+
+pdf("fit_sand_f.pdf")
+plot_redres(fit.sand, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("fit_sand_N.pdf")
+plot_resqq(fit.sand)
 dev.off() 
 
 # ANOVA analysis (Parametric test)

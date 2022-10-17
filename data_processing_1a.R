@@ -1367,9 +1367,8 @@ df_nor2 <- df_nor1 %>% dplyr::select(Code,Year,Treat_W,Block,LOSC, ARCA,
                                      bare.ground, BRMA, LECO, EUCH, LUBI, litter, MALA, SAME, NALE )
 df_nor2a = as.matrix(df_nor2 %>% dplyr::select(LOSC, ARCA,bare.ground, BRMA, LECO, 
                                                EUCH, LUBI, litter, MALA, SAME, NALE )) # set.seed(322)
-
+set.seed(333)
 distance = vegdist(df_nor2a, method = "chisq")
-set.seed(333) # 333
 nmds = metaMDS(distance,trymax = 2000)
 nmds
 stressplot(nmds)
@@ -1398,7 +1397,7 @@ adonispair_year  <- adonis.pair(distance, as.factor(df_nor2$Year), nper = 1000, 
 
 # All species
 
-df_nor2 <- df_nor1 %>% dplyr::select(-bare.ground,-litter,-Code,-Year,-Block,-Treat_W)
+df_nor2 <- df_nor1 %>% dplyr::select(-bare.ground,-litter,-Code,-Year,-Block,-Treat_W) # 40 zeros
 colSums(df_nor2)
 df_nor2 <- df_nor2 %>% dplyr::select(-AMME,-AVFA,-BLCR,-BRADIS,-CAAF,-CABI,-CASP,
                                      -CEME,-CHPO,-COBO,-COCO,-ENCA,-ERFO,-ERMO,
@@ -1406,37 +1405,41 @@ df_nor2 <- df_nor2 %>% dplyr::select(-AMME,-AVFA,-BLCR,-BRADIS,-CAAF,-CABI,-CASP
                                      -MASA,-MAVU,-MEIM,-MEPO,-MICA,-MILA,-PHDI,
                                      -RHIL,-RHOV,-RIAU,-RIMA,-SCCA,-SEVU,-STspp,
                                      -TRspp,-TRWO,-VIVI,-Unk02,-AVspp,-CABU,-Unk01,
-                                     -unkGR1001,-ERspp) # erase zero covers
+                                     -unkGR1001,-ERspp,-PHCA,-HOspp,-ACMI,-CRIN,
+                                     -ERBO,-CRBA,-ANAR,-GAAP,-POAN,-RHIN,-SIGA,-unkGR1002,-MEIN,
+                                     -LUspp,-SONOLE,-VUMI,-BRNI,-CACI,-CAMI,-DICA,-SAAP,
+                                     -CRCO,-GNACAL,-LEFI,-BRHO,-LUTR,-AVBA) # lower than 25
 
 df_nor2a = as.matrix(df_nor2) # set.seed(1)
 
+ # 1990,
 distance = vegdist(df_nor2a, method = "chisq")
-set.seed(11) # 8
-nmds = metaMDS(distance,trymax = 200)
+set.seed(5)
+nmds = metaMDS(distance,trymax = 2000)
 nmds
 stressplot(nmds)
 nmds$points
 
 NMDS1 <- nmds$points[,1] 
 NMDS2 <- nmds$points[,2]
-df_nor2.plot<-cbind(df_nor2, NMDS1, NMDS2)
+df_nor2.plot<-cbind(df_nor1, NMDS1, NMDS2)
 
-ggplot(data=df_nor2.plot,aes(x=NMDS1,y=NMDS2,color =Treat_W))+geom_point(size = 4) + scale_x_continuous(limit = c(-0.5,0.25)) + 
-  annotate("text", x=-0.4, y=-0.6, label=paste('Stress =',round(nmds$stress,2))) + 
-  stat_ellipse(type='t',size =1)
+ggplot(data=df_nor2.plot,aes(x=NMDS1,y=NMDS2,color =Treat_W))+geom_point(size = 4) + # scale_x_continuous(limit = c(-1,1)) + 
+  annotate("text", x=-2, y=-3, label=paste('Stress =',round(nmds$stress,3))) #+ 
+#stat_ellipse(type='t',size =1)
 
 #ggplot(data=df_nor2.plot,aes(x=NMDS1,y=NMDS2,color =Treat_W))+geom_point(size = 4) + 
 #  annotate("text", x=-0.6, y=-0.6, label=paste('Stress =',round(nmds$stress,3))) + 
 #  stat_ellipse(type='t',size =1)
 
-shrub_perm <- with(df_nor2, adonis2(distance~Treat_W*as.factor(Year), data = df_nor2, permutations = 10000, strata = Block))
+shrub_perm <- with(df_nor1, adonis2(distance~Treat_W*as.factor(Year), data = df_nor1, permutations = 10000, strata = Block))
 shrub_perm
 
 devtools::install_github("GuillemSalazar/EcolUtils")
 library(EcolUtils)
 
-adonispair_treat <- adonis.pair(distance, as.factor(df_nor2$Treat_W), nper = 1000, corr.method = "fdr")
-adonispair_year  <- adonis.pair(distance, as.factor(df_nor2$Year), nper = 1000, corr.method = "fdr")
+adonispair_treat <- adonis.pair(distance, as.factor(df_nor1$Treat_W), nper = 1000, corr.method = "fdr")
+adonispair_year  <- adonis.pair(distance, as.factor(df_nor1$Year), nper = 1000, corr.method = "fdr")
 
 
 library(car)

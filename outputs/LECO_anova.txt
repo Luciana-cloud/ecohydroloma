@@ -1,0 +1,10 @@
+> Anova(model_LECO)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: LECO
+                          Chisq Df Pr(>Chisq)
+Treat_W                  7.3510  2    0.02534 *
+as.factor(Year)         15.4917  6    0.01676 *
+Treat_W:as.factor(Year)  8.7096 12    0.72752
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

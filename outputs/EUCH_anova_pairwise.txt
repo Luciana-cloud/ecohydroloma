@@ -1,0 +1,434 @@
+> summary(glht(model_EUCH,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+Note: df set to 145
+
+         Simultaneous Tests for General Linear Hypotheses
+
+Fit: lmer(formula = EUCH ~ (Treat_W * as.factor(Year)) + (1 | Block),
+    data = df_nor)
+
+Linear Hypotheses:
+                                           Estimate Std. Error t value Pr(>|t|)
+added Year2009 - ambient Year2009 == 0   -1.251e-01  3.110e+00  -0.040        1
+added Year2009 - drought Year2009 == 0    1.010e+00  3.110e+00   0.325        1
+added Year2009 - added Year2010 == 0      1.247e+00  3.110e+00   0.401        1
+added Year2009 - ambient Year2010 == 0    1.247e+00  3.110e+00   0.401        1
+added Year2009 - drought Year2010 == 0    1.123e+00  3.110e+00   0.361        1
+added Year2009 - added Year2011 == 0      1.247e+00  3.110e+00   0.401        1
+added Year2009 - ambient Year2011 == 0    1.140e+00  3.110e+00   0.367        1
+added Year2009 - drought Year2011 == 0    1.084e+00  3.110e+00   0.349        1
+added Year2009 - added Year2012 == 0      1.247e+00  3.110e+00   0.401        1
+added Year2009 - ambient Year2012 == 0    1.076e+00  3.110e+00   0.346        1
+added Year2009 - drought Year2012 == 0    1.083e+00  3.110e+00   0.348        1
+added Year2009 - added Year2013 == 0      6.664e-01  3.110e+00   0.214        1
+added Year2009 - ambient Year2013 == 0    1.247e+00  3.110e+00   0.401        1
+added Year2009 - drought Year2013 == 0    1.247e+00  3.110e+00   0.401        1
+added Year2009 - added Year2014 == 0      1.049e+00  3.110e+00   0.337        1
+added Year2009 - ambient Year2014 == 0    3.342e-01  3.110e+00   0.107        1
+added Year2009 - drought Year2014 == 0    1.065e+00  3.110e+00   0.343        1
+added Year2009 - added Year2015 == 0      4.077e-01  3.110e+00   0.131        1
+added Year2009 - ambient Year2015 == 0    1.063e+00  3.110e+00   0.342        1
+added Year2009 - drought Year2015 == 0   -3.038e+01  3.110e+00  -9.771   <1e-10
+ambient Year2009 - drought Year2009 == 0  1.135e+00  3.110e+00   0.365        1
+ambient Year2009 - added Year2010 == 0    1.372e+00  3.110e+00   0.441        1
+ambient Year2009 - ambient Year2010 == 0  1.372e+00  3.110e+00   0.441        1
+ambient Year2009 - drought Year2010 == 0  1.248e+00  3.110e+00   0.401        1
+ambient Year2009 - added Year2011 == 0    1.372e+00  3.110e+00   0.441        1
+ambient Year2009 - ambient Year2011 == 0  1.265e+00  3.110e+00   0.407        1
+ambient Year2009 - drought Year2011 == 0  1.209e+00  3.110e+00   0.389        1
+ambient Year2009 - added Year2012 == 0    1.372e+00  3.110e+00   0.441        1
+ambient Year2009 - ambient Year2012 == 0  1.201e+00  3.110e+00   0.386        1
+ambient Year2009 - drought Year2012 == 0  1.208e+00  3.110e+00   0.389        1
+ambient Year2009 - added Year2013 == 0    7.915e-01  3.110e+00   0.255        1
+ambient Year2009 - ambient Year2013 == 0  1.372e+00  3.110e+00   0.441        1
+ambient Year2009 - drought Year2013 == 0  1.372e+00  3.110e+00   0.441        1
+ambient Year2009 - added Year2014 == 0    1.174e+00  3.110e+00   0.377        1
+ambient Year2009 - ambient Year2014 == 0  4.593e-01  3.110e+00   0.148        1
+ambient Year2009 - drought Year2014 == 0  1.190e+00  3.110e+00   0.383        1
+ambient Year2009 - added Year2015 == 0    5.328e-01  3.110e+00   0.171        1
+ambient Year2009 - ambient Year2015 == 0  1.188e+00  3.110e+00   0.382        1
+ambient Year2009 - drought Year2015 == 0 -3.026e+01  3.110e+00  -9.731   <1e-10
+drought Year2009 - added Year2010 == 0    2.371e-01  3.110e+00   0.076        1
+drought Year2009 - ambient Year2010 == 0  2.371e-01  3.110e+00   0.076        1
+drought Year2009 - drought Year2010 == 0  1.133e-01  3.110e+00   0.036        1
+drought Year2009 - added Year2011 == 0    2.371e-01  3.110e+00   0.076        1
+drought Year2009 - ambient Year2011 == 0  1.299e-01  3.110e+00   0.042        1
+drought Year2009 - drought Year2011 == 0  7.403e-02  3.110e+00   0.024        1
+drought Year2009 - added Year2012 == 0    2.371e-01  3.110e+00   0.076        1
+drought Year2009 - ambient Year2012 == 0  6.616e-02  3.110e+00   0.021        1
+drought Year2009 - drought Year2012 == 0  7.330e-02  3.110e+00   0.024        1
+drought Year2009 - added Year2013 == 0   -3.435e-01  3.110e+00  -0.110        1
+drought Year2009 - ambient Year2013 == 0  2.371e-01  3.110e+00   0.076        1
+drought Year2009 - drought Year2013 == 0  2.371e-01  3.110e+00   0.076        1
+drought Year2009 - added Year2014 == 0    3.888e-02  3.110e+00   0.013        1
+drought Year2009 - ambient Year2014 == 0 -6.757e-01  3.110e+00  -0.217        1
+drought Year2009 - drought Year2014 == 0  5.545e-02  3.110e+00   0.018        1
+drought Year2009 - added Year2015 == 0   -6.021e-01  3.110e+00  -0.194        1
+drought Year2009 - ambient Year2015 == 0  5.353e-02  3.110e+00   0.017        1
+drought Year2009 - drought Year2015 == 0 -3.139e+01  3.110e+00 -10.096   <1e-10
+added Year2010 - ambient Year2010 == 0   -2.415e-15  3.110e+00   0.000        1
+added Year2010 - drought Year2010 == 0   -1.238e-01  3.110e+00  -0.040        1
+added Year2010 - added Year2011 == 0     -4.663e-15  3.110e+00   0.000        1
+added Year2010 - ambient Year2011 == 0   -1.072e-01  3.110e+00  -0.034        1
+added Year2010 - drought Year2011 == 0   -1.631e-01  3.110e+00  -0.052        1
+added Year2010 - added Year2012 == 0     -4.219e-15  3.110e+00   0.000        1
+added Year2010 - ambient Year2012 == 0   -1.709e-01  3.110e+00  -0.055        1
+added Year2010 - drought Year2012 == 0   -1.638e-01  3.110e+00  -0.053        1
+added Year2010 - added Year2013 == 0     -5.806e-01  3.110e+00  -0.187        1
+added Year2010 - ambient Year2013 == 0   -2.554e-15  3.110e+00   0.000        1
+added Year2010 - drought Year2013 == 0    3.331e-16  3.110e+00   0.000        1
+added Year2010 - added Year2014 == 0     -1.982e-01  3.110e+00  -0.064        1
+added Year2010 - ambient Year2014 == 0   -9.128e-01  3.110e+00  -0.294        1
+added Year2010 - drought Year2014 == 0   -1.817e-01  3.110e+00  -0.058        1
+added Year2010 - added Year2015 == 0     -8.392e-01  3.110e+00  -0.270        1
+added Year2010 - ambient Year2015 == 0   -1.836e-01  3.110e+00  -0.059        1
+added Year2010 - drought Year2015 == 0   -3.163e+01  3.110e+00 -10.172   <1e-10
+ambient Year2010 - drought Year2010 == 0 -1.238e-01  3.110e+00  -0.040        1
+ambient Year2010 - added Year2011 == 0   -2.276e-15  3.110e+00   0.000        1
+ambient Year2010 - ambient Year2011 == 0 -1.072e-01  3.110e+00  -0.034        1
+ambient Year2010 - drought Year2011 == 0 -1.631e-01  3.110e+00  -0.052        1
+ambient Year2010 - added Year2012 == 0   -1.832e-15  3.110e+00   0.000        1
+ambient Year2010 - ambient Year2012 == 0 -1.709e-01  3.110e+00  -0.055        1
+ambient Year2010 - drought Year2012 == 0 -1.638e-01  3.110e+00  -0.053        1
+ambient Year2010 - added Year2013 == 0   -5.806e-01  3.110e+00  -0.187        1
+ambient Year2010 - ambient Year2013 == 0 -1.110e-16  3.110e+00   0.000        1
+ambient Year2010 - drought Year2013 == 0  2.720e-15  3.110e+00   0.000        1
+ambient Year2010 - added Year2014 == 0   -1.982e-01  3.110e+00  -0.064        1
+ambient Year2010 - ambient Year2014 == 0 -9.128e-01  3.110e+00  -0.294        1
+ambient Year2010 - drought Year2014 == 0 -1.817e-01  3.110e+00  -0.058        1
+ambient Year2010 - added Year2015 == 0   -8.392e-01  3.110e+00  -0.270        1
+ambient Year2010 - ambient Year2015 == 0 -1.836e-01  3.110e+00  -0.059        1
+ambient Year2010 - drought Year2015 == 0 -3.163e+01  3.110e+00 -10.172   <1e-10
+drought Year2010 - added Year2011 == 0    1.238e-01  3.110e+00   0.040        1
+drought Year2010 - ambient Year2011 == 0  1.660e-02  3.110e+00   0.005        1
+drought Year2010 - drought Year2011 == 0 -3.930e-02  3.110e+00  -0.013        1
+drought Year2010 - added Year2012 == 0    1.238e-01  3.110e+00   0.040        1
+drought Year2010 - ambient Year2012 == 0 -4.718e-02  3.110e+00  -0.015        1
+drought Year2010 - drought Year2012 == 0 -4.004e-02  3.110e+00  -0.013        1
+drought Year2010 - added Year2013 == 0   -4.568e-01  3.110e+00  -0.147        1
+drought Year2010 - ambient Year2013 == 0  1.238e-01  3.110e+00   0.040        1
+drought Year2010 - drought Year2013 == 0  1.238e-01  3.110e+00   0.040        1
+drought Year2010 - added Year2014 == 0   -7.445e-02  3.110e+00  -0.024        1
+drought Year2010 - ambient Year2014 == 0 -7.890e-01  3.110e+00  -0.254        1
+drought Year2010 - drought Year2014 == 0 -5.789e-02  3.110e+00  -0.019        1
+drought Year2010 - added Year2015 == 0   -7.155e-01  3.110e+00  -0.230        1
+drought Year2010 - ambient Year2015 == 0 -5.981e-02  3.110e+00  -0.019        1
+drought Year2010 - drought Year2015 == 0 -3.151e+01  3.110e+00 -10.132   <1e-10
+added Year2011 - ambient Year2011 == 0   -1.072e-01  3.110e+00  -0.034        1
+added Year2011 - drought Year2011 == 0   -1.631e-01  3.110e+00  -0.052        1
+added Year2011 - added Year2012 == 0      4.441e-16  3.110e+00   0.000        1
+added Year2011 - ambient Year2012 == 0   -1.709e-01  3.110e+00  -0.055        1
+added Year2011 - drought Year2012 == 0   -1.638e-01  3.110e+00  -0.053        1
+added Year2011 - added Year2013 == 0     -5.806e-01  3.110e+00  -0.187        1
+added Year2011 - ambient Year2013 == 0    2.109e-15  3.110e+00   0.000        1
+added Year2011 - drought Year2013 == 0    4.996e-15  3.110e+00   0.000        1
+added Year2011 - added Year2014 == 0     -1.982e-01  3.110e+00  -0.064        1
+added Year2011 - ambient Year2014 == 0   -9.128e-01  3.110e+00  -0.294        1
+added Year2011 - drought Year2014 == 0   -1.817e-01  3.110e+00  -0.058        1
+added Year2011 - added Year2015 == 0     -8.392e-01  3.110e+00  -0.270        1
+added Year2011 - ambient Year2015 == 0   -1.836e-01  3.110e+00  -0.059        1
+added Year2011 - drought Year2015 == 0   -3.163e+01  3.110e+00 -10.172   <1e-10
+ambient Year2011 - drought Year2011 == 0 -5.591e-02  3.110e+00  -0.018        1
+ambient Year2011 - added Year2012 == 0    1.072e-01  3.110e+00   0.034        1
+ambient Year2011 - ambient Year2012 == 0 -6.378e-02  3.110e+00  -0.021        1
+ambient Year2011 - drought Year2012 == 0 -5.664e-02  3.110e+00  -0.018        1
+ambient Year2011 - added Year2013 == 0   -4.734e-01  3.110e+00  -0.152        1
+ambient Year2011 - ambient Year2013 == 0  1.072e-01  3.110e+00   0.034        1
+ambient Year2011 - drought Year2013 == 0  1.072e-01  3.110e+00   0.034        1
+ambient Year2011 - added Year2014 == 0   -9.106e-02  3.110e+00  -0.029        1
+ambient Year2011 - ambient Year2014 == 0 -8.056e-01  3.110e+00  -0.259        1
+ambient Year2011 - drought Year2014 == 0 -7.449e-02  3.110e+00  -0.024        1
+ambient Year2011 - added Year2015 == 0   -7.321e-01  3.110e+00  -0.235        1
+ambient Year2011 - ambient Year2015 == 0 -7.641e-02  3.110e+00  -0.025        1
+ambient Year2011 - drought Year2015 == 0 -3.152e+01  3.110e+00 -10.137   <1e-10
+drought Year2011 - added Year2012 == 0    1.631e-01  3.110e+00   0.052        1
+drought Year2011 - ambient Year2012 == 0 -7.875e-03  3.110e+00  -0.003        1
+drought Year2011 - drought Year2012 == 0 -7.345e-04  3.110e+00   0.000        1
+drought Year2011 - added Year2013 == 0   -4.175e-01  3.110e+00  -0.134        1
+drought Year2011 - ambient Year2013 == 0  1.631e-01  3.110e+00   0.052        1
+drought Year2011 - drought Year2013 == 0  1.631e-01  3.110e+00   0.052        1
+drought Year2011 - added Year2014 == 0   -3.515e-02  3.110e+00  -0.011        1
+drought Year2011 - ambient Year2014 == 0 -7.497e-01  3.110e+00  -0.241        1
+drought Year2011 - drought Year2014 == 0 -1.859e-02  3.110e+00  -0.006        1
+drought Year2011 - added Year2015 == 0   -6.762e-01  3.110e+00  -0.217        1
+drought Year2011 - ambient Year2015 == 0 -2.050e-02  3.110e+00  -0.007        1
+drought Year2011 - drought Year2015 == 0 -3.147e+01  3.110e+00 -10.119   <1e-10
+added Year2012 - ambient Year2012 == 0   -1.709e-01  3.110e+00  -0.055        1
+added Year2012 - drought Year2012 == 0   -1.638e-01  3.110e+00  -0.053        1
+added Year2012 - added Year2013 == 0     -5.806e-01  3.110e+00  -0.187        1
+added Year2012 - ambient Year2013 == 0    1.665e-15  3.110e+00   0.000        1
+added Year2012 - drought Year2013 == 0    4.552e-15  3.110e+00   0.000        1
+added Year2012 - added Year2014 == 0     -1.982e-01  3.110e+00  -0.064        1
+added Year2012 - ambient Year2014 == 0   -9.128e-01  3.110e+00  -0.294        1
+added Year2012 - drought Year2014 == 0   -1.817e-01  3.110e+00  -0.058        1
+added Year2012 - added Year2015 == 0     -8.392e-01  3.110e+00  -0.270        1
+added Year2012 - ambient Year2015 == 0   -1.836e-01  3.110e+00  -0.059        1
+added Year2012 - drought Year2015 == 0   -3.163e+01  3.110e+00 -10.172   <1e-10
+ambient Year2012 - drought Year2012 == 0  7.140e-03  3.110e+00   0.002        1
+ambient Year2012 - added Year2013 == 0   -4.096e-01  3.110e+00  -0.132        1
+ambient Year2012 - ambient Year2013 == 0  1.709e-01  3.110e+00   0.055        1
+ambient Year2012 - drought Year2013 == 0  1.709e-01  3.110e+00   0.055        1
+ambient Year2012 - added Year2014 == 0   -2.728e-02  3.110e+00  -0.009        1
+ambient Year2012 - ambient Year2014 == 0 -7.418e-01  3.110e+00  -0.239        1
+ambient Year2012 - drought Year2014 == 0 -1.071e-02  3.110e+00  -0.003        1
+ambient Year2012 - added Year2015 == 0   -6.683e-01  3.110e+00  -0.215        1
+ambient Year2012 - ambient Year2015 == 0 -1.263e-02  3.110e+00  -0.004        1
+ambient Year2012 - drought Year2015 == 0 -3.146e+01  3.110e+00 -10.117   <1e-10
+drought Year2012 - added Year2013 == 0   -4.168e-01  3.110e+00  -0.134        1
+drought Year2012 - ambient Year2013 == 0  1.638e-01  3.110e+00   0.053        1
+drought Year2012 - drought Year2013 == 0  1.638e-01  3.110e+00   0.053        1
+drought Year2012 - added Year2014 == 0   -3.442e-02  3.110e+00  -0.011        1
+drought Year2012 - ambient Year2014 == 0 -7.490e-01  3.110e+00  -0.241        1
+drought Year2012 - drought Year2014 == 0 -1.785e-02  3.110e+00  -0.006        1
+drought Year2012 - added Year2015 == 0   -6.754e-01  3.110e+00  -0.217        1
+drought Year2012 - ambient Year2015 == 0 -1.977e-02  3.110e+00  -0.006        1
+drought Year2012 - drought Year2015 == 0 -3.147e+01  3.110e+00 -10.119   <1e-10
+added Year2013 - ambient Year2013 == 0    5.806e-01  3.110e+00   0.187        1
+added Year2013 - drought Year2013 == 0    5.806e-01  3.110e+00   0.187        1
+added Year2013 - added Year2014 == 0      3.823e-01  3.110e+00   0.123        1
+added Year2013 - ambient Year2014 == 0   -3.322e-01  3.110e+00  -0.107        1
+added Year2013 - drought Year2014 == 0    3.989e-01  3.110e+00   0.128        1
+added Year2013 - added Year2015 == 0     -2.587e-01  3.110e+00  -0.083        1
+added Year2013 - ambient Year2015 == 0    3.970e-01  3.110e+00   0.128        1
+added Year2013 - drought Year2015 == 0   -3.105e+01  3.110e+00  -9.985   <1e-10
+ambient Year2013 - drought Year2013 == 0  2.887e-15  3.110e+00   0.000        1
+ambient Year2013 - added Year2014 == 0   -1.982e-01  3.110e+00  -0.064        1
+ambient Year2013 - ambient Year2014 == 0 -9.128e-01  3.110e+00  -0.294        1
+ambient Year2013 - drought Year2014 == 0 -1.817e-01  3.110e+00  -0.058        1
+ambient Year2013 - added Year2015 == 0   -8.392e-01  3.110e+00  -0.270        1
+ambient Year2013 - ambient Year2015 == 0 -1.836e-01  3.110e+00  -0.059        1
+ambient Year2013 - drought Year2015 == 0 -3.163e+01  3.110e+00 -10.172   <1e-10
+drought Year2013 - added Year2014 == 0   -1.982e-01  3.110e+00  -0.064        1
+drought Year2013 - ambient Year2014 == 0 -9.128e-01  3.110e+00  -0.294        1
+drought Year2013 - drought Year2014 == 0 -1.817e-01  3.110e+00  -0.058        1
+drought Year2013 - added Year2015 == 0   -8.392e-01  3.110e+00  -0.270        1
+drought Year2013 - ambient Year2015 == 0 -1.836e-01  3.110e+00  -0.059        1
+drought Year2013 - drought Year2015 == 0 -3.163e+01  3.110e+00 -10.172   <1e-10
+added Year2014 - ambient Year2014 == 0   -7.145e-01  3.110e+00  -0.230        1
+added Year2014 - drought Year2014 == 0    1.656e-02  3.110e+00   0.005        1
+added Year2014 - added Year2015 == 0     -6.410e-01  3.110e+00  -0.206        1
+added Year2014 - ambient Year2015 == 0    1.465e-02  3.110e+00   0.005        1
+added Year2014 - drought Year2015 == 0   -3.143e+01  3.110e+00 -10.108   <1e-10
+ambient Year2014 - drought Year2014 == 0  7.311e-01  3.110e+00   0.235        1
+ambient Year2014 - added Year2015 == 0    7.352e-02  3.110e+00   0.024        1
+ambient Year2014 - ambient Year2015 == 0  7.292e-01  3.110e+00   0.234        1
+ambient Year2014 - drought Year2015 == 0 -3.072e+01  3.110e+00  -9.878   <1e-10
+drought Year2014 - added Year2015 == 0   -6.576e-01  3.110e+00  -0.211        1
+drought Year2014 - ambient Year2015 == 0 -1.917e-03  3.110e+00  -0.001        1
+drought Year2014 - drought Year2015 == 0 -3.145e+01  3.110e+00 -10.113   <1e-10
+added Year2015 - ambient Year2015 == 0    6.557e-01  3.110e+00   0.211        1
+added Year2015 - drought Year2015 == 0   -3.079e+01  3.110e+00  -9.902   <1e-10
+ambient Year2015 - drought Year2015 == 0 -3.145e+01  3.110e+00 -10.113   <1e-10
+
+added Year2009 - ambient Year2009 == 0
+added Year2009 - drought Year2009 == 0
+added Year2009 - added Year2010 == 0
+added Year2009 - ambient Year2010 == 0
+added Year2009 - drought Year2010 == 0
+added Year2009 - added Year2011 == 0
+added Year2009 - ambient Year2011 == 0
+added Year2009 - drought Year2011 == 0
+added Year2009 - added Year2012 == 0
+added Year2009 - ambient Year2012 == 0
+added Year2009 - drought Year2012 == 0
+added Year2009 - added Year2013 == 0
+added Year2009 - ambient Year2013 == 0
+added Year2009 - drought Year2013 == 0
+added Year2009 - added Year2014 == 0
+added Year2009 - ambient Year2014 == 0
+added Year2009 - drought Year2014 == 0
+added Year2009 - added Year2015 == 0
+added Year2009 - ambient Year2015 == 0
+added Year2009 - drought Year2015 == 0   ***
+ambient Year2009 - drought Year2009 == 0
+ambient Year2009 - added Year2010 == 0
+ambient Year2009 - ambient Year2010 == 0
+ambient Year2009 - drought Year2010 == 0
+ambient Year2009 - added Year2011 == 0
+ambient Year2009 - ambient Year2011 == 0
+ambient Year2009 - drought Year2011 == 0
+ambient Year2009 - added Year2012 == 0
+ambient Year2009 - ambient Year2012 == 0
+ambient Year2009 - drought Year2012 == 0
+ambient Year2009 - added Year2013 == 0
+ambient Year2009 - ambient Year2013 == 0
+ambient Year2009 - drought Year2013 == 0
+ambient Year2009 - added Year2014 == 0
+ambient Year2009 - ambient Year2014 == 0
+ambient Year2009 - drought Year2014 == 0
+ambient Year2009 - added Year2015 == 0
+ambient Year2009 - ambient Year2015 == 0
+ambient Year2009 - drought Year2015 == 0 ***
+drought Year2009 - added Year2010 == 0
+drought Year2009 - ambient Year2010 == 0
+drought Year2009 - drought Year2010 == 0
+drought Year2009 - added Year2011 == 0
+drought Year2009 - ambient Year2011 == 0
+drought Year2009 - drought Year2011 == 0
+drought Year2009 - added Year2012 == 0
+drought Year2009 - ambient Year2012 == 0
+drought Year2009 - drought Year2012 == 0
+drought Year2009 - added Year2013 == 0
+drought Year2009 - ambient Year2013 == 0
+drought Year2009 - drought Year2013 == 0
+drought Year2009 - added Year2014 == 0
+drought Year2009 - ambient Year2014 == 0
+drought Year2009 - drought Year2014 == 0
+drought Year2009 - added Year2015 == 0
+drought Year2009 - ambient Year2015 == 0
+drought Year2009 - drought Year2015 == 0 ***
+added Year2010 - ambient Year2010 == 0
+added Year2010 - drought Year2010 == 0
+added Year2010 - added Year2011 == 0
+added Year2010 - ambient Year2011 == 0
+added Year2010 - drought Year2011 == 0
+added Year2010 - added Year2012 == 0
+added Year2010 - ambient Year2012 == 0
+added Year2010 - drought Year2012 == 0
+added Year2010 - added Year2013 == 0
+added Year2010 - ambient Year2013 == 0
+added Year2010 - drought Year2013 == 0
+added Year2010 - added Year2014 == 0
+added Year2010 - ambient Year2014 == 0
+added Year2010 - drought Year2014 == 0
+added Year2010 - added Year2015 == 0
+added Year2010 - ambient Year2015 == 0
+added Year2010 - drought Year2015 == 0   ***
+ambient Year2010 - drought Year2010 == 0
+ambient Year2010 - added Year2011 == 0
+ambient Year2010 - ambient Year2011 == 0
+ambient Year2010 - drought Year2011 == 0
+ambient Year2010 - added Year2012 == 0
+ambient Year2010 - ambient Year2012 == 0
+ambient Year2010 - drought Year2012 == 0
+ambient Year2010 - added Year2013 == 0
+ambient Year2010 - ambient Year2013 == 0
+ambient Year2010 - drought Year2013 == 0
+ambient Year2010 - added Year2014 == 0
+ambient Year2010 - ambient Year2014 == 0
+ambient Year2010 - drought Year2014 == 0
+ambient Year2010 - added Year2015 == 0
+ambient Year2010 - ambient Year2015 == 0
+ambient Year2010 - drought Year2015 == 0 ***
+drought Year2010 - added Year2011 == 0
+drought Year2010 - ambient Year2011 == 0
+drought Year2010 - drought Year2011 == 0
+drought Year2010 - added Year2012 == 0
+drought Year2010 - ambient Year2012 == 0
+drought Year2010 - drought Year2012 == 0
+drought Year2010 - added Year2013 == 0
+drought Year2010 - ambient Year2013 == 0
+drought Year2010 - drought Year2013 == 0
+drought Year2010 - added Year2014 == 0
+drought Year2010 - ambient Year2014 == 0
+drought Year2010 - drought Year2014 == 0
+drought Year2010 - added Year2015 == 0
+drought Year2010 - ambient Year2015 == 0
+drought Year2010 - drought Year2015 == 0 ***
+added Year2011 - ambient Year2011 == 0
+added Year2011 - drought Year2011 == 0
+added Year2011 - added Year2012 == 0
+added Year2011 - ambient Year2012 == 0
+added Year2011 - drought Year2012 == 0
+added Year2011 - added Year2013 == 0
+added Year2011 - ambient Year2013 == 0
+added Year2011 - drought Year2013 == 0
+added Year2011 - added Year2014 == 0
+added Year2011 - ambient Year2014 == 0
+added Year2011 - drought Year2014 == 0
+added Year2011 - added Year2015 == 0
+added Year2011 - ambient Year2015 == 0
+added Year2011 - drought Year2015 == 0   ***
+ambient Year2011 - drought Year2011 == 0
+ambient Year2011 - added Year2012 == 0
+ambient Year2011 - ambient Year2012 == 0
+ambient Year2011 - drought Year2012 == 0
+ambient Year2011 - added Year2013 == 0
+ambient Year2011 - ambient Year2013 == 0
+ambient Year2011 - drought Year2013 == 0
+ambient Year2011 - added Year2014 == 0
+ambient Year2011 - ambient Year2014 == 0
+ambient Year2011 - drought Year2014 == 0
+ambient Year2011 - added Year2015 == 0
+ambient Year2011 - ambient Year2015 == 0
+ambient Year2011 - drought Year2015 == 0 ***
+drought Year2011 - added Year2012 == 0
+drought Year2011 - ambient Year2012 == 0
+drought Year2011 - drought Year2012 == 0
+drought Year2011 - added Year2013 == 0
+drought Year2011 - ambient Year2013 == 0
+drought Year2011 - drought Year2013 == 0
+drought Year2011 - added Year2014 == 0
+drought Year2011 - ambient Year2014 == 0
+drought Year2011 - drought Year2014 == 0
+drought Year2011 - added Year2015 == 0
+drought Year2011 - ambient Year2015 == 0
+drought Year2011 - drought Year2015 == 0 ***
+added Year2012 - ambient Year2012 == 0
+added Year2012 - drought Year2012 == 0
+added Year2012 - added Year2013 == 0
+added Year2012 - ambient Year2013 == 0
+added Year2012 - drought Year2013 == 0
+added Year2012 - added Year2014 == 0
+added Year2012 - ambient Year2014 == 0
+added Year2012 - drought Year2014 == 0
+added Year2012 - added Year2015 == 0
+added Year2012 - ambient Year2015 == 0
+added Year2012 - drought Year2015 == 0   ***
+ambient Year2012 - drought Year2012 == 0
+ambient Year2012 - added Year2013 == 0
+ambient Year2012 - ambient Year2013 == 0
+ambient Year2012 - drought Year2013 == 0
+ambient Year2012 - added Year2014 == 0
+ambient Year2012 - ambient Year2014 == 0
+ambient Year2012 - drought Year2014 == 0
+ambient Year2012 - added Year2015 == 0
+ambient Year2012 - ambient Year2015 == 0
+ambient Year2012 - drought Year2015 == 0 ***
+drought Year2012 - added Year2013 == 0
+drought Year2012 - ambient Year2013 == 0
+drought Year2012 - drought Year2013 == 0
+drought Year2012 - added Year2014 == 0
+drought Year2012 - ambient Year2014 == 0
+drought Year2012 - drought Year2014 == 0
+drought Year2012 - added Year2015 == 0
+drought Year2012 - ambient Year2015 == 0
+drought Year2012 - drought Year2015 == 0 ***
+added Year2013 - ambient Year2013 == 0
+added Year2013 - drought Year2013 == 0
+added Year2013 - added Year2014 == 0
+added Year2013 - ambient Year2014 == 0
+added Year2013 - drought Year2014 == 0
+added Year2013 - added Year2015 == 0
+added Year2013 - ambient Year2015 == 0
+added Year2013 - drought Year2015 == 0   ***
+ambient Year2013 - drought Year2013 == 0
+ambient Year2013 - added Year2014 == 0
+ambient Year2013 - ambient Year2014 == 0
+ambient Year2013 - drought Year2014 == 0
+ambient Year2013 - added Year2015 == 0
+ambient Year2013 - ambient Year2015 == 0
+ambient Year2013 - drought Year2015 == 0 ***
+drought Year2013 - added Year2014 == 0
+drought Year2013 - ambient Year2014 == 0
+drought Year2013 - drought Year2014 == 0
+drought Year2013 - added Year2015 == 0
+drought Year2013 - ambient Year2015 == 0
+drought Year2013 - drought Year2015 == 0 ***
+added Year2014 - ambient Year2014 == 0
+added Year2014 - drought Year2014 == 0
+added Year2014 - added Year2015 == 0
+added Year2014 - ambient Year2015 == 0
+added Year2014 - drought Year2015 == 0   ***
+ambient Year2014 - drought Year2014 == 0
+ambient Year2014 - added Year2015 == 0
+ambient Year2014 - ambient Year2015 == 0
+ambient Year2014 - drought Year2015 == 0 ***
+drought Year2014 - added Year2015 == 0
+drought Year2014 - ambient Year2015 == 0
+drought Year2014 - drought Year2015 == 0 ***
+added Year2015 - ambient Year2015 == 0
+added Year2015 - drought Year2015 == 0   ***
+ambient Year2015 - drought Year2015 == 0 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+(Adjusted p values reported -- single-step method)

@@ -1,0 +1,44 @@
+> summary(model_SAME)
+Linear mixed model fit by REML ['lmerMod']
+Formula: SAME ~ (Treat_W * as.factor(Year)) + (1 | Block)
+   Data: df_nor
+
+REML criterion at convergence: 1262.3
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-2.2558 -0.5429 -0.1316  0.3188  3.1650
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept)  12.59    3.549
+ Residual             230.76   15.191
+Number of obs: 168, groups:  Block, 2
+
+Fixed effects:
+                                   Estimate Std. Error t value
+(Intercept)                         11.1677     5.9347   1.882
+Treat_Wambient                      -4.6106     7.6418  -0.603
+Treat_Wdrought                      -5.9551     7.5954  -0.784
+as.factor(Year)2010                 -0.2404     7.5954  -0.032
+as.factor(Year)2011                 10.9781     7.5954   1.445
+as.factor(Year)2012                 10.4995     7.5954   1.382
+as.factor(Year)2013                 19.3731     7.5954   2.551
+as.factor(Year)2014                 19.8837     7.5954   2.618
+as.factor(Year)2015                 25.3450     7.5954   3.337
+Treat_Wambient:as.factor(Year)2010   1.4664    10.7415   0.137
+Treat_Wdrought:as.factor(Year)2010   0.5580    10.7415   0.052
+Treat_Wambient:as.factor(Year)2011  -1.2272    10.7415  -0.114
+Treat_Wdrought:as.factor(Year)2011  -4.8154    10.7415  -0.448
+Treat_Wambient:as.factor(Year)2012  -1.6693    10.7415  -0.155
+Treat_Wdrought:as.factor(Year)2012  -3.9126    10.7415  -0.364
+Treat_Wambient:as.factor(Year)2013  -3.5063    10.7415  -0.326
+Treat_Wdrought:as.factor(Year)2013 -10.2994    10.7415  -0.959
+Treat_Wambient:as.factor(Year)2014  -5.0489    10.7415  -0.470
+Treat_Wdrought:as.factor(Year)2014 -16.0451    10.7415  -1.494
+Treat_Wambient:as.factor(Year)2015  -4.8721    10.7415  -0.454
+Treat_Wdrought:as.factor(Year)2015 -24.5509    10.7415  -2.286
+
+Correlation matrix not shown by default, as p = 21 > 12.
+Use print(x, correlation=TRUE)  or
+    vcov(x)        if you need it

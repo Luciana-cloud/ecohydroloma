@@ -1,0 +1,44 @@
+> summary(model_litter)
+Linear mixed model fit by REML ['lmerMod']
+Formula: litter ~ (Treat_W * as.factor(Year)) + (1 | Block)
+   Data: df_nor
+
+REML criterion at convergence: 1044.7
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-2.1272 -0.4131 -0.1096  0.1700  4.8761
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept)  2.283   1.511
+ Residual             52.568   7.250
+Number of obs: 168, groups:  Block, 2
+
+Fixed effects:
+                                    Estimate Std. Error t value
+(Intercept)                          2.32766    2.78017   0.837
+Treat_Wambient                      -0.06616    3.64626  -0.018
+Treat_Wdrought                       7.22565    3.62519   1.993
+as.factor(Year)2010                 -2.19246    3.62519  -0.605
+as.factor(Year)2011                 -1.90143    3.62519  -0.525
+as.factor(Year)2012                  2.98462    3.62519   0.823
+as.factor(Year)2013                  3.73354    3.62519   1.030
+as.factor(Year)2014                  8.93470    3.62519   2.465
+as.factor(Year)2015                  9.97751    3.62519   2.752
+Treat_Wambient:as.factor(Year)2010   0.64339    5.12680   0.125
+Treat_Wdrought:as.factor(Year)2010  -7.15428    5.12680  -1.395
+Treat_Wambient:as.factor(Year)2011   1.36685    5.12680   0.267
+Treat_Wdrought:as.factor(Year)2011  -4.15152    5.12680  -0.810
+Treat_Wambient:as.factor(Year)2012   5.53246    5.12680   1.079
+Treat_Wdrought:as.factor(Year)2012  16.10385    5.12680   3.141
+Treat_Wambient:as.factor(Year)2013   4.07796    5.12680   0.795
+Treat_Wdrought:as.factor(Year)2013   5.08897    5.12680   0.993
+Treat_Wambient:as.factor(Year)2014   3.15251    5.12680   0.615
+Treat_Wdrought:as.factor(Year)2014  13.94699    5.12680   2.720
+Treat_Wambient:as.factor(Year)2015  -4.68455    5.12680  -0.914
+Treat_Wdrought:as.factor(Year)2015 -12.27506    5.12680  -2.394
+
+Correlation matrix not shown by default, as p = 21 > 12.
+Use print(x, correlation=TRUE)  or
+    vcov(x)        if you need it

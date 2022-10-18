@@ -1,0 +1,47 @@
+> summary(model_NALE)
+Linear mixed model fit by REML ['lmerMod']
+Formula: NALE ~ (Treat_W * as.factor(Year)) + (1 | Block)
+   Data: df_nor
+
+REML criterion at convergence: 623.5
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-3.4154 -0.1814  0.0000  0.0000  5.9128
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept) 0.000    0.000
+ Residual             3.023    1.739
+Number of obs: 168, groups:  Block, 2
+
+Fixed effects:
+                                   Estimate Std. Error t value
+(Intercept)                          2.8198     0.6147   4.587
+Treat_Wambient                       2.9432     0.8694   3.385
+Treat_Wdrought                      -1.3589     0.8694  -1.563
+as.factor(Year)2010                  0.1739     0.8694   0.200
+as.factor(Year)2011                 -2.8198     0.8694  -3.244
+as.factor(Year)2012                 -2.6397     0.8694  -3.036
+as.factor(Year)2013                 -2.8198     0.8694  -3.244
+as.factor(Year)2014                 -2.8198     0.8694  -3.244
+as.factor(Year)2015                 -2.8198     0.8694  -3.244
+Treat_Wambient:as.factor(Year)2010   0.8490     1.2295   0.691
+Treat_Wdrought:as.factor(Year)2010   1.1819     1.2295   0.961
+Treat_Wambient:as.factor(Year)2011  -2.9432     1.2295  -2.394
+Treat_Wdrought:as.factor(Year)2011   1.7516     1.2295   1.425
+Treat_Wambient:as.factor(Year)2012  -2.8078     1.2295  -2.284
+Treat_Wdrought:as.factor(Year)2012   1.5569     1.2295   1.266
+Treat_Wambient:as.factor(Year)2013  -2.9432     1.2295  -2.394
+Treat_Wdrought:as.factor(Year)2013   1.3589     1.2295   1.105
+Treat_Wambient:as.factor(Year)2014  -2.9432     1.2295  -2.394
+Treat_Wdrought:as.factor(Year)2014   1.3589     1.2295   1.105
+Treat_Wambient:as.factor(Year)2015  -2.9432     1.2295  -2.394
+Treat_Wdrought:as.factor(Year)2015   1.3589     1.2295   1.105
+
+Correlation matrix not shown by default, as p = 21 > 12.
+Use print(x, correlation=TRUE)  or
+    vcov(x)        if you need it
+
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')

@@ -1,0 +1,10 @@
+> Anova(model_BRMA)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: BRMA
+                         Chisq Df Pr(>Chisq)
+Treat_W                 25.052  2  3.632e-06 ***
+as.factor(Year)         77.231  6  1.332e-14 ***
+Treat_W:as.factor(Year) 34.755 12  0.0005124 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

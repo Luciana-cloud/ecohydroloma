@@ -1,0 +1,10 @@
+> Anova(model_MALA)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: MALA
+                          Chisq Df Pr(>Chisq)
+Treat_W                 15.0845  2  0.0005302 ***
+as.factor(Year)         11.0738  6  0.0861227 .
+Treat_W:as.factor(Year)  3.0301 12  0.9953276
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

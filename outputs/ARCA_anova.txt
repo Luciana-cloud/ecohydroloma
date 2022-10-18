@@ -1,0 +1,10 @@
+> Anova(model_ARCA)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: ARCA
+                          Chisq Df Pr(>Chisq)
+Treat_W                  4.4816  2    0.10637
+as.factor(Year)         15.5260  6    0.01654 *
+Treat_W:as.factor(Year)  3.0881 12    0.99489
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

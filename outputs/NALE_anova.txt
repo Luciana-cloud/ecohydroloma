@@ -1,0 +1,10 @@
+> Anova(model_NALE)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: NALE
+                          Chisq Df Pr(>Chisq)
+Treat_W                  13.759  2  0.0010285 **
+as.factor(Year)         157.727  6  < 2.2e-16 ***
+Treat_W:as.factor(Year)  38.772 12  0.0001147 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

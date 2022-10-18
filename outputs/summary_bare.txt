@@ -1,0 +1,47 @@
+> summary(model_bare)
+Linear mixed model fit by REML ['lmerMod']
+Formula: bare.ground ~ (Treat_W * as.factor(Year)) + (1 | Block)
+   Data: df_nor
+
+REML criterion at convergence: 1052.3
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-1.7922 -0.3907 -0.0933  0.3050  4.0850
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ Block    (Intercept)  0.0     0.000
+ Residual             55.9     7.476
+Number of obs: 168, groups:  Block, 2
+
+Fixed effects:
+                                   Estimate Std. Error t value
+(Intercept)                          5.9613     2.6433   2.255
+Treat_Wambient                      -3.4081     3.7382  -0.912
+Treat_Wdrought                       7.1566     3.7382   1.914
+as.factor(Year)2010                 -1.9209     3.7382  -0.514
+as.factor(Year)2011                 -4.7230     3.7382  -1.263
+as.factor(Year)2012                 -3.8936     3.7382  -1.042
+as.factor(Year)2013                 -5.2639     3.7382  -1.408
+as.factor(Year)2014                  0.5380     3.7382   0.144
+as.factor(Year)2015                 -3.6958     3.7382  -0.989
+Treat_Wambient:as.factor(Year)2010   4.0188     5.2866   0.760
+Treat_Wdrought:as.factor(Year)2010  -0.0657     5.2866  -0.012
+Treat_Wambient:as.factor(Year)2011   2.1698     5.2866   0.410
+Treat_Wdrought:as.factor(Year)2011  -7.0646     5.2866  -1.336
+Treat_Wambient:as.factor(Year)2012   6.0865     5.2866   1.151
+Treat_Wdrought:as.factor(Year)2012   2.4219     5.2866   0.458
+Treat_Wambient:as.factor(Year)2013  11.5659     5.2866   2.188
+Treat_Wdrought:as.factor(Year)2013  11.4187     5.2866   2.160
+Treat_Wambient:as.factor(Year)2014   6.3648     5.2866   1.204
+Treat_Wdrought:as.factor(Year)2014  16.7436     5.2866   3.167
+Treat_Wambient:as.factor(Year)2015   4.0226     5.2866   0.761
+Treat_Wdrought:as.factor(Year)2015   1.9881     5.2866   0.376
+
+Correlation matrix not shown by default, as p = 21 > 12.
+Use print(x, correlation=TRUE)  or
+    vcov(x)        if you need it
+
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')

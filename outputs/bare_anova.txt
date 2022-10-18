@@ -1,0 +1,10 @@
+> Anova(model_bare)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: bare.ground
+                         Chisq Df Pr(>Chisq)
+Treat_W                 68.566  2  1.292e-15 ***
+as.factor(Year)         50.779  6  3.281e-09 ***
+Treat_W:as.factor(Year) 32.214 12   0.001282 **
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

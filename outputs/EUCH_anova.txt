@@ -1,0 +1,10 @@
+> Anova(model_EUCH)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: EUCH
+                          Chisq Df Pr(>Chisq)
+Treat_W                  17.369  2  0.0001692 ***
+as.factor(Year)          59.919  6  4.674e-11 ***
+Treat_W:as.factor(Year) 116.493 12  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

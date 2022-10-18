@@ -1,0 +1,10 @@
+> Anova(model_litter)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: litter
+                          Chisq Df Pr(>Chisq)
+Treat_W                  47.983  2  3.807e-11 ***
+as.factor(Year)         133.256  6  < 2.2e-16 ***
+Treat_W:as.factor(Year)  57.043 12  7.765e-08 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

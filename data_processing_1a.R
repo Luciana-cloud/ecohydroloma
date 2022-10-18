@@ -483,6 +483,75 @@ water_stat.av <- aov(water_stat2)
 test_tukey = TukeyHSD(water_stat.av)
 test_tukey
 
+# Line Plots 
+
+statis_plot = statis %>% group_by(Depth,Water,Plant,date) %>% summarise(Mean = mean((as.numeric(Mean_water)),na.rm = TRUE),
+                                                                        STD = sd((as.numeric(Mean_water)),na.rm = TRUE),
+                                                                        q_5 = quantile(as.numeric(Mean_water),0.05,na.rm = TRUE),
+                                                                        q_95 = quantile(as.numeric(Mean_water),0.95,na.rm = TRUE),
+                                                                        minim = min(as.numeric(Mean_water)),
+                                                                        maxim = max(as.numeric(Mean_water)))
+
+statis_12  = statis_plot %>% filter(Depth==-12.5)
+statis_25  = statis_plot %>% filter(Depth==-25)
+statis_50  = statis_plot %>% filter(Depth==-50)
+statis_75  = statis_plot %>% filter(Depth==-75)
+statis_100 = statis_plot %>% filter(Depth==-100)
+statis_125 = statis_plot %>% filter(Depth==-125)
+statis_150 = statis_plot %>% filter(Depth==-150)
+statis_175 = statis_plot %>% filter(Depth==-175)
+statis_200 = statis_plot %>% filter(Depth==-200)
+
+statis_175_200 = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_175$Mean-statis_200$Mean)))
+statis_150_175 = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_150$Mean-statis_175$Mean)))
+statis_125_150 = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_125$Mean-statis_150$Mean)))
+statis_100_125 = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_100$Mean-statis_125$Mean)))
+statis_75_100  = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_75$Mean-statis_100$Mean)))
+statis_50_75   = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_50$Mean-statis_75$Mean)))
+statis_25_50   = as.data.frame(cbind(statis_200$Water,statis_200$Plant,decimal_date(statis_200$date),(statis_25$Mean-statis_50$Mean)))
+
+statis_175_200 = ggplot(statis_175_200,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("statis_175_200.pdf")
+statis_175_200
+dev.off()
+
+statis_150_175 = ggplot(statis_150_175,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("statis_150_175.pdf")
+statis_150_175
+dev.off()
+
+statis_125_150 = ggplot(statis_125_150,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("sstatis_125_150.pdf")
+statis_125_150
+dev.off()
+
+statis_100_125 = ggplot(statis_100_125,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("statis_100_125.pdf")
+statis_100_125
+dev.off()
+
+statis_75_100 = ggplot(statis_75_100,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("statis_75_100.pdf")
+statis_75_100
+dev.off()
+
+statis_50_75 = ggplot(statis_50_75,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("statis_50_75.pdf")
+statis_50_75
+dev.off()
+
+statis_25_50 = ggplot(statis_25_50,aes(as.numeric(V3),as.numeric(V4)),color=V1) + geom_line(aes(color=V1), size=1.5) + 
+  facet_wrap(facets = vars(V2))
+pdf("statis_25_50.pdf")
+statis_25_50
+dev.off()
+
 # Data preparation superficial water content
 temp_11 = temp10 %>% group_by(Date,Plant,Water) %>% summarise(new_mean = mean((Mean_W),na.rm = TRUE)) 
 temp_11 = temp_11 %>% add_column(depth = rep(-12.5,each=nrow(temp_11)))
@@ -1439,14 +1508,370 @@ devtools::install_github("GuillemSalazar/EcolUtils")
 library(EcolUtils)
 
 adonispair_treat <- adonis.pair(distance, as.factor(df_nor1$Treat_W), nper = 1000, corr.method = "fdr")
+write.csv(adonispair_treat, "perma_shrub_treatment.csv", row.names=FALSE, quote=FALSE) 
 adonispair_year  <- adonis.pair(distance, as.factor(df_nor1$Year), nper = 1000, corr.method = "fdr")
+write.csv(adonispair_year, "perma_shrub_year.csv", row.names=FALSE, quote=FALSE) 
 
-
-library(car)
+# Mixed effects model
 
 df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A", "added"))
 df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X", "ambient"))
 df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R", "drought"))
+df_nor <- df_nor %>% mutate(Block = substr(Code,4,4))
+
+library(tidyverse)
+library(lme4)
+library(Rcpp)
+library(car)
+library(multcomp)
+library(lsmeans)
+library(redres)
+
+# BRMA
+
+model_BRMA <- lmer(BRMA ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_BRMA)
+Anova(model_BRMA)
+
+# Pairwise comparison
+
+summary(glht(model_BRMA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_BRMA.pdf")
+plot_redres(model_BRMA)
+dev.off() 
+
+pdf("model_BRMA_treatment.pdf")
+plot_redres(model_BRMA, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_BRMA_f.pdf")
+plot_redres(model_BRMA, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_BRMA_N.pdf")
+plot_resqq(model_BRMA)
+dev.off() 
+
+# LOSC
+
+model_LOSC <- lmer(LOSC ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_LOSC)
+Anova(model_LOSC)
+
+# Pairwise comparison
+
+summary(glht(model_LOSC,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_LOSC.pdf")
+plot_redres(model_LOSC)
+dev.off() 
+
+pdf("model_LOSC_treatment.pdf")
+plot_redres(model_LOSC, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_LOSC_f.pdf")
+plot_redres(model_LOSC, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_LOSC_N.pdf")
+plot_resqq(model_LOSC)
+dev.off() 
+
+# ARCA
+
+model_ARCA <- lmer(ARCA ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_ARCA)
+Anova(model_ARCA)
+
+# Pairwise comparison
+
+summary(glht(model_ARCA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_ARCA.pdf")
+plot_redres(model_ARCA)
+dev.off() 
+
+pdf("model_ARCA_treatment.pdf")
+plot_redres(model_ARCA, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_ARCA_f.pdf")
+plot_redres(model_ARCA, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_ARCA_N.pdf")
+plot_resqq(model_ARCA)
+dev.off() 
+
+# bare.ground
+
+model_bare <- lmer(bare.ground ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_bare)
+Anova(model_bare)
+
+# Pairwise comparison
+
+summary(glht(model_bare,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_bare.pdf")
+plot_redres(model_bare)
+dev.off() 
+
+pdf("model_bare_treatment.pdf")
+plot_redres(model_bare, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_bare_f.pdf")
+plot_redres(model_bare, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_bare_N.pdf")
+plot_resqq(model_bare)
+dev.off() 
+
+# LECO
+
+model_LECO <- lmer(LECO ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_LECO)
+Anova(model_LECO)
+
+# Pairwise comparison
+
+summary(glht(model_LECO,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_LECO.pdf")
+plot_redres(model_LECO)
+dev.off() 
+
+pdf("model_LECO_treatment.pdf")
+plot_redres(model_LECO, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_LECO_f.pdf")
+plot_redres(model_LECO, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_LECO_N.pdf")
+plot_resqq(model_LECO)
+dev.off() 
+
+# EUCH
+
+model_EUCH <- lmer(EUCH ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_EUCH)
+Anova(model_EUCH)
+
+# Pairwise comparison
+
+summary(glht(model_EUCH,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_EUCH.pdf")
+plot_redres(model_EUCH)
+dev.off() 
+
+pdf("model_EUCH_treatment.pdf")
+plot_redres(model_EUCH, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_EUCH_f.pdf")
+plot_redres(model_EUCH, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_EUCH_N.pdf")
+plot_resqq(model_EUCH)
+dev.off() 
+
+# LUBI
+
+model_LUBI <- lmer(LUBI ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_LUBI)
+Anova(model_LUBI)
+
+# Pairwise comparison
+
+summary(glht(model_LUBI,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_LUBI.pdf")
+plot_redres(model_LUBI)
+dev.off() 
+
+pdf("model_LUBI_treatment.pdf")
+plot_redres(model_LUBI, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_LUBI_f.pdf")
+plot_redres(model_LUBI, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_LUBI_N.pdf")
+plot_resqq(model_LUBI)
+dev.off() 
+
+# litter
+
+model_litter <- lmer(litter ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_litter)
+Anova(model_litter)
+
+# Pairwise comparison
+
+summary(glht(model_litter,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_litter.pdf")
+plot_redres(model_litter)
+dev.off() 
+
+pdf("model_litter_treatment.pdf")
+plot_redres(model_litter, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_litter_f.pdf")
+plot_redres(model_litter, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_litter_N.pdf")
+plot_resqq(model_litter)
+dev.off() 
+
+
+# MALA
+
+model_MALA <- lmer(MALA ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_MALA)
+Anova(model_MALA)
+
+# Pairwise comparison
+
+summary(glht(model_MALA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_MALA.pdf")
+plot_redres(model_MALA)
+dev.off() 
+
+pdf("model_MALA_treatment.pdf")
+plot_redres(model_MALA, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_MALA_f.pdf")
+plot_redres(model_MALA, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_MALA_N.pdf")
+plot_resqq(model_MALA)
+dev.off() 
+
+
+# SAME
+
+model_SAME <- lmer(SAME ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_SAME)
+Anova(model_SAME)
+
+# Pairwise comparison
+
+summary(glht(model_SAME,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_SAME.pdf")
+plot_redres(model_SAME)
+dev.off() 
+
+pdf("model_SAME_treatment.pdf")
+plot_redres(model_SAME, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_SAME_f.pdf")
+plot_redres(model_SAME, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_SAME_N.pdf")
+plot_resqq(model_SAME)
+dev.off() 
+
+
+# NALE
+
+model_NALE <- lmer(NALE ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+summary(model_NALE)
+Anova(model_NALE)
+
+# Pairwise comparison
+
+summary(glht(model_SAME,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+pdf("model_NALE.pdf")
+plot_redres(model_NALE)
+dev.off() 
+
+pdf("model_NALE_treatment.pdf")
+plot_redres(model_NALE, xvar = "Treat_W")
+dev.off() 
+
+pdf("model_NALE_f.pdf")
+plot_redres(model_NALE, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("model_NALE_N.pdf")
+plot_resqq(model_NALE)
+dev.off() 
+
+library(car)
 
 # "BRMA","Bromus madritensis"
 model_BRMA = lm(RankNorm(BRMA)~as.character(Year)+Treat_W, data = df_nor)

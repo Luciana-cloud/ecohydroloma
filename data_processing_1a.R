@@ -436,25 +436,69 @@ temp9   = temp8 %>% mutate(Output_1 = 100*(-0.8094*Output_1^3 + 3.4428*Output_1^
 water_T = temp9 %>% mutate(Mean_W = (Output_1+Output_2+Output_3+Output_4)/4)
 temp10  = water_T %>% filter(Nitrogen == "X")
 
-# Statistical analysis 
+# Statistical analysis Mixed models
 
-statis = as.data.frame(rbind(cbind(temp10$Date,temp10$Plant,temp10$Water,temp10$Mean_W,(rep(-12.5,each=nrow(temp10)))),
-               cbind(water$Date,water$Plant,water$Water,water$X25cm,rep(-25,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X50cm,rep(-50,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X75cm,rep(-75,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X100cm,rep(-100,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X125cm,rep(-125,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X150cm,rep(-150,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X175cm,rep(-175,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Water,water$X200cm,rep(-200,each=nrow(water)))))
-colnames(statis) <- c('Date','Plant','Water',"Mean_water","Depth")
-date <-  as.Date(statis$Date,'%d/%m/%Y')
+statis = as.data.frame(rbind(cbind(temp10$Date,temp10$Plot,temp10$Plant,temp10$Water,temp10$Mean_W,(rep(-12.5,each=nrow(temp10)))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X25cm,rep(-25,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X50cm,rep(-50,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X75cm,rep(-75,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X100cm,rep(-100,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X125cm,rep(-125,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X150cm,rep(-150,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X175cm,rep(-175,each=nrow(water))),
+               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X200cm,rep(-200,each=nrow(water)))))
+colnames(statis) <- c('Date','Plot','Plant','Water',"Mean_water","Depth")
 
-statis = as.data.frame(cbind(statis,date))
-statis  = statis %>% filter(date > "2011-12-3")
-year <- as.numeric(format(statis$date,'%Y'))
-month <- as.numeric(format(statis$date,'%m'))
-statis = as.data.frame(cbind(statis,year,month))
+statis   = statis %>% mutate(Block = substr(Plot,4,4))
+statis   = statis %>% mutate(date = as.Date(statis$Date,'%d/%m/%Y'))
+statis   = statis %>% mutate(year = as.numeric(format(statis$date,'%Y')))
+statis   = statis %>% mutate(month = as.numeric(format(statis$date,'%m')))
+statis_1 = statis %>% filter(year > 2011)
+statis_1 = statis_1 %>% dplyr::select(-Plot)
+
+statis_1a = statis_1 %>% mutate(month = replace(month, month == 12, "winter"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 1, "winter"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 2, "winter"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 3, "spring"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 4, "spring"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 5, "spring"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 6, "summer"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 7, "summer"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 8, "summer"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 9, "fall"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 10, "fall"))
+statis_1a = statis_1a %>% mutate(month = replace(month, month == 11, "fall"))
+
+# write.csv(statis_1a, file = "statis_1a.csv")
+# statis_1 <- read.csv("statis_1.csv")
+
+fit.water  <- lmer(as.numeric(Mean_water) ~ (Plant*as.factor(Depth))*as.factor(year)*month + (1|Block), 
+                   data = statis_1a)
+
+fit.water1 <- lmer(as.numeric(Mean_water) ~ (Plant*as.factor(Depth)) + (1|Block), data = statis_1)
+
+summary(fit.water1)
+Anova(fit.water1)
+
+# Pairwise comparison
+
+summary(glht(fit.water1,lsm(pairwise ~ (Plant*as.factor(Depth)),test=adjusted(type="holm"))))
+
+# Save assumption plots - Constant variances
+
+pdf("fit.water1_f.pdf")
+plot_redres(fit.water1, type = "pearson_cond") +
+  geom_smooth(method = "loess") +
+  theme_classic() +
+  labs(title = "Residual Plot")
+dev.off()
+
+# Save assumption plots - Normality of errors
+pdf("fit.water1_N.pdf")
+plot_resqq(fit.water1)
+dev.off() 
+
+# Linear model
 
 #water_stat = lm((as.numeric(Mean_water))~Plant+Water+as.character(Depth)+as.character(year)+as.character(month) +
 #                Plant*Water+Plant*as.character(Depth)+Plant*as.character(year)+Plant*as.character(month) + 
@@ -474,7 +518,10 @@ water_stat2 = lm((as.numeric(Mean_water))~Plant+Water+as.character(Depth)+as.cha
                    as.character(Depth)*as.character(year)+as.character(Depth)*as.character(month) + 
                    as.character(year)*as.character(month) + 
                    Plant*Water*as.character(Depth)+
-                   Plant*as.character(Depth)*as.character(year),data=statis)
+                   Plant*as.character(Depth)*as.character(year),data=statis_1a)
+
+water_stat2 = lm((as.numeric(Mean_water)) ~ Plant*as.factor(Depth)*as.factor(year)*month,data=statis_1a)
+
 summary.aov(water_stat2)
 par(mfrow=c(2,2))
 plot(water_stat2)
@@ -1159,7 +1206,7 @@ ggplot(data=temp3b, aes(x=Year, y=mean_bio, fill=Treat_W)) +
   geom_bar(stat="identity", position=position_dodge()) + 
   geom_errorbar(aes(ymin=temp3b$mean_bio-temp4b$sd_bio, ymax=temp3b$mean_bio+temp4b$sd_bio), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("$Biomass (g/m^2)$")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added (a)", "ambient (b)", "drought (c)"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
 
 # SHRUB BIOMASS
 
@@ -1494,7 +1541,11 @@ NMDS2 <- nmds$points[,2]
 df_nor2.plot<-cbind(df_nor1, NMDS1, NMDS2)
 
 ggplot(data=df_nor2.plot,aes(x=NMDS1,y=NMDS2,color =Treat_W))+geom_point(size = 4) + # scale_x_continuous(limit = c(-1,1)) + 
-  annotate("text", x=-2, y=-3, label=paste('Stress =',round(nmds$stress,3))) #+ 
+  annotate("text", x=-2, y=-3, label=paste('Stress =',round(nmds$stress,3))) + theme(text = element_text(size=25)) + 
+  scale_color_manual(values = c("#2166ac", "#99d594", "#67a9cf"))
+
+
+#+ 
 #stat_ellipse(type='t',size =1)
 
 #ggplot(data=df_nor2.plot,aes(x=NMDS1,y=NMDS2,color =Treat_W))+geom_point(size = 4) + 

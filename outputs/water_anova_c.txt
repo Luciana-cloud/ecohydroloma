@@ -1,0 +1,38 @@
+> Anova(fit.water)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: as.numeric(Mean_water)
+                                                        Chisq Df Pr(>Chisq)
+Plant                                               3863.8521  1  < 2.2e-16 ***
+as.factor(Depth)                                   25650.7866  8  < 2.2e-16 ***
+as.factor(year)                                      173.6039  3  < 2.2e-16 ***
+month                                                606.8974  3  < 2.2e-16 ***
+Water                                                205.5803  2  < 2.2e-16 ***
+Plant:as.factor(Depth)                              3835.8029  8  < 2.2e-16 ***
+Plant:as.factor(year)                                107.4045  3  < 2.2e-16 ***
+as.factor(Depth):as.factor(year)                     223.3116 24  < 2.2e-16 ***
+Plant:month                                            7.8556  3  0.0490918 *
+as.factor(Depth):month                               412.1237 24  < 2.2e-16 ***
+as.factor(year):month                                151.4259  6  < 2.2e-16 ***
+Plant:Water                                           68.8535  2  1.119e-15 ***
+as.factor(Depth):Water                               192.8151 16  < 2.2e-16 ***
+as.factor(year):Water                                 97.5888  6  < 2.2e-16 ***
+month:Water                                           84.8128  6  3.610e-16 ***
+Plant:as.factor(Depth):as.factor(year)               139.0638 24  < 2.2e-16 ***
+Plant:as.factor(Depth):month                          14.9415 24  0.9224594
+Plant:as.factor(year):month                           21.7448  5  0.0005854 ***
+as.factor(Depth):as.factor(year):month               452.8889 40  < 2.2e-16 ***
+Plant:as.factor(Depth):Water                          85.1696 16  1.922e-11 ***
+Plant:as.factor(year):Water                            5.0540  6  0.5369079
+as.factor(Depth):as.factor(year):Water                36.6466 48  0.8840920
+Plant:month:Water                                     13.5913  6  0.0345495 *
+as.factor(Depth):month:Water                          47.1498 48  0.5076137
+as.factor(year):month:Water                           23.1523 12  0.0264604 *
+Plant:as.factor(Depth):as.factor(year):month          48.5366 32  0.0306813 *
+Plant:as.factor(Depth):as.factor(year):Water          23.4797 48  0.9988909
+Plant:as.factor(Depth):month:Water                    10.0793 48  1.0000000
+Plant:as.factor(year):month:Water                      5.0634 10  0.8868996
+as.factor(Depth):as.factor(year):month:Water          82.3200 80  0.4073842
+Plant:as.factor(Depth):as.factor(year):month:Water     8.3458 64  1.0000000
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

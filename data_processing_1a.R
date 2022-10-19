@@ -439,14 +439,14 @@ temp10  = water_T %>% filter(Nitrogen == "X")
 # Statistical analysis Mixed models
 
 statis = as.data.frame(rbind(cbind(temp10$Date,temp10$Plot,temp10$Plant,temp10$Water,temp10$Mean_W,(rep(-12.5,each=nrow(temp10)))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X25cm,rep(-25,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X50cm,rep(-50,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X75cm,rep(-75,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X100cm,rep(-100,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X125cm,rep(-125,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X150cm,rep(-150,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X175cm,rep(-175,each=nrow(water))),
-               cbind(water$Date,water$Plant,water$Plot,water$Water,water$X200cm,rep(-200,each=nrow(water)))))
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X25cm,rep(-25,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X50cm,rep(-50,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X75cm,rep(-75,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X100cm,rep(-100,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X125cm,rep(-125,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X150cm,rep(-150,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X175cm,rep(-175,each=nrow(water))),
+               cbind(water$Date,water$Plot,water$Plant,water$Water,water$X200cm,rep(-200,each=nrow(water)))))
 colnames(statis) <- c('Date','Plot','Plant','Water',"Mean_water","Depth")
 
 statis   = statis %>% mutate(Block = substr(Plot,4,4))
@@ -470,9 +470,11 @@ statis_1a = statis_1a %>% mutate(month = replace(month, month == 10, "fall"))
 statis_1a = statis_1a %>% mutate(month = replace(month, month == 11, "fall"))
 
 # write.csv(statis_1a, file = "statis_1a.csv")
-# statis_1 <- read.csv("statis_1.csv")
+statis_1a <- read.csv("statis_1a.csv")
 
-fit.water  <- lmer(as.numeric(Mean_water) ~ (Plant*as.factor(Depth))*as.factor(year)*month + (1|Block), 
+statis_1a = na.omit(statis_1a)
+
+fit.water  <- lmer(as.numeric(Mean_water) ~ Plant*as.factor(Depth)*as.factor(year)*month*Water + (1|Block), 
                    data = statis_1a)
 
 fit.water1 <- lmer(as.numeric(Mean_water) ~ (Plant*as.factor(Depth)) + (1|Block), data = statis_1)
@@ -482,7 +484,7 @@ Anova(fit.water1)
 
 # Pairwise comparison
 
-summary(glht(fit.water1,lsm(pairwise ~ (Plant*as.factor(Depth)),test=adjusted(type="holm"))))
+summary(glht(fit.water,lsm(pairwise ~ (Plant*as.factor(Depth)*as.factor(year)*month*Water),test=adjusted(type="holm"))))
 
 # Save assumption plots - Constant variances
 

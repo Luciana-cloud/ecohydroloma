@@ -1,0 +1,105 @@
+> summary.aov(water_stat2)
+                                                                Df Sum Sq
+Plant                                                            1  37290
+as.factor(Depth)                                                 8 231769
+as.factor(year)                                                  3   4983
+as.factor(month)                                                11   6463
+Water                                                            2   1740
+Block                                                            1     59
+Plant:as.factor(Depth)                                           8  33794
+Plant:as.factor(year)                                            3    607
+as.factor(Depth):as.factor(year)                                24   2579
+Plant:as.factor(month)                                          11    424
+as.factor(Depth):as.factor(month)                               80   8434
+as.factor(year):as.factor(month)                                18   3293
+Plant:Water                                                      2    670
+as.factor(Depth):Water                                          16   1441
+as.factor(year):Water                                            6    680
+as.factor(month):Water                                          22   1214
+Plant:as.factor(Depth):as.factor(year)                          24   1920
+Plant:as.factor(Depth):as.factor(month)                         80    766
+Plant:as.factor(year):as.factor(month)                          13    177
+as.factor(Depth):as.factor(year):as.factor(month)               54   4254
+Plant:as.factor(Depth):Water                                    16    698
+Plant:as.factor(year):Water                                      6     53
+as.factor(Depth):as.factor(year):Water                          48    413
+Plant:as.factor(month):Water                                    22    179
+as.factor(Depth):as.factor(month):Water                        160   1007
+as.factor(year):as.factor(month):Water                          36   1103
+Plant:as.factor(Depth):as.factor(year):as.factor(month)         32    145
+Plant:as.factor(Depth):as.factor(year):Water                    48    272
+Plant:as.factor(Depth):as.factor(month):Water                  160    225
+Plant:as.factor(year):as.factor(month):Water                    26    111
+as.factor(Depth):as.factor(year):as.factor(month):Water        108    479
+Plant:as.factor(Depth):as.factor(year):as.factor(month):Water   64     45
+Residuals                                                     9578  76354
+                                                              Mean Sq  F value
+Plant                                                           37290 4677.767
+as.factor(Depth)                                                28971 3634.192
+as.factor(year)                                                  1661  208.366
+as.factor(month)                                                  588   73.706
+Water                                                             870  109.147
+Block                                                              59    7.433
+Plant:as.factor(Depth)                                           4224  529.892
+Plant:as.factor(year)                                             202   25.361
+as.factor(Depth):as.factor(year)                                  107   13.477
+Plant:as.factor(month)                                             39    4.838
+as.factor(Depth):as.factor(month)                                 105   13.224
+as.factor(year):as.factor(month)                                  183   22.948
+Plant:Water                                                       335   42.001
+as.factor(Depth):Water                                             90   11.301
+as.factor(year):Water                                             113   14.225
+as.factor(month):Water                                             55    6.921
+Plant:as.factor(Depth):as.factor(year)                             80   10.033
+Plant:as.factor(Depth):as.factor(month)                            10    1.201
+Plant:as.factor(year):as.factor(month)                             14    1.707
+as.factor(Depth):as.factor(year):as.factor(month)                  79    9.883
+Plant:as.factor(Depth):Water                                       44    5.472
+Plant:as.factor(year):Water                                         9    1.098
+as.factor(Depth):as.factor(year):Water                              9    1.079
+Plant:as.factor(month):Water                                        8    1.018
+as.factor(Depth):as.factor(month):Water                             6    0.790
+as.factor(year):as.factor(month):Water                             31    3.845
+Plant:as.factor(Depth):as.factor(year):as.factor(month)             5    0.567
+Plant:as.factor(Depth):as.factor(year):Water                        6    0.711
+Plant:as.factor(Depth):as.factor(month):Water                       1    0.176
+Plant:as.factor(year):as.factor(month):Water                        4    0.537
+as.factor(Depth):as.factor(year):as.factor(month):Water             4    0.556
+Plant:as.factor(Depth):as.factor(year):as.factor(month):Water       1    0.088
+Residuals                                                           8
+                                                                Pr(>F)
+Plant                                                          < 2e-16 ***
+as.factor(Depth)                                               < 2e-16 ***
+as.factor(year)                                                < 2e-16 ***
+as.factor(month)                                               < 2e-16 ***
+Water                                                          < 2e-16 ***
+Block                                                          0.00641 **
+Plant:as.factor(Depth)                                         < 2e-16 ***
+Plant:as.factor(year)                                         2.46e-16 ***
+as.factor(Depth):as.factor(year)                               < 2e-16 ***
+Plant:as.factor(month)                                        1.72e-07 ***
+as.factor(Depth):as.factor(month)                              < 2e-16 ***
+as.factor(year):as.factor(month)                               < 2e-16 ***
+Plant:Water                                                    < 2e-16 ***
+as.factor(Depth):Water                                         < 2e-16 ***
+as.factor(year):Water                                         3.32e-16 ***
+as.factor(month):Water                                         < 2e-16 ***
+Plant:as.factor(Depth):as.factor(year)                         < 2e-16 ***
+Plant:as.factor(Depth):as.factor(month)                        0.10768
+Plant:as.factor(year):as.factor(month)                         0.05263 .
+as.factor(Depth):as.factor(year):as.factor(month)              < 2e-16 ***
+Plant:as.factor(Depth):Water                                  8.14e-12 ***
+Plant:as.factor(year):Water                                    0.36054
+as.factor(Depth):as.factor(year):Water                         0.32926
+Plant:as.factor(month):Water                                   0.43612
+as.factor(Depth):as.factor(month):Water                        0.97625
+as.factor(year):as.factor(month):Water                        8.27e-14 ***
+Plant:as.factor(Depth):as.factor(year):as.factor(month)        0.97640
+Plant:as.factor(Depth):as.factor(year):Water                   0.93412
+Plant:as.factor(Depth):as.factor(month):Water                  1.00000
+Plant:as.factor(year):as.factor(month):Water                   0.97343
+as.factor(Depth):as.factor(year):as.factor(month):Water        0.99995
+Plant:as.factor(Depth):as.factor(year):as.factor(month):Water  1.00000
+Residuals
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1

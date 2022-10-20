@@ -455,19 +455,20 @@ statis   = statis %>% mutate(year = as.numeric(format(statis$date,'%Y')))
 statis   = statis %>% mutate(month = as.numeric(format(statis$date,'%m')))
 statis_1 = statis %>% filter(year > 2011)
 statis_1 = statis_1 %>% dplyr::select(-Plot)
+statis_1a = statis_1
 
-statis_1a = statis_1 %>% mutate(month = replace(month, month == 12, "winter"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 1, "winter"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 2, "winter"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 3, "spring"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 4, "spring"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 5, "spring"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 6, "summer"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 7, "summer"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 8, "summer"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 9, "fall"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 10, "fall"))
-statis_1a = statis_1a %>% mutate(month = replace(month, month == 11, "fall"))
+#statis_1a = statis_1 %>% mutate(month = replace(month, month == 12, "winter"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 1, "winter"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 2, "winter"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 3, "spring"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 4, "spring"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 5, "spring"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 6, "summer"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 7, "summer"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 8, "summer"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 9, "fall"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 10, "fall"))
+#statis_1a = statis_1a %>% mutate(month = replace(month, month == 11, "fall"))
 
 # write.csv(statis_1a, file = "statis_1a.csv")
 statis_1a <- read.csv("statis_1a.csv")
@@ -484,7 +485,7 @@ Anova(fit.water1)
 
 # Pairwise comparison
 
-summary(glht(fit.water,lsm(pairwise ~ (Plant*as.factor(Depth)*as.factor(year)*month*Water),test=adjusted(type="holm"))))
+fit_test = summary(glht(fit.water,lsm(pairwise ~ (Plant*as.factor(Depth)*as.factor(year)*month*Water),test=adjusted(type="holm"))))
 
 # Save assumption plots - Constant variances
 
@@ -514,23 +515,27 @@ dev.off()
 #                Plant*Water*as.character(Depth)*as.character(year)+Plant*Water*as.character(Depth)*as.character(month) + 
 #                Water*as.character(Depth)*as.character(year)*as.character(month) + 
 #                Plant*Water*as.character(Depth)*as.character(year)*as.character(month),data=statis)
-water_stat2 = lm((as.numeric(Mean_water))~Plant+Water+as.character(Depth)+as.character(year)+as.character(month) +
-                   Plant*Water+Plant*as.character(Depth)+Plant*as.character(year)+Plant*as.character(month) + 
-                   Water*as.character(Depth)+Water*as.character(year)+Water*as.character(month) +
-                   as.character(Depth)*as.character(year)+as.character(Depth)*as.character(month) + 
-                   as.character(year)*as.character(month) + 
-                   Plant*Water*as.character(Depth)+
-                   Plant*as.character(Depth)*as.character(year),data=statis_1a)
+water_stat2 = lm(as.numeric(Mean_water) ~ Plant*as.factor(Depth)*as.factor(year)*as.factor(month)*Water 
+                 + (Block),data = statis_1a)
 
-water_stat2 = lm((as.numeric(Mean_water)) ~ Plant*as.factor(Depth)*as.factor(year)*month,data=statis_1a)
+#water_stat2 = lm((as.numeric(Mean_water)) ~ Plant*as.factor(Depth)*as.factor(year)*month,data=statis_1a)
 
 summary.aov(water_stat2)
+
+pdf("water_stat2.pdf")
 par(mfrow=c(2,2))
 plot(water_stat2)
 par(mfrow=c(1,1))
+dev.off()
+
 water_stat.av <- aov(water_stat2)
 test_tukey = TukeyHSD(water_stat.av)
-test_tukey
+test_21 = as.data.frame(test_tukey[21])
+write.csv(test_21, file = "test_21.csv")
+test_27 = as.data.frame(test_tukey[27])
+write.csv(test_27, file = "test_27.csv")
+test_31 = as.data.frame(test_tukey[31])
+write.csv(test_31, file = "test_31.csv")
 
 # Line Plots 
 

@@ -829,6 +829,9 @@ dev.off()
 ##################################################################################
 temp3b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(mean_bio = mean(biomass_g))
 temp4b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g))
+temp4b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g))
+temp5b = temp3b  %>% group_by(Treat_W) %>% summarise(mean_mean = mean(mean_bio))
+temp6b = temp3b  %>% group_by(Treat_W) %>% summarise(std_mean = sd(mean_bio))
 
 # Plotting
 ##################################################################################

@@ -1040,7 +1040,7 @@ final_X = final_X %>% filter(headings=="LOSC" | headings=="ARCA" | headings=="ba
 ##################################################################################
 # ADDED
 final_A_new = final_A %>% mutate(headings = replace(headings,headings=="BRMA","Bromus madritensis"))
-final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LUBI","Lespedeza bicolor"))
+final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LUBI","Lupinus bicolor"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="SAME","Salvia mellifera"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LECO","Elymus condensatus"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="bare.ground","Bare ground"))
@@ -1049,7 +1049,7 @@ final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LOSC
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="MALA","Malosma laurina"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="ARCA","Artemisia californica"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="litter","Litter"))
-final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="NALE","Solidago lepida"))
+final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="NALE","Stipa lepida"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="EUCH","Eucrypta chrysanthemifolia"))
 
 # REDUCED
@@ -1061,23 +1061,23 @@ final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="SAME
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="ARCA","Artemisia californica"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="MALA","Malosma laurina"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="EUCH","Eucrypta chrysanthemifolia"))
-final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="LUBI","Lespedeza bicolor"))
+final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="LUBI","Lupinus bicolor"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="VUMY","Vulpia myuros"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="MAFA","Malacothamnus fasciculatus"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="HASQ","Hazardia squarrosa"))
-final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="NALE","Solidago lepida"))
+final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="NALE","Stipa lepida"))
 final_R_new = final_R_new %>% mutate(headings = replace(headings,headings=="LOSC","Acmispon glaber"))
 
 # AMBIENT
 final_X_new = final_X %>% mutate(headings = replace(headings,headings=="BRMA","Bromus madritensis"))
-final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LUBI","Lespedeza bicolor"))
+final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LUBI","Lupinus bicolor"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LECO","Elymus condensatus"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="SAME","Salvia mellifera"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="LOSC","Acmispon glaber"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="MALA","Malosma laurina"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="litter","Litter"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="VUMY","Vulpia myuros"))
-final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="NALE","Solidago lepida"))
+final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="NALE","Stipa lepida"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="ARCA","Artemisia californica"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="bare.ground","Bare ground"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="EUCH","Eucrypta chrysanthemifolia"))
@@ -1112,13 +1112,20 @@ comp_shrub
 ##################################################################################
 dataT_1 = dataT %>% filter(Cover != "Bare ground")
 dataT_1 = dataT_1 %>% filter(Cover != "Litter")
-
-comp_shrub = ggplot(dataT_1, aes(fill=Cover, y=Percentage, x=Year)) + 
+ 
+comp_shrub = ggplot(dataT_1, 
+                    aes(fill=factor(Cover,levels=c("Eucrypta chrysanthemifolia","Lupinus bicolor",
+                                                   "Bromus madritensis","Elymus condensatus",
+                                                   "Stipa lepida","Salvia mellifera","Malosma laurina",
+                                                   "Artemisia californica","Acmispon glaber")), 
+                        y=Percentage, x=Year)) + 
   geom_col(position="stack")+facet_wrap(~Treatment) + 
   labs(x="", y = "Cover proportion (%)") + 
   theme(text = element_text(size=20)) + 
-  theme(legend.position="right") + lims(y=c(0,100)) + 
-  scale_fill_manual(values=c("#6baed6", "#2171b5", "#006d2c","#41ab5d","#ef3b2c","#fb6a4a","#a6bddb","#08306b","#a1d99b"),name = "")
+  theme(legend.position="top") + lims(y=c(0,100)) + 
+  scale_fill_manual(values=c("#ef3b2c","#fb6a4a","#006d2c","#41ab5d","#a1d99b","#08306b","#a6bddb",
+                             "#2171b5","#6baed6"),name = "") + 
+  geom_bar(stat="identity")
 comp_shrub
 
 # Other covers

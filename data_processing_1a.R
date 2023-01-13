@@ -753,7 +753,8 @@ colnames(temp_3) = c("Year","Precipitation")
 winput = as.data.frame(rbind(temp_1,temp_2,temp_3))
 Treatment = rep(c("Ambient","Added","Drought"),each=length(winput$Year)/3)
 winput = as.data.frame(cbind(winput,Treatment))
-
+winput = winput %>% dplyr::filter(Year < 2018)
+  
 # Plotting
 ##################################################################################
 ggplot(data=winput, aes(x=as.factor(Year), y=Precipitation,group=Treatment)) +

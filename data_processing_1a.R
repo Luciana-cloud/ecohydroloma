@@ -754,6 +754,10 @@ winput = as.data.frame(rbind(temp_1,temp_2,temp_3))
 Treatment = rep(c("Ambient","Added","Drought"),each=length(winput$Year)/3)
 winput = as.data.frame(cbind(winput,Treatment))
 winput = winput %>% dplyr::filter(Year < 2018)
+
+# Long-term precipitation in Loma
+long_prec = read.csv("CCSCDR_1983_2020.csv")
+mean_P    = mean(long_prec$Rain.mm.)
   
 # Plotting
 ##################################################################################
@@ -762,7 +766,8 @@ ggplot(data=winput, aes(x=as.factor(Year), y=Precipitation,group=Treatment)) +
   geom_point()+scale_linetype_manual(values=c("solid","twodash","dotted")) + 
   theme_light(base_size = 40) + labs(x="Water Year",y="Water Input (mm)") + 
   theme(legend.title = element_blank()) + coord_cartesian(ylim = c(0, 800)) + theme(legend.position="top") + 
-  geom_vline(xintercept = c(4,8), linetype="dotted",color = "red", size=2.5)
+  geom_vline(xintercept = c(4,8), linetype="dotted",color = "red", size=2.5) + 
+  geom_hline(yintercept=mean_P, linetype="dashed",color = "#3182bd", size=1)
 
 ##################################################################################
 # GRASS BIOMASS

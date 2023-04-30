@@ -44,6 +44,7 @@ clay_p     = clay*100/dry_weight
 sand_p     = 100-silt_clay*100/dry_weight
 silt_p     = 100-sand_p-clay_p
 texture    = cbind(df,clay_p,silt_p,sand_p)
+write.csv(texture, file = "C:/UCI/Project_1 (ecohydrology)/ecohydroloma/datasets/texture.csv")
 set.seed(42)
 texture_1  = texture %>% group_by(plant,depth) %>% sample_n(22, replace = FALSE)
 texture_2  = texture_1 %>% filter(depth==0|depth==15|depth==30|depth==45|depth==100|depth==200)
@@ -726,6 +727,49 @@ shrub_d_a =  ggplot(data=dtg, aes(date, depth)) +
   labs(title= "Drought - Ambient (G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 shrub_d_a 
+
+##################################################################################
+# Water potential transformations
+##################################################################################
+# Saxton et al. 1986 empirical relationships 
+#  https://doi.org/10.2136/sssaj1986.03615995005000040039x
+
+# Calling interpolated volumetric water content
+dts  <- read.csv("shrub_amb.csv")   # Shrubland ambient
+dtsa <- read.csv("shrub_added.csv") # Shrubland added
+dtsd <- read.csv("shrub_rest.csv")  # Shrubland drought
+dtg  <- read.csv("grass_amb.csv")   # Grassland ambient
+dtga <- read.csv("grass_add.csv")   # Grassland added
+dtgd <- read.csv("grass_red.csv")   # Grassland drought
+
+# Calling texture data
+df       <- read.csv("texture.csv") 
+mean_tex <- df %>% group_by(plant,depth) %>% summarise(mean(clay_p),mean(sand_p))
+shru_tex <- mean_tex %>% filter(plant=="CS")
+colnames(shru_tex)[3] ="clay"
+colnames(shru_tex)[4] ="sand"
+gras_tex <- mean_tex %>% filter(plant=="G")
+
+# Shrubland ambient
+
+dts  <- dts %>% mutate(clay_c = case_when(dts$depth>-22.5~shru_tex$clay[2],
+                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$clay[3],
+                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$clay[4],
+                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$clay[5],
+                                          dts$depth<=-150~shru_tex$clay[6]))
+
+dts  <- dts %>% mutate(sand_c = case_when(dts$depth>-22.5~shru_tex$sand[2],
+                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$sand[3],
+                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$sand[4],
+                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$sand[5],
+                                          dts$depth<=-150~shru_tex$sand[6]))
+
+dts  <- dts %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
+                                 (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
+dts  <- dts %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
+dts  <- dts %>% mutate(WP = A*(new_mean/100)^B)
+dts  <- dts %>% mutate(Wilt = 100*(1500/A)^(1/B))
+
 
 ##################################################################################
 # PRECIPITATION

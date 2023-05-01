@@ -1,6 +1,6 @@
 setwd("C:/UCI/Project_1 (ecohydrology)/ecohydroloma/datasets")
 
-# Data Processing
+# Calling packages ####
 
 library(tidyverse)
 library(ggplot2)
@@ -26,15 +26,14 @@ library(lsmeans)
 # devtools::install_github("goodekat/redres")
 library(redres)
 
-##################################################################################
-# TEXTURE ANALYSIS
-##################################################################################
 
-# Calling data
-##################################################################################
+# TEXTURE ANALYSIS ####
+
+# Calling data  ####
+
 df  = read.delim("texture.txt",dec=".")
 
-# Preliminary calculations
+# Preliminary calculations  ####
 blank      = 1 # hydrometer reading of blank solution, g/cm3 
 t_cor      = 2.5 
 dry_weight = as.numeric(df$soil_jar-df$jar_weight)
@@ -52,18 +51,18 @@ texture_3  = texture_2 %>% filter(plant=="CS") %>% mutate(Block = substr(plot,5,
 texture_4  = texture_2 %>% filter(plant=="G") %>% mutate(Block = substr(plot,4,4))
 texture_2  = as.data.frame(rbind(texture_3,texture_4))
 
-# Clay
-##################################################################################
+# Clay ####
+
 fit.clay <- lmer(clay_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
 summary(fit.clay)
 Anova(fit.clay)
 
-# Pairwise comparison
-##################################################################################
+# Pairwise comparison ####
+
 summary(glht(fit.clay,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
 
-# Save assumption plots - Constant variances
-##################################################################################
+# Save assumption plots - Constant variances ####
+
 pdf("fit_clay.pdf")
 plot_redres(fit.clay)
 dev.off() 
@@ -79,24 +78,24 @@ plot_redres(fit.clay, type = "pearson_cond") +
   labs(title = "Residual Plot")
 dev.off()
 
-# Save assumption plots - Normality of errors
-##################################################################################
+# Save assumption plots - Normality of errors ####
+
 pdf("fit_clay_N.pdf")
 plot_resqq(fit.clay)
 dev.off() 
 
-# Silt
-##################################################################################
+# Silt ####
+
 fit.silt <- lmer(silt_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
 summary(fit.silt)
 Anova(fit.silt)
 
-# Pairwise comparison
-##################################################################################
+# Pairwise comparison ####
+
 summary(glht(fit.silt,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
 
-# Save assumption plots - Constant variances
-##################################################################################
+# Save assumption plots - Constant variances ####
+
 pdf("fit_silt.pdf")
 plot_redres(fit.silt)
 dev.off() 
@@ -112,24 +111,24 @@ plot_redres(fit.silt, type = "pearson_cond") +
   labs(title = "Residual Plot")
 dev.off()
 
-# Save assumption plots - Normality of errors
-##################################################################################
+# Save assumption plots - Normality of errors ####
+
 pdf("fit_silt_N.pdf")
 plot_resqq(fit.silt)
 dev.off() 
 
-# Sand
-##################################################################################
+# Sand ####
+
 fit.sand <- lmer(sand_p ~ (plant*as.factor(depth)) + (1|Block), data = texture_2)
 summary(fit.sand)
 Anova(fit.sand)
 
-# Pairwise comparison
-##################################################################################
+# Pairwise comparison ####
+
 summary(glht(fit.sand,lsm(pairwise ~ (plant*as.factor(depth)),test=adjusted(type="holm"))))
 
-# Save assumption plots - Constant variances
-##################################################################################
+# Save assumption plots - Constant variances ####
+
 pdf("fit_sand.pdf")
 plot_redres(fit.sand)
 dev.off() 
@@ -145,16 +144,16 @@ plot_redres(fit.sand, type = "pearson_cond") +
   labs(title = "Residual Plot")
 dev.off()
 
-# Save assumption plots - Normality of errors
-##################################################################################
+# Save assumption plots - Normality of errors ####
+
 pdf("fit_sand_N.pdf")
 plot_resqq(fit.sand)
 dev.off() 
 
-# Plotting Texture
-##################################################################################
-# STACKED BARS
-##################################################################################
+# Plotting Texture ####
+
+# STACKED BARS ####
+
 mean_clay    = texture_2 %>% group_by(plant,depth) %>% summarise(mean = mean(clay_p))
 mean_silt    = texture_2 %>% group_by(plant,depth) %>% summarise(mean = mean(silt_p))
 mean_sand    = texture_2 %>% group_by(plant,depth) %>% summarise(mean = mean(sand_p))
@@ -178,17 +177,17 @@ ggplot(temp, aes(x = as.character(temp$orden), y = temp$mean_v, fill = temp$leve
        theme(text = element_text(size=25)) + 
        scale_fill_manual(values=c("#ec7014", "#fec44f", "#993404"),name = "") 
 
-##################################################################################
-# SOIL WATER CONTENT
-##################################################################################
 
-# Calling data
-##################################################################################
+# SOIL WATER CONTENT ####
+
+
+# Calling data ####
+
 df    = read.delim("water_content.txt",dec=".")     # Hydroprobe (deep water content)
 df_s  = read.delim("water_superficial.txt",dec=".") # Hydrosense (superficial water content)
 
-# Device linear regression
-##################################################################################
+# Device linear regression ####
+
 temp1    = df %>% filter(Date == "10/05/2012")
 temp2    = df %>% filter(Date == "22/05/2012")
 x_vari   = rbind(cbind(temp1$Plant,temp1$X50cm),cbind(temp1$Plant,temp1$X75cm),
@@ -208,8 +207,9 @@ ggplot(temp3,aes(as.numeric(V2), as.numeric(V4))) + geom_point() + geom_smooth(m
        stat_regline_equation(label.y = 21,size = 10) + theme(aspect.ratio=1,text = element_text(size=25)) + 
        scale_x_continuous(limits = c(5, 23)) + scale_y_continuous(limits = c(5, 23))
 
-# Preliminary calculations (linear regression of data taken by old Davis device)
-##################################################################################
+# Preliminary calculations I ####
+# (linear regression of data taken by old Davis device)
+
 a2    = 1.129838
 b2    = 0.563247
 temp4    = df %>% filter(Standard == 12577|Standard == 12969|Standard == 12870)
@@ -220,8 +220,9 @@ temp5    = temp4 %>% mutate(X12cm = X12cm*a2+b2,X25cm = X25cm*a2+b2,X50cm = X50c
 temp6    = df %>% filter(Standard == 7732|Standard == 7748)
 temp7    = rbind(temp5,temp6)
 
-# Preliminary calculations (linear regression from fabric calibration to in situ values)
-##################################################################################
+# Preliminary calculations II ####
+# (linear regression from fabric calibration to in situ values)
+
 af    = 19.3108
 a1    = 29.595
 b1    = -0.0697 
@@ -229,8 +230,8 @@ water = temp7 %>% mutate(X12cm = X12cm*a1/af+b1,X25cm = X25cm*a1/af+b1,X50cm = X
                       X75cm = X75cm*a1/af+b1,X100cm = X100cm*a1/af+b1,X125cm = X125cm*a1/af+b1,
                       X150cm = X150cm*a1/af+b1,X175cm = X175cm*a1/af+b1,X200cm = X200cm*a1/af+b1)
 
-# Preliminary calculations (hydroprobe regressions)  
-##################################################################################
+# Preliminary calculations ####
+# (hydroprobe regressions)  
 
 # Period mS adjusted to 180 mm probe
 temp8 = df_s %>% mutate(Output_1 = (Output_1/1000*(180/Length)+65536*0.000000011291*(1-180/Length))*1000,
@@ -246,8 +247,8 @@ temp9   = temp8 %>% mutate(Output_1 = 100*(-0.8094*Output_1^3 + 3.4428*Output_1^
 water_T = temp9 %>% mutate(Mean_W = (Output_1+Output_2+Output_3+Output_4)/4)
 temp10  = water_T %>% filter(Nitrogen == "X")
 
-# Statistical analysis Mixed models
-##################################################################################
+# Statistical analysis Mixed models ####
+
 statis = as.data.frame(rbind(cbind(temp10$Date,temp10$Plot,temp10$Plant,temp10$Water,temp10$Mean_W,(rep(-12.5,each=nrow(temp10)))),
                cbind(water$Date,water$Plot,water$Plant,water$Water,water$X25cm,rep(-25,each=nrow(water))),
                cbind(water$Date,water$Plot,water$Plant,water$Water,water$X50cm,rep(-50,each=nrow(water))),
@@ -267,8 +268,8 @@ statis_1 = statis %>% filter(year > 2011)
 statis_1 = statis_1 %>% dplyr::select(-Plot)
 statis_1a = statis_1
 
-# Linear model
-##################################################################################
+# Linear model ####
+
 water_stat2 = lm(as.numeric(Mean_water) ~ Plant*as.factor(Depth)*as.factor(year)*as.factor(month)*Water 
                  + (Block),data = statis_1a)
 
@@ -289,16 +290,16 @@ write.csv(test_27, file = "test_27.csv")
 test_31 = as.data.frame(test_tukey[31])
 write.csv(test_31, file = "test_31.csv")
 
-#Spatial interpolation - Kriging
-##################################################################################
+#Spatial interpolation - Kriging ####
 
-# Data preparation superficial water content
-##################################################################################
+
+# Data preparation superficial water content ####
+
 temp_11 = temp10 %>% group_by(Date,Plant,Water) %>% summarise(new_mean = mean((Mean_W),na.rm = TRUE)) 
 temp_11 = temp_11 %>% add_column(depth = rep(-12.5,each=nrow(temp_11)))
 
-# Data preparation deep water content
-##################################################################################
+# Data preparation deep water content ####
+
 temp_12 = water %>% group_by(Date,Plant,Water) %>% summarise(new_mean = mean(X50cm,na.rm = TRUE))
 temp_12 = temp_12 %>% add_column(depth = rep(-50,each=nrow(temp_12)))
 temp_13 = water %>% group_by(Date,Plant,Water) %>% summarise(new_mean = mean(X75cm,na.rm = TRUE))
@@ -314,8 +315,8 @@ temp_17 = temp_17 %>% add_column(depth = rep(-175,each=nrow(temp_17)))
 temp_18 = water %>% group_by(Date,Plant,Water) %>% summarise(new_mean = mean(X200cm,na.rm = TRUE))
 temp_18 = temp_18 %>% add_column(depth = rep(-200,each=nrow(temp_18)))
 
-# Shrubland
-##################################################################################
+# Shrubland ####
+
 shrub_X = rbind((temp_11 %>% filter(Plant=="S"&Water=="X")),(temp_12 %>% filter(Plant=="S"&Water=="X")),
                 (temp_13 %>% filter(Plant=="S"&Water=="X")),(temp_14 %>% filter(Plant=="S"&Water=="X")),
                 (temp_15 %>% filter(Plant=="S"&Water=="X")),(temp_16 %>% filter(Plant=="S"&Water=="X")),
@@ -332,8 +333,8 @@ shrub_R = rbind((temp_11 %>% filter(Plant=="S"&Water=="R")),(temp_12 %>% filter(
                 (temp_16 %>% filter(Plant=="S"&Water=="R")),(temp_17 %>% filter(Plant=="S"&Water=="R")),
                 (temp_18 %>% filter(Plant=="S"&Water=="R")))
 
-# Grassland
-##################################################################################
+# Grassland ####
+
 grass_X = rbind((temp_11 %>% filter(Plant=="G"&Water=="X")),(temp_12 %>% filter(Plant=="G"&Water=="X")),
                 (temp_13 %>% filter(Plant=="G"&Water=="X")),(temp_14 %>% filter(Plant=="G"&Water=="X")),
                 (temp_15 %>% filter(Plant=="G"&Water=="X")),(temp_16 %>% filter(Plant=="G"&Water=="X")),
@@ -352,8 +353,8 @@ grass_R = rbind((temp_11 %>% filter(Plant=="G"&Water=="R")),(temp_12 %>% filter(
 
 set.seed(44)
 
-# Using a dummy variable to replace the time
-##################################################################################
+# Using a dummy variable to replace the time ####
+
 shrub_X$date = as.POSIXct(strptime(shrub_X$Date, format="%d/%m/%Y", tz="GMT"))
 shrub_X$date = decimal_date(shrub_X$date)
 shrub_X$depth = as.integer(shrub_X$depth)
@@ -366,8 +367,8 @@ coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
-# Fitting the semi variogram
-##################################################################################
+# Fitting the semi variogram ####
+
 lzn.vgm = variogram((new_mean)~1, df3)
 lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 1000, 1))
 shrub_Xplot = plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20,main= "shrubland + ambient")
@@ -375,17 +376,17 @@ pdf("shrub_Xplot.pdf")
 shrub_Xplot
 dev.off()
 
-# Kriging
-##################################################################################
+# Kriging ####
+
 lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
-# Reconverting to data frame
-##################################################################################
+# Reconverting to data frame ####
+
 dt <- as.data.frame(df3)
 write.csv(dt, file = "shrub_amb.csv")
 
-# Using a dummy variable to replace the time
-##################################################################################
+# Using a dummy variable to replace the time ####
+
 shrub_A$date = as.POSIXct(strptime(shrub_A$Date, format="%d/%m/%Y", tz="GMT"))
 shrub_A$date = decimal_date(shrub_A$date)
 shrub_A$depth = as.integer(shrub_A$depth)
@@ -398,8 +399,8 @@ coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
-# Fitting the semi variogram
-##################################################################################
+# Fitting the semi variogram ####
+
 lzn.vgm = variogram((new_mean)~1, df3)
 lzn.fit = fit.variogram(lzn.vgm, model=vgm(psill = NA, "Gau", range = NA, 1))
 shrub_Aplot =plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20,main= "shrubland + added")
@@ -407,17 +408,17 @@ pdf("shrub_Aplot.pdf")
 shrub_Aplot
 dev.off()
 
-# Kriging
-##################################################################################
+# Kriging ####
+
 lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
-# Reconverting to data frame
-##################################################################################
+# Reconverting to data frame ####
+
 dt <- as.data.frame(df3)
 write.csv(dt, file = "shrub_added.csv")
 
-# Using a dummy variable to replace the time
-##################################################################################
+# Using a dummy variable to replace the time ####
+
 shrub_R$date = as.POSIXct(strptime(shrub_R$Date, format="%d/%m/%Y", tz="GMT"))
 shrub_R$date = decimal_date(shrub_R$date)
 shrub_R$depth = as.integer(shrub_R$depth)
@@ -430,8 +431,8 @@ coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
-# Fitting the semi variogram
-##################################################################################
+# Fitting the semi variogram ####
+
 lzn.vgm = variogram((new_mean)~1, df3)
 lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 500, 1))
 shrub_Rplot = plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20)
@@ -439,18 +440,18 @@ pdf("shrub_Rplot.pdf")
 shrub_Rplot
 dev.off()
 
-# Kriging
-##################################################################################
+# Kriging ####
+
 lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
-# Reconverting to data frame
-##################################################################################
+# Reconverting to data frame ####
+
 dt <- as.data.frame(df3)
 write.csv(dt, file = "shrub_rest.csv")
 
 
-# Using a dummy variable to replace the time
-##################################################################################
+# Using a dummy variable to replace the time ####
+
 grass_X$date = as.POSIXct(strptime(grass_X$Date, format="%d/%m/%Y", tz="GMT"))
 grass_X$date = decimal_date(grass_X$date)
 grass_X$depth = as.integer(grass_X$depth)
@@ -464,8 +465,8 @@ coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
-# Fitting the semi variogram
-##################################################################################
+# Fitting the semi variogram ####
+
 lzn.vgm = variogram((new_mean)~1, df3)
 lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 50, 1))
 grass_Xplot = plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20)
@@ -473,17 +474,17 @@ pdf("grass_Xplot.pdf")
 grass_Xplot
 dev.off()
 
-# Kriging
-##################################################################################
+# Kriging ####
+
 lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
-# Reconverting to data frame
-##################################################################################
+# Reconverting to data frame ####
+
 dt <- as.data.frame(df3)
 write.csv(dt, file = "grass_amb.csv")
 
-# Using a dummy variable to replace the time
-##################################################################################
+# Using a dummy variable to replace the time ####
+
 grass_A$date = as.POSIXct(strptime(grass_A$Date, format="%d/%m/%Y", tz="GMT"))
 grass_A$date = decimal_date(grass_A$date)
 grass_A$depth = as.integer(grass_A$depth)
@@ -497,8 +498,8 @@ coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
-# Fitting the semi variogram
-##################################################################################
+# Fitting the semi variogram ####
+
 lzn.vgm = variogram((new_mean)~1, df3)
 lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 50, 1))
 grass_Aplot = plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20)
@@ -506,17 +507,17 @@ pdf("grass_Aplot.pdf")
 grass_Aplot
 dev.off()
 
-# Kriging
-##################################################################################
+# Kriging ####
+
 lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
-# Reconverting to data frame
-##################################################################################
+# Reconverting to data frame ####
+
 dt <- as.data.frame(df3)
 write.csv(dt, file = "grass_add.csv")
 
-# Using a dummy variable to replace the time
-##################################################################################
+# Using a dummy variable to replace the time ####
+
 grass_R$date = as.POSIXct(strptime(grass_R$Date, format="%d/%m/%Y", tz="GMT"))
 grass_R$date = decimal_date(grass_R$date)
 grass_R$depth = as.integer(grass_R$depth)
@@ -530,8 +531,8 @@ coordinates(df3) = ~ date + depth
 class(df3)
 bbox(df3)
 
-# Fitting the semi variogram
-##################################################################################
+# Fitting the semi variogram ####
+
 lzn.vgm = variogram((new_mean)~1, df3)
 lzn.fit = fit.variogram(lzn.vgm, model=vgm(1, "Gau", 500, 1))
 grass_Rplot = plot(lzn.vgm, lzn.fit,cex=1,cex.axis = 20,cex.lab=20,cex.names=20)
@@ -539,20 +540,20 @@ pdf("grass_Rplot.pdf")
 grass_Rplot
 dev.off()
 
-# Kriging
-##################################################################################
+# Kriging ####
+
 lzn.kriged = krige((new_mean) ~ 1, df3, df3, model=lzn.fit, nmax=50)
 
-# Reconverting to data frame
-##################################################################################
+# Reconverting to data frame ####
+
 dt <- as.data.frame(df3)
 write.csv(dt, file = "grass_red.csv")
 
-# Plotting
-##################################################################################
+# Plotting ####
 
-# Shrubland ambient
-##################################################################################
+
+# Shrubland ambient ####
+
 dts <- read.csv("shrub_amb.csv")
 dts = dts %>% filter(date > 2012.061)
 dts = dts %>% filter(date < 2015.121)
@@ -569,8 +570,8 @@ shrub_X_Fig
 #dev.off()
 
 
-# Shrubland added
-##################################################################################
+# Shrubland added ####
+
 dtsa <- read.csv("shrub_added.csv")
 dtsa = dtsa %>% filter(date > 2012.061)
 dtsa = dtsa %>% filter(date < 2015.121)
@@ -587,8 +588,8 @@ shrub_A_Fig
 #dev.off()
 
 
-# Shrubland drought
-##################################################################################
+# Shrubland drought ####
+
 dtsd <- read.csv("shrub_rest.csv")
 dtsd = dtsd %>% filter(date > 2012.061)
 dtsd = dtsd %>% filter(date < 2015.121)
@@ -605,8 +606,8 @@ shrub_R_Fig
 #dev.off()
 
 
-# Grassland ambient
-##################################################################################
+# Grassland ambient ####
+
 dtg <- read.csv("grass_amb.csv")
 dtg = dtg %>% filter(date > 2012.061)
 dtg = dtg %>% filter(date < 2015.121)
@@ -623,8 +624,8 @@ grass_X_Fig
 #dev.off()
 
 
-# Grassland added
-##################################################################################
+# Grassland added ####
+
 dtga <- read.csv("grass_add.csv")
 dtga = dtga %>% filter(date > 2012.061)
 dtga = dtga %>% filter(date < 2015.121)
@@ -641,8 +642,8 @@ grass_A_Fig
 #dev.off()
 
 
-# Grassland drought
-##################################################################################
+# Grassland drought ####
+
 dtgd <- read.csv("grass_red.csv")
 dtgd = dtgd %>% filter(date > 2012.061)
 dtgd = dtgd %>% filter(date < 2015.121)
@@ -658,8 +659,8 @@ grass_R_Fig
 #grass_R_Fig
 #dev.off()
 
-# Shrubland - Grassland (Ambient)
-##################################################################################
+# Shrubland - Grassland (Ambient) ####
+
 library(pals) # for more colors
 
 shrub_grass = dts$new_mean-dtg$new_mean
@@ -673,8 +674,8 @@ grass_s_g =  ggplot(data=dts, aes(date, depth)) +
   theme(text = element_text(size=25))
 grass_s_g 
 
-# Shrubland : added - ambient
-##################################################################################
+# Shrubland : added - ambient ####
+
 added_ambient = dtsa$new_mean-dts$new_mean
 dts$added_ambient <- added_ambient
 
@@ -687,8 +688,8 @@ shrub_a_a =  ggplot(data=dts, aes(date, depth)) +
 shrub_a_a 
 
 
-# Shrubland : drought - ambient
-##################################################################################
+# Shrubland : drought - ambient ####
+
 drought_ambient = dtsd$new_mean-dts$new_mean
 dts$drought_ambient <- drought_ambient
 
@@ -701,8 +702,8 @@ shrub_d_a =  ggplot(data=dts, aes(date, depth)) +
 shrub_d_a 
 
 
-# Grassland : added - ambient
-##################################################################################
+# Grassland : added - ambient ####
+
 added_ambient = dtga$new_mean-dtg$new_mean
 dtg$added_ambient <- added_ambient
 
@@ -715,8 +716,8 @@ grass_a_a =  ggplot(data=dtg, aes(date, depth)) +
 grass_a_a 
 
 
-# Shrubland : drought - ambient
-##################################################################################
+# Shrubland : drought - ambient ####
+
 drought_ambient = dtgd$new_mean-dtg$new_mean
 dtg$drought_ambient <- drought_ambient
 
@@ -728,9 +729,8 @@ shrub_d_a =  ggplot(data=dtg, aes(date, depth)) +
   theme(text = element_text(size=25))
 shrub_d_a 
 
-##################################################################################
-# Water potential transformations
-##################################################################################
+# Water potential transformations ####
+
 # Saxton et al. 1986 empirical relationships 
 #  https://doi.org/10.2136/sssaj1986.03615995005000040039x
 
@@ -749,8 +749,10 @@ shru_tex <- mean_tex %>% filter(plant=="CS")
 colnames(shru_tex)[3] ="clay"
 colnames(shru_tex)[4] ="sand"
 gras_tex <- mean_tex %>% filter(plant=="G")
+colnames(gras_tex)[3] ="clay"
+colnames(gras_tex)[4] ="sand"
 
-# Shrubland ambient
+# Shrubland ambient ####
 
 dts  <- dts %>% mutate(clay_c = case_when(dts$depth>-22.5~shru_tex$clay[2],
                                           dts$depth<=-22.5&dts$depth>-37.5~shru_tex$clay[3],
@@ -769,15 +771,150 @@ dts  <- dts %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
 dts  <- dts %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dts  <- dts %>% mutate(WP = A*(new_mean/100)^B)
 dts  <- dts %>% mutate(Wilt = 100*(1500/A)^(1/B))
+dts  <- dts %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water [mm]
+dts  <- dts %>% mutate(TEW_mm = case_when(dts$TEW<0~0,
+                                          dts$TEW>=0~dts$TEW))
+dts  <- dts %>% mutate(FC = 100*(33/A)^(1/B))
+dts  <- dts %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
 
+# Shrubland added ####
 
-##################################################################################
-# PRECIPITATION
-##################################################################################
+dtsa  <- dtsa %>% mutate(clay_c = case_when(dtsa$depth>-22.5~shru_tex$clay[2],
+                                            dtsa$depth<=-22.5&dtsa$depth>-37.5~shru_tex$clay[3],
+                                            dtsa$depth<=-37.5&dtsa$depth>-72.5~shru_tex$clay[4],
+                                            dtsa$depth<=-72.5&dtsa$depth>-150~shru_tex$clay[5],
+                                            dtsa$depth<=-150~shru_tex$clay[6]))
+
+dtsa  <- dtsa %>% mutate(sand_c = case_when(dtsa$depth>-22.5~shru_tex$sand[2],
+                                            dtsa$depth<=-22.5&dtsa$depth>-37.5~shru_tex$sand[3],
+                                            dtsa$depth<=-37.5&dtsa$depth>-72.5~shru_tex$sand[4],
+                                            dtsa$depth<=-72.5&dtsa$depth>-150~shru_tex$sand[5],
+                                            dtsa$depth<=-150~shru_tex$sand[6]))
+
+dtsa  <- dtsa %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
+                                   (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
+dtsa  <- dtsa %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
+dtsa  <- dtsa %>% mutate(WP = A*(new_mean/100)^B)
+dtsa  <- dtsa %>% mutate(Wilt = 100*(1500/A)^(1/B))
+dtsa  <- dtsa %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtsa  <- dtsa %>% mutate(TEW_mm = case_when(dtsa$TEW<0~0,
+                                            dtsa$TEW>=0~dtsa$TEW))
+
+# Shrubland drought ####
+
+dtsd  <- dtsd %>% mutate(clay_c = case_when(dtsd$depth>-22.5~shru_tex$clay[2],
+                                            dtsd$depth<=-22.5&dtsd$depth>-37.5~shru_tex$clay[3],
+                                            dtsd$depth<=-37.5&dtsd$depth>-72.5~shru_tex$clay[4],
+                                            dtsd$depth<=-72.5&dtsd$depth>-150~shru_tex$clay[5],
+                                            dtsd$depth<=-150~shru_tex$clay[6]))
+
+dtsd  <- dtsd %>% mutate(sand_c = case_when(dtsd$depth>-22.5~shru_tex$sand[2],
+                                            dtsd$depth<=-22.5&dtsd$depth>-37.5~shru_tex$sand[3],
+                                            dtsd$depth<=-37.5&dtsd$depth>-72.5~shru_tex$sand[4],
+                                            dtsd$depth<=-72.5&dtsd$depth>-150~shru_tex$sand[5],
+                                            dtsd$depth<=-150~shru_tex$sand[6]))
+
+dtsd  <- dtsd %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
+                                   (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
+dtsd  <- dtsd %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
+dtsd  <- dtsd %>% mutate(WP = A*(new_mean/100)^B)
+dtsd  <- dtsd %>% mutate(Wilt = 100*(1500/A)^(1/B))
+dtsd  <- dtsd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtsd  <- dtsd %>% mutate(TEW_mm = case_when(dtsd$TEW<0~0,
+                                            dtsd$TEW>=0~dtsd$TEW))
+
+# Grassland ambient ####
+
+dtg  <- dtg %>% mutate(clay_c = case_when(dtg$depth>-22.5~gras_tex$clay[2],
+                                          dtg$depth<=-22.5&dtg$depth>-37.5~gras_tex$clay[3],
+                                          dtg$depth<=-37.5&dtg$depth>-72.5~gras_tex$clay[4],
+                                          dtg$depth<=-72.5&dtg$depth>-112.5~gras_tex$clay[5],
+                                          dtg$depth<=-112.5&dtg$depth>-137.5~gras_tex$clay[6],
+                                          dtg$depth<=-137.5&dtg$depth>-162.5~gras_tex$clay[7],
+                                          dtg$depth<=-162.5&dtg$depth>-187.5~gras_tex$clay[8],
+                                          dtg$depth<=-187.5~gras_tex$clay[9]))
+
+dtg  <- dtg %>% mutate(sand_c = case_when(dtg$depth>-22.5~gras_tex$sand[2],
+                                          dtg$depth<=-22.5&dtg$depth>-37.5~gras_tex$sand[3],
+                                          dtg$depth<=-37.5&dtg$depth>-72.5~gras_tex$sand[4],
+                                          dtg$depth<=-72.5&dtg$depth>-112.5~gras_tex$sand[5],
+                                          dtg$depth<=-112.5&dtg$depth>-137.5~gras_tex$sand[6],
+                                          dtg$depth<=-137.5&dtg$depth>-162.5~gras_tex$sand[7],
+                                          dtg$depth<=-162.5&dtg$depth>-187.5~gras_tex$sand[8],
+                                          dtg$depth<=-187.5~gras_tex$sand[9]))
+
+dtg  <- dtg %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
+                                 (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
+dtg  <- dtg %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
+dtg  <- dtg %>% mutate(WP = A*(new_mean/100)^B)
+dtg  <- dtg %>% mutate(Wilt = 100*(1500/A)^(1/B))
+dtg  <- dtg %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtg  <- dtg %>% mutate(TEW_mm = case_when(dtg$TEW<0~0,
+                                          dtg$TEW>=0~dtg$TEW))
+
+# Grassland added ####
+
+dtga  <- dtga %>% mutate(clay_c = case_when(dtga$depth>-22.5~gras_tex$clay[2],
+                                            dtga$depth<=-22.5&dtga$depth>-37.5~gras_tex$clay[3],
+                                            dtga$depth<=-37.5&dtga$depth>-72.5~gras_tex$clay[4],
+                                            dtga$depth<=-72.5&dtga$depth>-112.5~gras_tex$clay[5],
+                                            dtga$depth<=-112.5&dtga$depth>-137.5~gras_tex$clay[6],
+                                            dtga$depth<=-137.5&dtga$depth>-162.5~gras_tex$clay[7],
+                                            dtga$depth<=-162.5&dtga$depth>-187.5~gras_tex$clay[8],
+                                            dtga$depth<=-187.5~gras_tex$clay[9]))
+
+dtga  <- dtga %>% mutate(sand_c = case_when(dtga$depth>-22.5~gras_tex$sand[2],
+                                            dtga$depth<=-22.5&dtga$depth>-37.5~gras_tex$sand[3],
+                                            dtga$depth<=-37.5&dtga$depth>-72.5~gras_tex$sand[4],
+                                            dtga$depth<=-72.5&dtga$depth>-112.5~gras_tex$sand[5],
+                                            dtga$depth<=-112.5&dtga$depth>-137.5~gras_tex$sand[6],
+                                            dtga$depth<=-137.5&dtga$depth>-162.5~gras_tex$sand[7],
+                                            dtga$depth<=-162.5&dtga$depth>-187.5~gras_tex$sand[8],
+                                            dtga$depth<=-187.5~gras_tex$sand[9]))
+
+dtga  <- dtga %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
+                                   (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
+dtga  <- dtga %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
+dtga  <- dtga %>% mutate(WP = A*(new_mean/100)^B)
+dtga  <- dtga %>% mutate(Wilt = 100*(1500/A)^(1/B))
+dtga  <- dtga %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtga  <- dtga %>% mutate(TEW_mm = case_when(dtga$TEW<0~0,
+                                            dtga$TEW>=0~dtga$TEW))
+
+# Grassland drought ####
+
+dtgd  <- dtgd %>% mutate(clay_c = case_when(dtgd$depth>-22.5~gras_tex$clay[2],
+                                            dtgd$depth<=-22.5&dtgd$depth>-37.5~gras_tex$clay[3],
+                                            dtgd$depth<=-37.5&dtgd$depth>-72.5~gras_tex$clay[4],
+                                            dtgd$depth<=-72.5&dtgd$depth>-112.5~gras_tex$clay[5],
+                                            dtgd$depth<=-112.5&dtgd$depth>-137.5~gras_tex$clay[6],
+                                            dtgd$depth<=-137.5&dtgd$depth>-162.5~gras_tex$clay[7],
+                                            dtgd$depth<=-162.5&dtgd$depth>-187.5~gras_tex$clay[8],
+                                            dtgd$depth<=-187.5~gras_tex$clay[9]))
+
+dtgd  <- dtgd %>% mutate(sand_c = case_when(dtgd$depth>-22.5~gras_tex$sand[2],
+                                            dtgd$depth<=-22.5&dtgd$depth>-37.5~gras_tex$sand[3],
+                                            dtgd$depth<=-37.5&dtgd$depth>-72.5~gras_tex$sand[4],
+                                            dtgd$depth<=-72.5&dtgd$depth>-112.5~gras_tex$sand[5],
+                                            dtgd$depth<=-112.5&dtgd$depth>-137.5~gras_tex$sand[6],
+                                            dtgd$depth<=-137.5&dtgd$depth>-162.5~gras_tex$sand[7],
+                                            dtgd$depth<=-162.5&dtgd$depth>-187.5~gras_tex$sand[8],
+                                            dtgd$depth<=-187.5~gras_tex$sand[9]))
+
+dtgd  <- dtgd %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
+                                   (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
+dtgd  <- dtgd %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
+dtgd  <- dtgd %>% mutate(WP = A*(new_mean/100)^B)
+dtgd  <- dtgd %>% mutate(Wilt = 100*(1500/A)^(1/B))
+dtgd  <- dtgd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtgd  <- dtgd %>% mutate(TEW_mm = case_when(dtgd$TEW<0~0,
+                                            dtgd$TEW>=0~dtgd$TEW))
+
+# PRECIPITATION ####
 
 # Water year is defined by the January of that wet season
 # E.g. Water Year 2020 goes from 2019-10-01 to 2020-09-30
-##################################################################################
+
 FullPrecipLoma = read.csv("FullPrecipLoma.csv") %>%
   mutate(Day = as.Date(Day,format="%m/%d/%Y"))%>%
   mutate(Year = as.numeric(format(Day,"%Y"))) %>%

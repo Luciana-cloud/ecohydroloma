@@ -736,11 +736,23 @@ shrub_d_a
 
 # Calling interpolated volumetric water content
 dts  <- read.csv("shrub_amb.csv")   # Shrubland ambient
+dts = dts %>% filter(date > 2012.061)
+dts = dts %>% filter(date < 2015.121)
 dtsa <- read.csv("shrub_added.csv") # Shrubland added
+dtsa = dtsa %>% filter(date > 2012.061)
+dtsa = dtsa %>% filter(date < 2015.121)
 dtsd <- read.csv("shrub_rest.csv")  # Shrubland drought
+dtsd = dtsd %>% filter(date > 2012.061)
+dtsd = dtsd %>% filter(date < 2015.121)
 dtg  <- read.csv("grass_amb.csv")   # Grassland ambient
+dtg = dtg %>% filter(date > 2012.061)
+dtg = dtg %>% filter(date < 2015.121)
 dtga <- read.csv("grass_add.csv")   # Grassland added
+dtga = dtga %>% filter(date > 2012.061)
+dtga = dtga %>% filter(date < 2015.121)
 dtgd <- read.csv("grass_red.csv")   # Grassland drought
+dtgd = dtgd %>% filter(date > 2012.061)
+dtgd = dtgd %>% filter(date < 2015.121)
 
 # Calling texture data
 df       <- read.csv("texture.csv") 
@@ -776,6 +788,10 @@ dts  <- dts %>% mutate(TEW_mm = case_when(dts$TEW<0~0,
                                           dts$TEW>=0~dts$TEW))
 dts  <- dts %>% mutate(FC = 100*(33/A)^(1/B))
 dts  <- dts %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
+dts  <- dts %>% mutate(plant=rep("Shrubland", len = nrow(dts)))
+dts  <- dts %>% mutate(treatment=rep("Ambient", len = nrow(dts)))
+dts  <- dts %>% mutate(Wilt_MP=rep(as.numeric(4.2), len = nrow(dts)))
+dts  <- dts %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Shrubland added ####
 
@@ -799,6 +815,12 @@ dtsa  <- dtsa %>% mutate(Wilt = 100*(1500/A)^(1/B))
 dtsa  <- dtsa %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
 dtsa  <- dtsa %>% mutate(TEW_mm = case_when(dtsa$TEW<0~0,
                                             dtsa$TEW>=0~dtsa$TEW))
+dtsa  <- dtsa %>% mutate(FC = 100*(33/A)^(1/B))
+dtsa  <- dtsa %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
+dtsa  <- dtsa %>% mutate(plant=rep("Shrubland", len = nrow(dts)))
+dtsa  <- dtsa %>% mutate(treatment=rep("Added", len = nrow(dts)))
+dtsa  <- dtsa %>% mutate(Wilt_MP=rep(as.numeric(4.2), len = nrow(dts)))
+dtsa  <- dtsa %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Shrubland drought ####
 
@@ -822,6 +844,12 @@ dtsd  <- dtsd %>% mutate(Wilt = 100*(1500/A)^(1/B))
 dtsd  <- dtsd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
 dtsd  <- dtsd %>% mutate(TEW_mm = case_when(dtsd$TEW<0~0,
                                             dtsd$TEW>=0~dtsd$TEW))
+dtsd  <- dtsd %>% mutate(FC = 100*(33/A)^(1/B))
+dtsd  <- dtsd %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
+dtsd  <- dtsd %>% mutate(plant=rep("Shrubland", len = nrow(dts)))
+dtsd  <- dtsd %>% mutate(treatment=rep("Drought", len = nrow(dts)))
+dtsd  <- dtsd %>% mutate(Wilt_MP=rep(as.numeric(4.2), len = nrow(dts)))
+dtsd  <- dtsd %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Grassland ambient ####
 
@@ -851,6 +879,12 @@ dtg  <- dtg %>% mutate(Wilt = 100*(1500/A)^(1/B))
 dtg  <- dtg %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
 dtg  <- dtg %>% mutate(TEW_mm = case_when(dtg$TEW<0~0,
                                           dtg$TEW>=0~dtg$TEW))
+dtg  <- dtg %>% mutate(FC = 100*(33/A)^(1/B))
+dtg  <- dtg %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
+dtg  <- dtg %>% mutate(plant=rep("Grassland", len = nrow(dts)))
+dtg  <- dtg %>% mutate(treatment=rep("Ambient", len = nrow(dts)))
+dtg  <- dtg %>% mutate(Wilt_MP=rep(as.numeric(4.2), len = nrow(dts)))
+dtg  <- dtg %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Grassland added ####
 
@@ -880,6 +914,12 @@ dtga  <- dtga %>% mutate(Wilt = 100*(1500/A)^(1/B))
 dtga  <- dtga %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
 dtga  <- dtga %>% mutate(TEW_mm = case_when(dtga$TEW<0~0,
                                             dtga$TEW>=0~dtga$TEW))
+dtga  <- dtga %>% mutate(FC = 100*(33/A)^(1/B))
+dtga  <- dtga %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
+dtga  <- dtga %>% mutate(plant=rep("Grassland", len = nrow(dts)))
+dtga  <- dtga %>% mutate(treatment=rep("Added", len = nrow(dts)))
+dtga  <- dtga %>% mutate(Wilt_MP=rep(as.numeric(4.2), len = nrow(dts)))
+dtga  <- dtga %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Grassland drought ####
 
@@ -909,6 +949,281 @@ dtgd  <- dtgd %>% mutate(Wilt = 100*(1500/A)^(1/B))
 dtgd  <- dtgd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
 dtgd  <- dtgd %>% mutate(TEW_mm = case_when(dtgd$TEW<0~0,
                                             dtgd$TEW>=0~dtgd$TEW))
+dtgd  <- dtgd %>% mutate(FC = 100*(33/A)^(1/B))
+dtgd  <- dtgd %>% mutate(SMD = 10*(FC/100-new_mean/100)*0.62876) # soil water deficit [mm]
+dtgd  <- dtgd %>% mutate(plant=rep("Grassland", len = nrow(dts)))
+dtgd  <- dtgd %>% mutate(treatment=rep("Drought", len = nrow(dts)))
+dtgd  <- dtgd %>% mutate(Wilt_MP=rep(as.numeric(4.2), len = nrow(dts)))
+dtgd  <- dtgd %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
+
+# Plotting the water retention curves ####
+
+data_tot = as.data.frame(rbind(dts,dtsa,dtsd,dtg,dtga,dtgd))
+
+ggplot(data=data_tot, aes(x=new_mean, y=WP))+
+  geom_point()+
+  theme_bw()+
+  facet_grid(plant~treatment)+labs(x="Soil water content (%)", y = "Water potential (kPa)") + 
+  theme(text = element_text(size=25))
+
+# Plotting water potential ####
+
+# Shrubland ambient (dts)
+
+shrub_X_WP =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = log10(10*WP)), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  stat_contour(aes(z = log10(10*WP)),breaks = c(4.2), colour = "black", size = 0.8) + 
+  stat_contour(aes(z = log10(10*WP)),breaks = c(1.8), colour = "#dd1c77", size = 0.8) +
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(1,5)) + 
+  labs(title= "Shrubland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_X_WP
+
+# Shrubland added (dtsa)
+
+shrub_A_WP =  ggplot(data=dtsa, aes(date, depth)) + 
+  geom_raster(aes(fill = log10(10*WP)), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  stat_contour(aes(z = log10(10*WP)),breaks = c(4.2), colour = "black", size = 0.8) + 
+  stat_contour(aes(z = log10(10*WP)),breaks = c(1.8), colour = "#dd1c77", size = 0.8) +
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(1,5)) + 
+  labs(title= "Shrubland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_A_WP
+
+# Shrubland drought (dtsd)
+
+shrub_R_WP =  ggplot(data=dtsd, aes(date, depth)) + 
+  geom_raster(aes(fill = log10(10*WP)), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  stat_contour(aes(z = log10(10*WP)),breaks = c(4.2), colour = "black", size = 0.8) + 
+  stat_contour(aes(z = log10(10*WP)),breaks = c(1.8), colour = "#dd1c77", size = 0.8) +
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(1,5)) + 
+  labs(title= "Shrubland+Drought", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_R_WP
+
+# Grassland ambient (dtg)
+
+grass_X_WP =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = log10(10*WP)), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  stat_contour(aes(z = log10(10*WP)),breaks = c(4.2), colour = "black", size = 0.8) + 
+  stat_contour(aes(z = log10(10*WP)),breaks = c(1.8), colour = "#dd1c77", size = 0.8) +
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(1,5)) + 
+  labs(title= "Grassland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_X_WP
+
+# Grassland added (dtga)
+
+grass_A_WP =  ggplot(data=dtga, aes(date, depth)) + 
+  geom_raster(aes(fill = log10(10*WP)), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  stat_contour(aes(z = log10(10*WP)),breaks = c(4.2), colour = "black", size = 0.8) + 
+  stat_contour(aes(z = log10(10*WP)),breaks = c(1.8), colour = "#dd1c77", size = 0.8) +
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(1,5)) + 
+  labs(title= "Grassland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_A_WP
+
+# Grassland drought (dtgd)
+
+grass_R_WP =  ggplot(data=dtgd, aes(date, depth)) + 
+  geom_raster(aes(fill = log10(10*WP)), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  stat_contour(aes(z = log10(10*WP)),breaks = c(4.2), colour = "black", size = 0.8) + 
+  stat_contour(aes(z = log10(10*WP)),breaks = c(1.8), colour = "#dd1c77", size = 0.8) +
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(1,5)) + 
+  labs(title= "Grassland+Drought", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_R_WP
+
+# Plotting Total extractable water (mm) ####
+
+# Shrubland ambient (dts)
+
+shrub_X_TEW =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = TEW_mm), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(1.2,0)) + 
+  labs(title= "Shrubland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_X_TEW
+
+# Shrubland added (dtsa)
+
+shrub_A_TEW =  ggplot(data=dtsa, aes(date, depth)) + 
+  geom_raster(aes(fill = TEW_mm), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(1.2,0)) + 
+  labs(title= "Shrubland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_A_TEW
+
+# Shrubland drought (dtsd)
+
+shrub_R_TEW =  ggplot(data=dtsd, aes(date, depth)) + 
+  geom_raster(aes(fill = TEW_mm), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(1.2,0)) + 
+  labs(title= "Shrubland+Drought", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_R_TEW
+
+# Grassland ambient (dtg)
+
+grass_X_TEW =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = TEW_mm), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(1.2,0)) + 
+  labs(title= "Grassland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_X_TEW
+
+# Grassland added (dtga)
+
+grass_A_TEW =  ggplot(data=dtga, aes(date, depth)) + 
+  geom_raster(aes(fill = TEW_mm), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(1.2,0)) + 
+  labs(title= "Grassland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_A_TEW
+
+# Grassland drought (dtgd)
+
+grass_R_TEW =  ggplot(data=dtgd, aes(date, depth)) + 
+  geom_raster(aes(fill = TEW_mm), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),trans = 'reverse',limits=c(1.2,0)) + 
+  labs(title= "Grassland+Drought", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_R_TEW
+
+# Soil water deficit (mm) ####
+
+# Shrubland ambient (dts)
+
+shrub_X_SMD =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = SMD), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(-0.65,0.65)) + 
+  labs(title= "Shrubland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_X_SMD
+
+# Shrubland added (dtsa)
+
+shrub_A_SMD =  ggplot(data=dtsa, aes(date, depth)) + 
+  geom_raster(aes(fill = SMD), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(-0.65,0.65)) + 
+  labs(title= "Shrubland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_A_SMD
+
+# Shrubland drought (dtsd)
+
+shrub_R_SMD =  ggplot(data=dtsd, aes(date, depth)) + 
+  geom_raster(aes(fill = SMD), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(-0.65,0.65)) + 
+  labs(title= "Shrubland+Drought", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_R_SMD
+
+# Grassland ambient (dtg)
+
+grass_X_SMD =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = SMD), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(-0.65,0.65)) + 
+  labs(title= "Grassland+Ambient", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_X_SMD
+
+# Grassland added (dtga)
+
+grass_A_SMD =  ggplot(data=dtga, aes(date, depth)) + 
+  geom_raster(aes(fill = SMD), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(-0.65,0.65)) + 
+  labs(title= "Grassland+Added", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_A_SMD
+
+# Grassland drought (dtgd)
+
+grass_R_SMD =  ggplot(data=dtgd, aes(date, depth)) + 
+  geom_raster(aes(fill = SMD), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #geom_contour(aes(z = TEW_mm)) + 
+  scale_fill_gradientn(colours = matlab.like(100),limits=c(-0.65,0.65)) + 
+  labs(title= "Grassland+Drought", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_R_SMD
+
+# Water Extractable Difference #####
+
+# Shrubland - Grassland (TWE) ####
+
+shrub_grass = dts$TEW_mm-dtg$TEW_mm
+dts$shrub_grass <- shrub_grass
+
+grass_shrub_TEW =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = shrub_grass), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #  geom_contour(aes(z = shrub_grass)) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.65,0.45)) + # ,limits=c(-15,15)
+  labs(title= "Shrub - Grass", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_shrub_TEW 
+
+# Shrubland : added - ambient (TWE) ####
+
+added_ambient = dtsa$TEW_mm-dts$TEW_mm
+dts$added_ambient <- added_ambient
+
+shrub_a_a_TEW =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #  geom_contour(aes(z = added_ambient)) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  labs(title= "Added - Ambient(S)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_a_a_TEW 
+
+# Shrubland : drought - ambient (TWE) ####
+
+drought_ambient = dtsd$TEW_mm-dts$TEW_mm
+dts$drought_ambient <- drought_ambient
+
+shrub_d_a_TEW =  ggplot(data=dts, aes(date, depth)) + 
+  geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #  geom_contour(aes(z = drought_ambient)) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  labs(title= "Drought - Ambient(S)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+shrub_d_a_TEW 
+
+# Grassland : added - ambient (TWE) ####
+
+added_ambient = dtga$TEW_mm-dtg$TEW_mm
+dtg$added_ambient <- added_ambient
+
+grass_a_a_TEW =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #  geom_contour(aes(z = added_ambient)) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  labs(title= "Added - Ambient(G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_a_a_TEW 
+
+# Grassland : drought - ambient (TWE) ####
+
+drought_ambient = dtgd$TEW_mm-dtg$TEW_mm
+dtg$drought_ambient <- drought_ambient
+
+grass_d_a_TEW =  ggplot(data=dtg, aes(date, depth)) + 
+  geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
+  #  geom_contour(aes(z = drought_ambient)) + 
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  labs(title= "Drought - Ambient(G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
+  theme(text = element_text(size=25))
+grass_d_a_TEW 
 
 # PRECIPITATION ####
 
@@ -936,12 +1251,10 @@ Treatment = rep(c("Ambient","Added","Drought"),each=length(winput$Year)/3)
 winput = as.data.frame(cbind(winput,Treatment))
 winput = winput %>% dplyr::filter(Year < 2018)
 
-# Long-term precipitation in Loma
+# Long-term precipitation in Loma #####
 long_prec = read.csv("CCSCDR_1983_2020.csv")
 mean_P    = mean(long_prec$Rain.mm.)
-  
-# Plotting
-##################################################################################
+
 ggplot(data=winput, aes(x=as.factor(Year), y=Precipitation,group=Treatment)) +
   geom_line(aes(linetype=Treatment), size=1.2) +
   geom_point()+scale_linetype_manual(values=c("solid","twodash","dotted")) + 
@@ -950,17 +1263,14 @@ ggplot(data=winput, aes(x=as.factor(Year), y=Precipitation,group=Treatment)) +
   geom_vline(xintercept = c(4,8), linetype="dotted",color = "red", size=2.5) + 
   geom_hline(yintercept=mean_P, linetype="dashed",color = "#3182bd", size=1)
 
-##################################################################################
-# GRASS BIOMASS
-##################################################################################
+# GRASS BIOMASS #####
 
 # Calling data
-##################################################################################
 df  = read.delim("grassland_biomass.txt",dec=".")
 df1 = df %>% filter(Treat_N == "X")
 
-# Statistical analysis
-##################################################################################
+# Statistical analysis #####
+
 temp1b = df1 %>% mutate(biomass_g = biomass_g/(0.5*0.14))
 temp2b = temp1b %>% filter(Year > 2007)
 count(temp2b, "Year")
@@ -969,8 +1279,8 @@ temp2b2 = temp2b1 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X","ambient"
 temp2b3 = temp2b2 %>% mutate(Treat_W = replace(Treat_W, Treat_W == "R","drought"))
 temp2b4 = temp2b3 %>% mutate(Block = substr(Plot,4,4))
 
-# Mixed effects model
-##################################################################################
+# Mixed effects model #####
+
 library(tidyverse)
 library(lme4)
 library(Rcpp)
@@ -982,15 +1292,14 @@ fit.bio <- lmer(biomass_g ~ (Treat_W*as.factor(Year)) + (1|Block), data = temp2b
 summary(fit.bio)
 Anova(fit.bio)
 
-# Pairwise comparison
-##################################################################################
+# Pairwise comparison #####
+
 summary(glht(fit.bio,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
-# Plotting assumptions
-##################################################################################
+# Plotting assumptions #####
 
 # Save assumption plots - Constant variances
-##################################################################################
+
 pdf("plot_fit.pdf")
 plot_redres(fit.bio)
 dev.off() 
@@ -1007,59 +1316,57 @@ plot_redres(fit.bio, type = "pearson_cond") +
 dev.off()
 
 # Save assumption plots - Normality of errors
-##################################################################################
+
 pdf("plot_fit_N.pdf")
 plot_resqq(fit.bio)
 dev.off() 
 
-# Preliminary calculations
-##################################################################################
+# Preliminary calculations #####
+
 temp3b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(mean_bio = mean(biomass_g))
 temp4b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g))
 temp4b = temp2b3 %>% group_by(Year,Treat_W) %>% summarise(sd_bio = sd(biomass_g))
 temp5b = temp3b  %>% group_by(Treat_W) %>% summarise(mean_mean = mean(mean_bio))
 temp6b = temp3b  %>% group_by(Treat_W) %>% summarise(std_mean = sd(mean_bio))
 
-# Plotting
-##################################################################################
+# Plotting #####
+
 ggplot(data=temp3b, aes(x=Year, y=mean_bio, fill=Treat_W)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
   geom_errorbar(aes(ymin=temp3b$mean_bio-temp4b$sd_bio, ymax=temp3b$mean_bio+temp4b$sd_bio), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("$Biomass (g/m^2)$")) + theme(legend.position="top",text = element_text(size=25)) + 
   scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
 
-##################################################################################
-# SHRUB BIOMASS
-##################################################################################
+# SHRUB BIOMASS #####
 
 # Calling data
-##################################################################################
+
 df  = read.delim("shrubland_species_comp.txt",dec=".")
 
-# Pre processing of the data
-##################################################################################
+# Pre processing of the data #####
+
 df1 = df %>% filter(Area == "PP"&Treat_N == "X")
 
 # Replace all NA and < 0 to zero
-##################################################################################
+
 df1 = replace(df1, df1=="<1", as.numeric(0.0))
 df1 = replace(df1, df1=="<0.5", as.numeric(0.0))
 df1 = replace(df1, df1=="", as.numeric(0.0))
 df1 = replace(df1, is.na(df1), as.numeric(0.0))
 
-# Normalize the values
-##################################################################################
+# Normalize the values 
+
 temp   = subset(df1,select = bare.ground:Total)
 temp1  = as.data.frame(apply(temp, 2, as.numeric)) 
 temp2  = temp1*100/temp1$Total
 df_nor = cbind((subset(df1,select = Plot_code:Area)),temp2)
 
 # Mean values per cover type
-##################################################################################
+
 shrub_mean = df_nor %>% group_by(Year,Treat_W) %>% summarise_if(is.numeric, mean, na.rm = TRUE)
   
-# Assemble the graph for plotting
-##################################################################################
+# Assemble the graph for plotting #####
+
 temp3 = NULL
 temp4 = NULL
 temp5 = 2009:2015
@@ -1075,8 +1382,8 @@ headings = rep(temp6,each=length(temp5))
 year     = rep(temp5, times=length(df_nor)-6)
 final    = as.data.frame(cbind(year,headings,temp3,temp4))
 
-# Select the n most abundant plant covers per year
-##################################################################################
+# Select the n most abundant plant covers per year #####
+
 # The first temp7 select the values
 # of each year including all the treatments, the row names function erases the name of the
 # rows generated when using the subset function, temp8 file erase the row total because 
@@ -1208,8 +1515,8 @@ final_A      = rbind(m_2009_A,m_2010_A,m_2011_A,m_2012_A,m_2013_A,m_2014_A,m_201
 final_R      = rbind(m_2009_R,m_2010_R,m_2011_R,m_2012_R,m_2013_R,m_2014_R,m_2015_R)
 final_X      = rbind(m_2009_X,m_2010_X,m_2011_X,m_2012_X,m_2013_X,m_2014_X,m_2015_X)
 
-# Select the soil covers to show in the graph
-##################################################################################
+# Select the soil covers to show in the graph #####
+
 final_A = final_A %>% filter(headings=="LOSC" | headings=="ARCA" | headings=="bare.ground" |
                              headings=="BRMA" | headings=="LECO" | headings=="EUCH" | 
                              headings=="LUBI" | headings=="litter" | headings=="MALA" |
@@ -1223,8 +1530,8 @@ final_X = final_X %>% filter(headings=="LOSC" | headings=="ARCA" | headings=="ba
                                headings=="LUBI" | headings=="litter" | headings=="MALA" |
                                headings=="SAME" | headings=="litter" | headings=="NALE")
 
-# Change the name of the plant species
-##################################################################################
+# Change the name of the plant species #####
+
 # ADDED
 final_A_new = final_A %>% mutate(headings = replace(headings,headings=="BRMA","Bromus madritensis"))
 final_A_new = final_A_new %>% mutate(headings = replace(headings,headings=="LUBI","Lupinus bicolor"))
@@ -1269,8 +1576,8 @@ final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="ARCA
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="bare.ground","Bare ground"))
 final_X_new = final_X_new %>% mutate(headings = replace(headings,headings=="EUCH","Eucrypta chrysanthemifolia"))
 
-# Plotting
-##################################################################################
+# Plotting Shrubland covers #####
+
 colnames(final_A_new)[3:4] = c("Mean","STD")
 colnames(final_R_new)[3:4] = c("Mean","STD")
 colnames(final_X_new)[3:4] = c("Mean","STD")
@@ -1295,8 +1602,8 @@ comp_shrub = ggplot(dataT, aes(fill=dataT[,3], y=dataT[,4], x=dataT[,2])) +
       scale_fill_brewer(palette = "Paired",name = "")
 comp_shrub
 
-# Only vegetation covers
-##################################################################################
+# Only vegetation covers #####
+
 dataT_1 = dataT %>% filter(Cover != "Bare ground")
 dataT_1 = dataT_1 %>% filter(Cover != "Litter")
  
@@ -1315,8 +1622,8 @@ comp_shrub = ggplot(dataT_1,
   geom_bar(stat="identity")
 comp_shrub
 
-# Other covers
-##################################################################################
+# Other covers #####
+
 dataT_2a = dataT %>% filter(Cover == c("Bare ground"))
 dataT_2b = dataT %>% filter(Cover == c("Litter"))
 dataT_2 = as.data.frame(rbind(dataT_2a,dataT_2b))
@@ -1334,12 +1641,11 @@ comp_shrub = ggplot(dataT_4, aes(fill=Cover, y=Percentage, x=Year)) +
   scale_fill_manual(values=c("#fc8d59", "#d8b365", "#91cf60"),name = "")
 comp_shrub
 
-# PERMANOVA Analysis
-##################################################################################
+# PERMANOVA Analysis #####
+
 # https://rstudio-pubs-static.s3.amazonaws.com/246172_1930ddfb5f064b2bab54b11016ab407e.html
 
-# Dominant species
-##################################################################################
+# Dominant species #####
 
 df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "A", "added"))
 df_nor <- df_nor %>% mutate(Treat_W = replace(Treat_W, Treat_W == "X", "ambient"))
@@ -1377,8 +1683,8 @@ library(EcolUtils)
 adonispair_treat <- adonis.pair(distance, as.factor(df_nor2$Treat_W), nper = 1000, corr.method = "fdr")
 adonispair_year  <- adonis.pair(distance, as.factor(df_nor2$Year), nper = 1000, corr.method = "fdr")
 
-# All species
-##################################################################################
+# All species #####
+
 df_nor2 <- df_nor1 %>% dplyr::select(-bare.ground,-litter,-Code,-Year,-Block,-Treat_W) # 40 zeros
 colSums(df_nor2)
 df_nor2 <- df_nor2 %>% dplyr::select(-AMME,-AVFA,-BLCR,-BRADIS,-CAAF,-CABI,-CASP,
@@ -1416,8 +1722,7 @@ write.csv(adonispair_treat, "perma_shrub_treatment.csv", row.names=FALSE, quote=
 adonispair_year  <- adonis.pair(distance, as.factor(df_nor1$Year), nper = 1000, corr.method = "fdr")
 write.csv(adonispair_year, "perma_shrub_year.csv", row.names=FALSE, quote=FALSE) 
 
-# Friedman statistics
-##################################################################################
+# Friedman statistics #####
 
 # "BRMA","Bromus madritensis"
 BRMA = with(df_nor,friedman(Year,Treat_W,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))

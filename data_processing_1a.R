@@ -25,7 +25,7 @@ library(multcomp)
 library(lsmeans)
 # devtools::install_github("goodekat/redres")
 library(redres)
-
+library(pals) # for more colors
 
 # TEXTURE ANALYSIS ####
 
@@ -659,8 +659,6 @@ grass_R_Fig
 
 # Shrubland - Grassland (Ambient) ####
 
-library(pals) # for more colors
-
 shrub_grass = dts$new_mean-dtg$new_mean
 dts$shrub_grass <- shrub_grass
 
@@ -1236,88 +1234,148 @@ FullPrecipLoma  = FullPrecipLoma %>% mutate(dec_date = decimal_date(Day))
 FullPrecipLoma1 = FullPrecipLoma %>% filter(dec_date > 2012.061)
 FullPrecipLoma1 = FullPrecipLoma1 %>% filter(dec_date < 2015.121)
 
-# 2011-2012
+# 2011-2012 ####
 time_1    = data_tot %>% filter(date <= FullPrecipLoma1$dec_date[30])
-time_1_L1 = time_1 %>% filter(depth < -150) %>% group_by(plant,treatment) %>% 
+time_1_L1 = time_1 %>% filter(depth < -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
+time_1_L1 = time_1_L1 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
 time_1_L1$year  = rep(as.numeric(2012), len = nrow(time_1_L1))
 time_1_L1$layer = rep(as.factor("150-200"), len = nrow(time_1_L1))
-time_1_L2 = time_1 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment) %>% 
+time_1_L2 = time_1 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
+time_1_L2 = time_1_L2 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
 time_1_L2$year  = rep(as.numeric(2012), len = nrow(time_1_L1))
 time_1_L2$layer = rep(as.factor("100-150"), len = nrow(time_1_L1))
-time_1_L3 = time_1 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment) %>% 
+time_1_L3 = time_1 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
+time_1_L3 = time_1_L3 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
 time_1_L3$year  = rep(as.numeric(2012), len = nrow(time_1_L1))
 time_1_L3$layer = rep(as.factor("50-100"), len = nrow(time_1_L1))
-time_1_L4 = time_1 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment) %>% 
+time_1_L4 = time_1 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
+time_1_L4 = time_1_L4 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
 time_1_L4$year  = rep(as.numeric(2012), len = nrow(time_1_L1))
 time_1_L4$layer = rep(as.factor("0-50"), len = nrow(time_1_L1))
 temp1 = as.data.frame(rbind(time_1_L1,time_1_L2,time_1_L3,time_1_L4))
 
-# 2012-2013
+# 2012-2013 ####
 time_2    = data_tot %>% filter(date <= FullPrecipLoma1$dec_date[94]&date > FullPrecipLoma1$dec_date[30])
-time_2_L1 = time_2 %>% filter(depth < -150) %>% group_by(plant,treatment) %>% 
+
+time_2_L1 = time_2 %>% filter(depth < -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_2_L1$year  = rep(as.numeric(2013), len = nrow(time_1_L1))
-time_2_L1$layer = rep(as.factor("150-200"), len = nrow(time_1_L1))
-time_2_L2 = time_2 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment) %>% 
+time_2_L1 = time_2_L1 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_2_L1$year  = rep(as.numeric(2013), len = nrow(time_2_L1))
+time_2_L1$layer = rep(as.factor("150-200"), len = nrow(time_2_L1))
+
+time_2_L2 = time_2 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_2_L2$year  = rep(as.numeric(2013), len = nrow(time_1_L1))
-time_2_L2$layer = rep(as.factor("100-150"), len = nrow(time_1_L1))
-time_2_L3 = time_2 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment) %>% 
+time_2_L2 = time_2_L2 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_2_L2$year  = rep(as.numeric(2013), len = nrow(time_2_L2))
+time_2_L2$layer = rep(as.factor("100-150"), len = nrow(time_2_L2))
+
+time_2_L3 = time_2 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_2_L3$year  = rep(as.numeric(2013), len = nrow(time_1_L1))
-time_2_L3$layer = rep(as.factor("50-100"), len = nrow(time_1_L1))
-time_2_L4 = time_2 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment) %>% 
+time_2_L3 = time_2_L3 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_2_L3$year  = rep(as.numeric(2013), len = nrow(time_2_L3))
+time_2_L3$layer = rep(as.factor("50-100"), len = nrow(time_2_L3))
+
+time_2_L4 = time_2 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_2_L4$year  = rep(as.numeric(2013), len = nrow(time_1_L1))
-time_2_L4$layer = rep(as.factor("0-50"), len = nrow(time_1_L1))
+time_2_L4 = time_2_L4 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_2_L4$year  = rep(as.numeric(2013), len = nrow(time_2_L4))
+time_2_L4$layer = rep(as.factor("0-50"), len = nrow(time_2_L4))
 temp2 = as.data.frame(rbind(time_2_L1,time_2_L2,time_2_L3,time_2_L4))
 
-# 2013-2014
+# 2013-2014 ####
 time_3    = data_tot %>% filter(date <= FullPrecipLoma1$dec_date[132]&date > FullPrecipLoma1$dec_date[94])
-time_3_L1 = time_3 %>% filter(depth < -150) %>% group_by(plant,treatment) %>% 
+
+time_3_L1 = time_3 %>% filter(depth < -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_3_L1$year  = rep(as.numeric(2014), len = nrow(time_1_L1))
-time_3_L1$layer = rep(as.factor("150-200"), len = nrow(time_1_L1))
-time_3_L2 = time_3 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment) %>% 
+time_3_L1 = time_3_L1 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_3_L1$year  = rep(as.numeric(2014), len = nrow(time_3_L1))
+time_3_L1$layer = rep(as.factor("150-200"), len = nrow(time_3_L1))
+
+time_3_L2 = time_3 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_3_L2$year  = rep(as.numeric(2014), len = nrow(time_1_L1))
-time_3_L2$layer = rep(as.factor("100-150"), len = nrow(time_1_L1))
-time_3_L3 = time_3 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment) %>% 
+time_3_L2 = time_3_L2 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_3_L2$year  = rep(as.numeric(2014), len = nrow(time_3_L2))
+time_3_L2$layer = rep(as.factor("100-150"), len = nrow(time_3_L2))
+
+time_3_L3 = time_3 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_3_L3$year  = rep(as.numeric(2014), len = nrow(time_1_L1))
-time_3_L3$layer = rep(as.factor("50-100"), len = nrow(time_1_L1))
-time_3_L4 = time_3 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment) %>% 
+time_3_L3 = time_3_L3 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_3_L3$year  = rep(as.numeric(2014), len = nrow(time_3_L3))
+time_3_L3$layer = rep(as.factor("50-100"), len = nrow(time_3_L3))
+
+time_3_L4 = time_3 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_3_L4$year  = rep(as.numeric(2014), len = nrow(time_1_L1))
-time_3_L4$layer = rep(as.factor("0-50"), len = nrow(time_1_L1))
+time_3_L4 = time_3_L4 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_3_L4$year  = rep(as.numeric(2014), len = nrow(time_3_L4))
+time_3_L4$layer = rep(as.factor("0-50"), len = nrow(time_3_L4))
 temp3 = as.data.frame(rbind(time_3_L1,time_3_L2,time_3_L3,time_3_L4))
 
-# 2014-2015
+# 2014-2015 ####
 time_4    = data_tot %>% filter(date <= data_tot$date[293400]&date > FullPrecipLoma1$dec_date[132])
-time_4_L1 = time_4 %>% filter(depth < -150) %>% group_by(plant,treatment) %>% 
+
+time_4_L1 = time_4 %>% filter(depth < -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_4_L1$year  = rep(as.numeric(2015), len = nrow(time_1_L1))
-time_4_L1$layer = rep(as.factor("150-200"), len = nrow(time_1_L1))
-time_4_L2 = time_4 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment) %>% 
+time_4_L1 = time_4_L1 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_4_L1$year  = rep(as.numeric(2015), len = nrow(time_4_L1))
+time_4_L1$layer = rep(as.factor("150-200"), len = nrow(time_4_L1))
+
+time_4_L2 = time_4 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_4_L2$year  = rep(as.numeric(2015), len = nrow(time_1_L1))
-time_4_L2$layer = rep(as.factor("100-150"), len = nrow(time_1_L1))
-time_4_L3 = time_4 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment) %>% 
+time_4_L2 = time_4_L2 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_4_L2$year  = rep(as.numeric(2015), len = nrow(time_4_L2))
+time_4_L2$layer = rep(as.factor("100-150"), len = nrow(time_4_L2))
+
+time_4_L3 = time_4 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_4_L3$year  = rep(as.numeric(2015), len = nrow(time_1_L1))
-time_4_L3$layer = rep(as.factor("50-100"), len = nrow(time_1_L1))
-time_4_L4 = time_4 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment) %>% 
+time_4_L3 = time_4_L3 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_4_L3$year  = rep(as.numeric(2015), len = nrow(time_4_L3))
+time_4_L3$layer = rep(as.factor("50-100"), len = nrow(time_4_L3))
+
+time_4_L4 = time_4 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,treatment,date) %>% 
   summarise(sum(SMD),sum(TEW_mm))
-time_4_L4$year  = rep(as.numeric(2015), len = nrow(time_1_L1))
-time_4_L4$layer = rep(as.factor("0-50"), len = nrow(time_1_L1))
+time_4_L4 = time_4_L4 %>% group_by(plant,treatment) %>% 
+  summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`)) %>% 
+  mutate(diff_tew = `max(\`sum(TEW_mm)\`)`-`min(\`sum(TEW_mm)\`)`)
+time_4_L4$year  = rep(as.numeric(2015), len = nrow(time_4_L4))
+time_4_L4$layer = rep(as.factor("0-50"), len = nrow(time_4_L4))
 temp4 = as.data.frame(rbind(time_4_L1,time_4_L2,time_4_L3,time_4_L4))
 
 data_tot1 = as.data.frame(rbind(temp1,temp2,temp3,temp4))
-colnames(data_tot1) = c("plant","treatment","SMD","TEW","year","layer")
+colnames(data_tot1) = c("plant","treatment","max_TEW","min_TEW","diff_TEW","year","layer")
 data_tot1 = data_tot1 %>% mutate(Rain = case_when(data_tot1$year==2012&data_tot1$treatment=="Added"~FullPrecipLoma1$CumAdded[30],
                                                   data_tot1$year==2012&data_tot1$treatment=="Ambient"~FullPrecipLoma1$CumAmbient[30],
                                                   data_tot1$year==2012&data_tot1$treatment=="Drought"~FullPrecipLoma1$CumReduced[30],
@@ -1331,8 +1389,8 @@ data_tot1 = data_tot1 %>% mutate(Rain = case_when(data_tot1$year==2012&data_tot1
                                                   data_tot1$year==2015&data_tot1$treatment=="Ambient"~FullPrecipLoma1$CumAmbient[156],
                                                   data_tot1$year==2015&data_tot1$treatment=="Drought"~FullPrecipLoma1$CumReduced[156]))
 
-ggplot() + geom_bar(data=data_tot1,aes(x=year, y=Rain/4),stat="identity", fill="#2b8cbe",colour="#2b8cbe", width=0.6) + 
-  geom_line(data=data_tot1,aes(x=year,y=TEW,color=layer), linewidth = 0.8) +
+ggplot() + geom_bar(data=data_tot1,aes(x=year, y=Rain/(4*20)),stat="identity", fill="#2b8cbe",colour="#2b8cbe", width=0.6) + 
+  geom_line(data=data_tot1,aes(x=year,y=diff_TEW,color=layer), linewidth = 0.8) + scale_y_continuous(sec.axis = sec_axis(~ . * 20),name="mm") + 
   facet_grid(plant~treatment) + theme_bw() + labs(x="", y = "mm") + 
   theme(text = element_text(size=20))
 

@@ -761,26 +761,44 @@ gras_tex <- mean_tex %>% filter(plant=="G")
 colnames(gras_tex)[3] ="clay"
 colnames(gras_tex)[4] ="sand"
 
+# Texture Interpolation ####
+
+shru_tex = shru_tex %>% mutate(depth_1 = depth*-1)
+y_clay   = approx(shru_tex$depth_1,shru_tex$clay,unique(dts$depth),method="linear")
+y_sand   = approx(shru_tex$depth_1,shru_tex$sand,unique(dts$depth),method="linear")
+shru_tex_1 = as.data.frame(cbind(y_clay$x,y_clay$y,y_sand$y))
+colnames(shru_tex_1) = c("depth","clay","sand")
+
+gras_tex = gras_tex %>% mutate(depth_1 = depth*-1)
+y_clay   = approx(gras_tex$depth_1,gras_tex$clay,unique(dts$depth),method="linear")
+y_sand   = approx(gras_tex$depth_1,gras_tex$sand,unique(dts$depth),method="linear")
+gras_tex_1 = as.data.frame(cbind(y_clay$x,y_clay$y,y_sand$y))
+colnames(gras_tex_1) = c("depth","clay","sand")
+test = as.data.frame(unique(dts$date))
+
 # Shrubland ambient ####
 
-dts  <- dts %>% mutate(clay_c = case_when(dts$depth>-22.5~shru_tex$clay[2],
-                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$clay[3],
-                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$clay[4],
-                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$clay[5],
-                                          dts$depth<=-150~shru_tex$clay[6]))
+#dts  <- dts %>% mutate(clay_c = case_when(dts$depth>-22.5~shru_tex$clay[2],
+#                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$clay[3],
+#                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$clay[4],
+#                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$clay[5],
+#                                          dts$depth<=-150~shru_tex$clay[6]))
 
-dts  <- dts %>% mutate(sand_c = case_when(dts$depth>-22.5~shru_tex$sand[2],
-                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$sand[3],
-                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$sand[4],
-                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$sand[5],
-                                          dts$depth<=-150~shru_tex$sand[6]))
+#dts  <- dts %>% mutate(sand_c = case_when(dts$depth>-22.5~shru_tex$sand[2],
+#                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$sand[3],
+#                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$sand[4],
+#                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$sand[5],
+#                                          dts$depth<=-150~shru_tex$sand[6]))
+
+dts  <- dts %>% mutate(clay_c=rep(shru_tex_1$clay, each = nrow(test)))
+dts  <- dts %>% mutate(sand_c=rep(shru_tex_1$sand, each = nrow(test)))
 
 dts  <- dts %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
                                  (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
 dts  <- dts %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dts  <- dts %>% mutate(WP = A*(new_mean/100)^B)
 dts  <- dts %>% mutate(Wilt = 100*(1500/A)^(1/B))
-dts  <- dts %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water [mm]
+dts  <- dts %>% mutate(TEW = 10*(new_mean/100-Wilt/100)) # total extractable soil water [mm]
 dts  <- dts %>% mutate(TEW_mm = case_when(dts$TEW<0~0,
                                           dts$TEW>=0~dts$TEW))
 dts  <- dts %>% mutate(FC = 100*(33/A)^(1/B))
@@ -792,24 +810,27 @@ dts  <- dts %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Shrubland added ####
 
-dtsa  <- dtsa %>% mutate(clay_c = case_when(dtsa$depth>-22.5~shru_tex$clay[2],
-                                            dtsa$depth<=-22.5&dtsa$depth>-37.5~shru_tex$clay[3],
-                                            dtsa$depth<=-37.5&dtsa$depth>-72.5~shru_tex$clay[4],
-                                            dtsa$depth<=-72.5&dtsa$depth>-150~shru_tex$clay[5],
-                                            dtsa$depth<=-150~shru_tex$clay[6]))
+#dtsa  <- dtsa %>% mutate(clay_c = case_when(dtsa$depth>-22.5~shru_tex$clay[2],
+#                                            dtsa$depth<=-22.5&dtsa$depth>-37.5~shru_tex$clay[3],
+#                                            dtsa$depth<=-37.5&dtsa$depth>-72.5~shru_tex$clay[4],
+#                                            dtsa$depth<=-72.5&dtsa$depth>-150~shru_tex$clay[5],
+#                                            dtsa$depth<=-150~shru_tex$clay[6]))
 
-dtsa  <- dtsa %>% mutate(sand_c = case_when(dtsa$depth>-22.5~shru_tex$sand[2],
-                                            dtsa$depth<=-22.5&dtsa$depth>-37.5~shru_tex$sand[3],
-                                            dtsa$depth<=-37.5&dtsa$depth>-72.5~shru_tex$sand[4],
-                                            dtsa$depth<=-72.5&dtsa$depth>-150~shru_tex$sand[5],
-                                            dtsa$depth<=-150~shru_tex$sand[6]))
+#dtsa  <- dtsa %>% mutate(sand_c = case_when(dtsa$depth>-22.5~shru_tex$sand[2],
+#                                            dtsa$depth<=-22.5&dtsa$depth>-37.5~shru_tex$sand[3],
+#                                            dtsa$depth<=-37.5&dtsa$depth>-72.5~shru_tex$sand[4],
+#                                            dtsa$depth<=-72.5&dtsa$depth>-150~shru_tex$sand[5],
+#                                            dtsa$depth<=-150~shru_tex$sand[6]))
+
+dtsa  <- dtsa %>% mutate(clay_c=rep(shru_tex_1$clay, each = nrow(test)))
+dtsa  <- dtsa %>% mutate(sand_c=rep(shru_tex_1$sand, each = nrow(test)))
 
 dtsa  <- dtsa %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
                                    (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
 dtsa  <- dtsa %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dtsa  <- dtsa %>% mutate(WP = A*(new_mean/100)^B)
 dtsa  <- dtsa %>% mutate(Wilt = 100*(1500/A)^(1/B))
-dtsa  <- dtsa %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtsa  <- dtsa %>% mutate(TEW = 10*(new_mean/100-Wilt/100)) # total extractable soil water
 dtsa  <- dtsa %>% mutate(TEW_mm = case_when(dtsa$TEW<0~0,
                                             dtsa$TEW>=0~dtsa$TEW))
 dtsa  <- dtsa %>% mutate(FC = 100*(33/A)^(1/B))
@@ -821,24 +842,27 @@ dtsa  <- dtsa %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Shrubland drought ####
 
-dtsd  <- dtsd %>% mutate(clay_c = case_when(dtsd$depth>-22.5~shru_tex$clay[2],
-                                            dtsd$depth<=-22.5&dtsd$depth>-37.5~shru_tex$clay[3],
-                                            dtsd$depth<=-37.5&dtsd$depth>-72.5~shru_tex$clay[4],
-                                            dtsd$depth<=-72.5&dtsd$depth>-150~shru_tex$clay[5],
-                                            dtsd$depth<=-150~shru_tex$clay[6]))
+#dtsd  <- dtsd %>% mutate(clay_c = case_when(dtsd$depth>-22.5~shru_tex$clay[2],
+#                                            dtsd$depth<=-22.5&dtsd$depth>-37.5~shru_tex$clay[3],
+#                                            dtsd$depth<=-37.5&dtsd$depth>-72.5~shru_tex$clay[4],
+#                                            dtsd$depth<=-72.5&dtsd$depth>-150~shru_tex$clay[5],
+#                                            dtsd$depth<=-150~shru_tex$clay[6]))
 
-dtsd  <- dtsd %>% mutate(sand_c = case_when(dtsd$depth>-22.5~shru_tex$sand[2],
-                                            dtsd$depth<=-22.5&dtsd$depth>-37.5~shru_tex$sand[3],
-                                            dtsd$depth<=-37.5&dtsd$depth>-72.5~shru_tex$sand[4],
-                                            dtsd$depth<=-72.5&dtsd$depth>-150~shru_tex$sand[5],
-                                            dtsd$depth<=-150~shru_tex$sand[6]))
+#dtsd  <- dtsd %>% mutate(sand_c = case_when(dtsd$depth>-22.5~shru_tex$sand[2],
+#                                            dtsd$depth<=-22.5&dtsd$depth>-37.5~shru_tex$sand[3],
+#                                            dtsd$depth<=-37.5&dtsd$depth>-72.5~shru_tex$sand[4],
+#                                            dtsd$depth<=-72.5&dtsd$depth>-150~shru_tex$sand[5],
+#                                            dtsd$depth<=-150~shru_tex$sand[6]))
+
+dtsd  <- dtsd %>% mutate(clay_c=rep(shru_tex_1$clay, each = nrow(test)))
+dtsd  <- dtsd %>% mutate(sand_c=rep(shru_tex_1$sand, each = nrow(test)))
 
 dtsd  <- dtsd %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
                                    (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
 dtsd  <- dtsd %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dtsd  <- dtsd %>% mutate(WP = A*(new_mean/100)^B)
 dtsd  <- dtsd %>% mutate(Wilt = 100*(1500/A)^(1/B))
-dtsd  <- dtsd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtsd  <- dtsd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)) # total extractable soil water
 dtsd  <- dtsd %>% mutate(TEW_mm = case_when(dtsd$TEW<0~0,
                                             dtsd$TEW>=0~dtsd$TEW))
 dtsd  <- dtsd %>% mutate(FC = 100*(33/A)^(1/B))
@@ -850,30 +874,33 @@ dtsd  <- dtsd %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Grassland ambient ####
 
-dtg  <- dtg %>% mutate(clay_c = case_when(dtg$depth>-22.5~gras_tex$clay[2],
-                                          dtg$depth<=-22.5&dtg$depth>-37.5~gras_tex$clay[3],
-                                          dtg$depth<=-37.5&dtg$depth>-72.5~gras_tex$clay[4],
-                                          dtg$depth<=-72.5&dtg$depth>-112.5~gras_tex$clay[5],
-                                          dtg$depth<=-112.5&dtg$depth>-137.5~gras_tex$clay[6],
-                                          dtg$depth<=-137.5&dtg$depth>-162.5~gras_tex$clay[7],
-                                          dtg$depth<=-162.5&dtg$depth>-187.5~gras_tex$clay[8],
-                                          dtg$depth<=-187.5~gras_tex$clay[9]))
+#dtg  <- dtg %>% mutate(clay_c = case_when(dtg$depth>-22.5~gras_tex$clay[2],
+#                                          dtg$depth<=-22.5&dtg$depth>-37.5~gras_tex$clay[3],
+#                                          dtg$depth<=-37.5&dtg$depth>-72.5~gras_tex$clay[4],
+#                                          dtg$depth<=-72.5&dtg$depth>-112.5~gras_tex$clay[5],
+#                                          dtg$depth<=-112.5&dtg$depth>-137.5~gras_tex$clay[6],
+#                                          dtg$depth<=-137.5&dtg$depth>-162.5~gras_tex$clay[7],
+#                                          dtg$depth<=-162.5&dtg$depth>-187.5~gras_tex$clay[8],
+#                                          dtg$depth<=-187.5~gras_tex$clay[9]))
 
-dtg  <- dtg %>% mutate(sand_c = case_when(dtg$depth>-22.5~gras_tex$sand[2],
-                                          dtg$depth<=-22.5&dtg$depth>-37.5~gras_tex$sand[3],
-                                          dtg$depth<=-37.5&dtg$depth>-72.5~gras_tex$sand[4],
-                                          dtg$depth<=-72.5&dtg$depth>-112.5~gras_tex$sand[5],
-                                          dtg$depth<=-112.5&dtg$depth>-137.5~gras_tex$sand[6],
-                                          dtg$depth<=-137.5&dtg$depth>-162.5~gras_tex$sand[7],
-                                          dtg$depth<=-162.5&dtg$depth>-187.5~gras_tex$sand[8],
-                                          dtg$depth<=-187.5~gras_tex$sand[9]))
+#dtg  <- dtg %>% mutate(sand_c = case_when(dtg$depth>-22.5~gras_tex$sand[2],
+#                                          dtg$depth<=-22.5&dtg$depth>-37.5~gras_tex$sand[3],
+#                                          dtg$depth<=-37.5&dtg$depth>-72.5~gras_tex$sand[4],
+#                                          dtg$depth<=-72.5&dtg$depth>-112.5~gras_tex$sand[5],
+#                                          dtg$depth<=-112.5&dtg$depth>-137.5~gras_tex$sand[6],
+#                                          dtg$depth<=-137.5&dtg$depth>-162.5~gras_tex$sand[7],
+#                                          dtg$depth<=-162.5&dtg$depth>-187.5~gras_tex$sand[8],
+#                                          dtg$depth<=-187.5~gras_tex$sand[9]))
+
+dtg  <- dtg %>% mutate(clay_c=rep(gras_tex_1$clay, each = nrow(test)))
+dtg  <- dtg %>% mutate(sand_c=rep(gras_tex_1$sand, each = nrow(test)))
 
 dtg  <- dtg %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
                                  (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
 dtg  <- dtg %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dtg  <- dtg %>% mutate(WP = A*(new_mean/100)^B)
 dtg  <- dtg %>% mutate(Wilt = 100*(1500/A)^(1/B))
-dtg  <- dtg %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtg  <- dtg %>% mutate(TEW = 10*(new_mean/100-Wilt/100)) # total extractable soil water
 dtg  <- dtg %>% mutate(TEW_mm = case_when(dtg$TEW<0~0,
                                           dtg$TEW>=0~dtg$TEW))
 dtg  <- dtg %>% mutate(FC = 100*(33/A)^(1/B))
@@ -885,30 +912,33 @@ dtg  <- dtg %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Grassland added ####
 
-dtga  <- dtga %>% mutate(clay_c = case_when(dtga$depth>-22.5~gras_tex$clay[2],
-                                            dtga$depth<=-22.5&dtga$depth>-37.5~gras_tex$clay[3],
-                                            dtga$depth<=-37.5&dtga$depth>-72.5~gras_tex$clay[4],
-                                            dtga$depth<=-72.5&dtga$depth>-112.5~gras_tex$clay[5],
-                                            dtga$depth<=-112.5&dtga$depth>-137.5~gras_tex$clay[6],
-                                            dtga$depth<=-137.5&dtga$depth>-162.5~gras_tex$clay[7],
-                                            dtga$depth<=-162.5&dtga$depth>-187.5~gras_tex$clay[8],
-                                            dtga$depth<=-187.5~gras_tex$clay[9]))
+#dtga  <- dtga %>% mutate(clay_c = case_when(dtga$depth>-22.5~gras_tex$clay[2],
+#                                            dtga$depth<=-22.5&dtga$depth>-37.5~gras_tex$clay[3],
+#                                            dtga$depth<=-37.5&dtga$depth>-72.5~gras_tex$clay[4],
+#                                            dtga$depth<=-72.5&dtga$depth>-112.5~gras_tex$clay[5],
+#                                            dtga$depth<=-112.5&dtga$depth>-137.5~gras_tex$clay[6],
+#                                            dtga$depth<=-137.5&dtga$depth>-162.5~gras_tex$clay[7],
+#                                            dtga$depth<=-162.5&dtga$depth>-187.5~gras_tex$clay[8],
+#                                            dtga$depth<=-187.5~gras_tex$clay[9]))
 
-dtga  <- dtga %>% mutate(sand_c = case_when(dtga$depth>-22.5~gras_tex$sand[2],
-                                            dtga$depth<=-22.5&dtga$depth>-37.5~gras_tex$sand[3],
-                                            dtga$depth<=-37.5&dtga$depth>-72.5~gras_tex$sand[4],
-                                            dtga$depth<=-72.5&dtga$depth>-112.5~gras_tex$sand[5],
-                                            dtga$depth<=-112.5&dtga$depth>-137.5~gras_tex$sand[6],
-                                            dtga$depth<=-137.5&dtga$depth>-162.5~gras_tex$sand[7],
-                                            dtga$depth<=-162.5&dtga$depth>-187.5~gras_tex$sand[8],
-                                            dtga$depth<=-187.5~gras_tex$sand[9]))
+#dtga  <- dtga %>% mutate(sand_c = case_when(dtga$depth>-22.5~gras_tex$sand[2],
+#                                            dtga$depth<=-22.5&dtga$depth>-37.5~gras_tex$sand[3],
+#                                            dtga$depth<=-37.5&dtga$depth>-72.5~gras_tex$sand[4],
+#                                            dtga$depth<=-72.5&dtga$depth>-112.5~gras_tex$sand[5],
+#                                            dtga$depth<=-112.5&dtga$depth>-137.5~gras_tex$sand[6],
+#                                            dtga$depth<=-137.5&dtga$depth>-162.5~gras_tex$sand[7],
+#                                            dtga$depth<=-162.5&dtga$depth>-187.5~gras_tex$sand[8],
+#                                            dtga$depth<=-187.5~gras_tex$sand[9]))
+
+dtga  <- dtga %>% mutate(clay_c=rep(gras_tex_1$clay, each = nrow(test)))
+dtga  <- dtga %>% mutate(sand_c=rep(gras_tex_1$sand, each = nrow(test)))
 
 dtga  <- dtga %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
                                    (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
 dtga  <- dtga %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dtga  <- dtga %>% mutate(WP = A*(new_mean/100)^B)
 dtga  <- dtga %>% mutate(Wilt = 100*(1500/A)^(1/B))
-dtga  <- dtga %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtga  <- dtga %>% mutate(TEW = 10*(new_mean/100-Wilt/100)) # total extractable soil water
 dtga  <- dtga %>% mutate(TEW_mm = case_when(dtga$TEW<0~0,
                                             dtga$TEW>=0~dtga$TEW))
 dtga  <- dtga %>% mutate(FC = 100*(33/A)^(1/B))
@@ -920,30 +950,33 @@ dtga  <- dtga %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 
 # Grassland drought ####
 
-dtgd  <- dtgd %>% mutate(clay_c = case_when(dtgd$depth>-22.5~gras_tex$clay[2],
-                                            dtgd$depth<=-22.5&dtgd$depth>-37.5~gras_tex$clay[3],
-                                            dtgd$depth<=-37.5&dtgd$depth>-72.5~gras_tex$clay[4],
-                                            dtgd$depth<=-72.5&dtgd$depth>-112.5~gras_tex$clay[5],
-                                            dtgd$depth<=-112.5&dtgd$depth>-137.5~gras_tex$clay[6],
-                                            dtgd$depth<=-137.5&dtgd$depth>-162.5~gras_tex$clay[7],
-                                            dtgd$depth<=-162.5&dtgd$depth>-187.5~gras_tex$clay[8],
-                                            dtgd$depth<=-187.5~gras_tex$clay[9]))
+#dtgd  <- dtgd %>% mutate(clay_c = case_when(dtgd$depth>-22.5~gras_tex$clay[2],
+#                                            dtgd$depth<=-22.5&dtgd$depth>-37.5~gras_tex$clay[3],
+#                                            dtgd$depth<=-37.5&dtgd$depth>-72.5~gras_tex$clay[4],
+#                                            dtgd$depth<=-72.5&dtgd$depth>-112.5~gras_tex$clay[5],
+#                                            dtgd$depth<=-112.5&dtgd$depth>-137.5~gras_tex$clay[6],
+#                                            dtgd$depth<=-137.5&dtgd$depth>-162.5~gras_tex$clay[7],
+#                                            dtgd$depth<=-162.5&dtgd$depth>-187.5~gras_tex$clay[8],
+#                                            dtgd$depth<=-187.5~gras_tex$clay[9]))
 
-dtgd  <- dtgd %>% mutate(sand_c = case_when(dtgd$depth>-22.5~gras_tex$sand[2],
-                                            dtgd$depth<=-22.5&dtgd$depth>-37.5~gras_tex$sand[3],
-                                            dtgd$depth<=-37.5&dtgd$depth>-72.5~gras_tex$sand[4],
-                                            dtgd$depth<=-72.5&dtgd$depth>-112.5~gras_tex$sand[5],
-                                            dtgd$depth<=-112.5&dtgd$depth>-137.5~gras_tex$sand[6],
-                                            dtgd$depth<=-137.5&dtgd$depth>-162.5~gras_tex$sand[7],
-                                            dtgd$depth<=-162.5&dtgd$depth>-187.5~gras_tex$sand[8],
-                                            dtgd$depth<=-187.5~gras_tex$sand[9]))
+#dtgd  <- dtgd %>% mutate(sand_c = case_when(dtgd$depth>-22.5~gras_tex$sand[2],
+#                                            dtgd$depth<=-22.5&dtgd$depth>-37.5~gras_tex$sand[3],
+#                                            dtgd$depth<=-37.5&dtgd$depth>-72.5~gras_tex$sand[4],
+#                                            dtgd$depth<=-72.5&dtgd$depth>-112.5~gras_tex$sand[5],
+#                                            dtgd$depth<=-112.5&dtgd$depth>-137.5~gras_tex$sand[6],
+#                                            dtgd$depth<=-137.5&dtgd$depth>-162.5~gras_tex$sand[7],
+#                                            dtgd$depth<=-162.5&dtgd$depth>-187.5~gras_tex$sand[8],
+#                                            dtgd$depth<=-187.5~gras_tex$sand[9]))
+
+dtgd  <- dtgd %>% mutate(clay_c=rep(gras_tex_1$clay, each = nrow(test)))
+dtgd  <- dtgd %>% mutate(sand_c=rep(gras_tex_1$sand, each = nrow(test)))
 
 dtgd  <- dtgd %>% mutate(A = exp(-4.396-0.0715*clay_c-(4.880*10^(-4))*sand_c^2-
                                    (4.285*10^-5)*(sand_c^2)*clay_c)*100) 
 dtgd  <- dtgd %>% mutate(B = -3.140-0.00222*clay_c^2-(3.484*10^-5)*(sand_c^2)*clay_c)
 dtgd  <- dtgd %>% mutate(WP = A*(new_mean/100)^B)
 dtgd  <- dtgd %>% mutate(Wilt = 100*(1500/A)^(1/B))
-dtgd  <- dtgd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)*0.62876) # total extractable soil water
+dtgd  <- dtgd %>% mutate(TEW = 10*(new_mean/100-Wilt/100)) # total extractable soil water
 dtgd  <- dtgd %>% mutate(TEW_mm = case_when(dtgd$TEW<0~0,
                                             dtgd$TEW>=0~dtgd$TEW))
 dtgd  <- dtgd %>% mutate(FC = 100*(33/A)^(1/B))
@@ -1165,7 +1198,7 @@ dts$shrub_grass <- shrub_grass
 grass_shrub_TEW =  ggplot(data=dts, aes(date, depth)) + 
   geom_raster(aes(fill = shrub_grass), interpolate = F, hjust = 0.5, vjust = 0.5) +
   #  geom_contour(aes(z = shrub_grass)) + 
-  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.65,0.45)) + # ,limits=c(-15,15)
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-1.1,0.7)) + # ,limits=c(-15,15)
   labs(title= "Shrub - Grass", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 grass_shrub_TEW 
@@ -1178,7 +1211,7 @@ dts$added_ambient <- added_ambient
 shrub_a_a_TEW =  ggplot(data=dts, aes(date, depth)) + 
   geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   #  geom_contour(aes(z = added_ambient)) + 
-  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.8,0.6)) + # ,limits=c(-15,15)
   labs(title= "Added - Ambient(S)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 shrub_a_a_TEW 
@@ -1191,7 +1224,7 @@ dts$drought_ambient <- drought_ambient
 shrub_d_a_TEW =  ggplot(data=dts, aes(date, depth)) + 
   geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   #  geom_contour(aes(z = drought_ambient)) + 
-  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.8,0.6)) + # ,limits=c(-15,15)
   labs(title= "Drought - Ambient(S)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 shrub_d_a_TEW 
@@ -1204,7 +1237,7 @@ dtg$added_ambient <- added_ambient
 grass_a_a_TEW =  ggplot(data=dtg, aes(date, depth)) + 
   geom_raster(aes(fill = added_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   #  geom_contour(aes(z = added_ambient)) + 
-  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.8,0.6)) + # ,limits=c(-15,15)
   labs(title= "Added - Ambient(G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 grass_a_a_TEW 
@@ -1217,7 +1250,7 @@ dtg$drought_ambient <- drought_ambient
 grass_d_a_TEW =  ggplot(data=dtg, aes(date, depth)) + 
   geom_raster(aes(fill = drought_ambient), interpolate = F, hjust = 0.5, vjust = 0.5) +
   #  geom_contour(aes(z = drought_ambient)) + 
-  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.51,0.4)) + # ,limits=c(-15,15)
+  scale_fill_gradientn(colours = brewer.piyg(100),limits=c(-0.8,0.6)) + # ,limits=c(-15,15)
   labs(title= "Drought - Ambient(G)", y="Depth (cm)",x = element_blank())+ theme(legend.title = element_blank()) + 
   theme(text = element_text(size=25))
 grass_d_a_TEW 
@@ -1441,8 +1474,20 @@ data_tot1 = data_tot1 %>% mutate(Rain = case_when(data_tot1$year==2012&data_tot1
                                                   data_tot1$year==2015&data_tot1$treatment=="Ambient"~FullPrecipLoma1$CumAmbient[206],
                                                   data_tot1$year==2015&data_tot1$treatment=="Drought"~FullPrecipLoma1$CumReduced[206]))
 
+data_tot1 = data_tot1 %>% filter(year>2012)
+
 ggplot() + geom_bar(data=data_tot1,aes(x=year, y=Rain/(4*20)),stat="identity", fill="#2b8cbe",colour="#2b8cbe", width=0.6) + 
   geom_line(data=data_tot1,aes(x=year,y=diff_tew,color=layer), linewidth = 0.8) + scale_y_continuous(sec.axis = sec_axis(~ . * 20),name="mm") + 
+  facet_grid(plant~treatment) + theme_bw() + labs(x="", y = "mm") + 
+  theme(text = element_text(size=20))
+
+data_tot1 = data_tot1 %>% mutate(new_layer = case_when(data_tot1$layer=="0-50"~1,
+                                                       data_tot1$layer=="50-100"~2,
+                                                       data_tot1$layer=="100-150"~3,
+                                                       data_tot1$layer=="150-200"~4))
+
+ggplot() + geom_bar(data=data_tot1,aes(x=year, y=Rain/4),stat="identity", fill="#2b8cbe",colour="#2b8cbe", width=0.6) + 
+  geom_bar(data=data_tot1,aes(x=year,y=diff_tew,fill=as.factor(new_layer)), position="stack", stat="identity") +  
   facet_grid(plant~treatment) + theme_bw() + labs(x="", y = "mm") + 
   theme(text = element_text(size=20))
 

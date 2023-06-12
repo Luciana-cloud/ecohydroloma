@@ -776,19 +776,60 @@ gras_tex_1 = as.data.frame(cbind(y_clay$x,y_clay$y,y_sand$y))
 colnames(gras_tex_1) = c("depth","clay","sand")
 test = as.data.frame(unique(dts$date))
 
-# Shrubland ambient ####
+# Statistical analysis per layer test ####
 
-#dts  <- dts %>% mutate(clay_c = case_when(dts$depth>-22.5~shru_tex$clay[2],
-#                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$clay[3],
-#                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$clay[4],
-#                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$clay[5],
-#                                          dts$depth<=-150~shru_tex$clay[6]))
+statis_1a  <- statis_1a %>% mutate(clay_l = case_when(as.numeric(Depth)>-22.5&Plant=="G"~gras_tex$clay[2],
+                                                      as.numeric(Depth)<=-22.5&as.numeric(Depth)>-37.5&Plant=="G"~gras_tex$clay[3],
+                                                      as.numeric(Depth)<=-37.5&as.numeric(Depth)>-72.5&Plant=="G"~gras_tex$clay[4],
+                                                      as.numeric(Depth)<=-72.5&as.numeric(Depth)>-150&Plant=="G"~gras_tex$clay[5],
+                                                      as.numeric(Depth)<=-150&Plant=="G"~gras_tex$clay[6],
+                                                      as.numeric(Depth)>-22.5&Plant=="S"~shru_tex$clay[2],
+                                                      as.numeric(Depth)<=-22.5&as.numeric(Depth)>-37.5&Plant=="S"~shru_tex$clay[3],
+                                                      as.numeric(Depth)<=-37.5&as.numeric(Depth)>-72.5&Plant=="S"~shru_tex$clay[4],
+                                                      as.numeric(Depth)<=-72.5&as.numeric(Depth)>-150&Plant=="S"~shru_tex$clay[5],
+                                                      as.numeric(Depth)<=-150&Plant=="S"~shru_tex$clay[6]))
 
-#dts  <- dts %>% mutate(sand_c = case_when(dts$depth>-22.5~shru_tex$sand[2],
-#                                          dts$depth<=-22.5&dts$depth>-37.5~shru_tex$sand[3],
-#                                          dts$depth<=-37.5&dts$depth>-72.5~shru_tex$sand[4],
-#                                          dts$depth<=-72.5&dts$depth>-150~shru_tex$sand[5],
-#                                          dts$depth<=-150~shru_tex$sand[6]))
+statis_1a  <- statis_1a %>% mutate(sand_l = case_when(as.numeric(Depth)>-22.5&Plant=="G"~gras_tex$sand[2],
+                                                      as.numeric(Depth)<=-22.5&as.numeric(Depth)>-37.5&Plant=="G"~gras_tex$sand[3],
+                                                      as.numeric(Depth)<=-37.5&as.numeric(Depth)>-72.5&Plant=="G"~gras_tex$sand[4],
+                                                      as.numeric(Depth)<=-72.5&as.numeric(Depth)>-150&Plant=="G"~gras_tex$sand[5],
+                                                      as.numeric(Depth)<=-150&Plant=="G"~gras_tex$sand[6],
+                                                      as.numeric(Depth)>-22.5&Plant=="S"~shru_tex$sand[2],
+                                                      as.numeric(Depth)<=-22.5&as.numeric(Depth)>-37.5&Plant=="S"~shru_tex$sand[3],
+                                                      as.numeric(Depth)<=-37.5&as.numeric(Depth)>-72.5&Plant=="S"~shru_tex$sand[4],
+                                                      as.numeric(Depth)<=-72.5&as.numeric(Depth)>-150&Plant=="S"~shru_tex$sand[5],
+                                                      as.numeric(Depth)<=-150&Plant=="S"~shru_tex$sand[6]))
+
+statis_1a  <- statis_1a %>% mutate(A = exp(-4.396-0.0715*clay_l-(4.880*10^(-4))*sand_l^2-
+                                 (4.285*10^-5)*(sand_l^2)*clay_l)*100) 
+statis_1a  <- statis_1a %>% mutate(B = -3.140-0.00222*clay_l^2-(3.484*10^-5)*(sand_l^2)*clay_l)
+statis_1a  <- statis_1a %>% mutate(WP = A*(as.numeric(Mean_water)/100)^B)
+statis_1a  <- statis_1a %>% mutate(Wilt = 100*(1500/A)^(1/B))
+statis_1a  <- statis_1a %>% mutate(TEW = 10*(as.numeric(Mean_water)/100-Wilt/100)) # total extractable soil water [mm]
+statis_1a  <- statis_1a %>% mutate(TEW_mm = case_when(TEW<0~0,
+                                          TEW>=0~TEW))
+
+water_stat2 = lm(TEW_mm ~ Plant*as.factor(Depth)*as.factor(year)*as.factor(month)*Water 
+                 + (Block),data = statis_1a)
+
+summary.aov(water_stat2)
+
+pdf("water_stat2.pdf")
+par(mfrow=c(2,2))
+plot(water_stat2)
+par(mfrow=c(1,1))
+dev.off()
+
+water_stat.av <- aov(water_stat2)
+test_tukey = TukeyHSD(water_stat.av)
+test_21 = as.data.frame(test_tukey[21])
+write.csv(test_21, file = "test_21.csv")
+test_27 = as.data.frame(test_tukey[27])
+write.csv(test_27, file = "test_27.csv")
+test_31 = as.data.frame(test_tukey[31])
+write.csv(test_31, file = "test_31.csv")
+
+#
 
 dts  <- dts %>% mutate(clay_c=rep(shru_tex_1$clay, each = nrow(test)))
 dts  <- dts %>% mutate(sand_c=rep(shru_tex_1$sand, each = nrow(test)))
@@ -989,6 +1030,7 @@ dtgd  <- dtgd %>% mutate(FC_MP=rep(as.numeric(1.8), len = nrow(dts)))
 # Plotting the water retention curves ####
 
 data_tot = as.data.frame(rbind(dts,dtsa,dtsd,dtg,dtga,dtgd))
+write.csv(data_tot, file = "C:/UCI/Project_1 (ecohydrology)/ecohydroloma/datasets/data_tot.csv")
 
 ggplot(data=data_tot, aes(x=new_mean, y=WP))+
   geom_point()+
@@ -1257,6 +1299,8 @@ grass_d_a_TEW
 
 # Water Budget ####
 
+data_tot = read.csv("data_tot.csv")
+
 FullPrecipLoma = read.csv("FullPrecipLoma.csv") %>%
   mutate(Day = as.Date(Day,format="%m/%d/%Y"))%>%
   mutate(Year = as.numeric(format(Day,"%Y"))) %>%
@@ -1285,7 +1329,7 @@ time_1_L2 = time_1 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,t
   summarise(sum(TEW_mm))
 time_1_L2a = time_1_L2 %>% group_by(plant,treatment) %>% 
   summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`))
-time_1_L2b = time_1_L2 %>% filter(date<2012.062)
+time_1_L2b = time_1_L2 %>% filter(date<=time_1_L2$date[1])
 time_1_L2  = as.data.frame(cbind(time_1_L2a,time_1_L2b$`sum(TEW_mm)`))
 colnames(time_1_L2) = c("plant","treatment","max_TEW","min_TEW","int_TEW")
 time_1_L2  = time_1_L2 %>% mutate(diff_tew = max_TEW-int_TEW)
@@ -1296,7 +1340,7 @@ time_1_L3 = time_1 %>% filter(depth < -50 & depth >= -100) %>% group_by(plant,tr
   summarise(sum(TEW_mm))
 time_1_L3a = time_1_L3 %>% group_by(plant,treatment) %>% 
   summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`))
-time_1_L3b = time_1_L3 %>% filter(date<2012.062)
+time_1_L3b = time_1_L3 %>% filter(date<=time_1_L3$date[1])
 time_1_L3  = as.data.frame(cbind(time_1_L3a,time_1_L3b$`sum(TEW_mm)`))
 colnames(time_1_L3) = c("plant","treatment","max_TEW","min_TEW","int_TEW")
 time_1_L3  = time_1_L3 %>% mutate(diff_tew = max_TEW-int_TEW)
@@ -1307,7 +1351,7 @@ time_1_L4 = time_1 %>% filter(depth < -0 & depth >= -50) %>% group_by(plant,trea
   summarise(sum(TEW_mm))
 time_1_L4a = time_1_L4 %>% group_by(plant,treatment) %>% 
   summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`))
-time_1_L4b = time_1_L4 %>% filter(date<2012.062)
+time_1_L4b = time_1_L4 %>% filter(date<=time_1_L4$date[1])
 time_1_L4  = as.data.frame(cbind(time_1_L4a,time_1_L4b$`sum(TEW_mm)`))
 colnames(time_1_L4) = c("plant","treatment","max_TEW","min_TEW","int_TEW")
 time_1_L4  = time_1_L4 %>% mutate(diff_tew = max_TEW-int_TEW)
@@ -1333,7 +1377,7 @@ time_2_L2 = time_2 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,t
   summarise(sum(TEW_mm))
 time_2_L2a = time_2_L2 %>% group_by(plant,treatment) %>% 
   summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`))
-time_2_L2b = time_2_L2 %>% filter(date<2012.780)
+time_2_L2b = time_2_L2 %>% filter(date<=time_2_L2$date[1])
 time_2_L2  = as.data.frame(cbind(time_2_L2a,time_2_L2b$`sum(TEW_mm)`))
 colnames(time_2_L2) = c("plant","treatment","max_TEW","min_TEW","int_TEW")
 time_2_L2  = time_1_L2 %>% mutate(diff_tew = max_TEW-int_TEW)
@@ -1381,7 +1425,8 @@ time_3_L2 = time_3 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,t
   summarise(sum(TEW_mm))
 time_3_L2a = time_3_L2 %>% group_by(plant,treatment) %>% 
   summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`))
-time_3_L2b = time_3_L2 %>% filter(date<2013.781)
+time_3_L2b = time_3_L2 %>% filter(date<=time_3_L2$date[1])
+#time_3_L2b <- time_3_L2b[-6,]
 time_3_L2  = as.data.frame(cbind(time_3_L2a,time_3_L2b$`sum(TEW_mm)`))
 colnames(time_3_L2) = c("plant","treatment","max_TEW","min_TEW","int_TEW")
 time_3_L2  = time_3_L2 %>% mutate(diff_tew = max_TEW-int_TEW)
@@ -1429,7 +1474,8 @@ time_4_L2 = time_4 %>% filter(depth < -100 & depth >= -150) %>% group_by(plant,t
   summarise(sum(TEW_mm))
 time_4_L2a = time_4_L2 %>% group_by(plant,treatment) %>% 
   summarise(max(`sum(TEW_mm)`),min(`sum(TEW_mm)`))
-time_4_L2b = time_4_L2 %>% filter(date<2014.782)
+time_4_L2b = time_4_L2 %>% filter(date<=time_4_L2$date[1])
+#time_4_L2b <- time_4_L2b[-6,]
 time_4_L2  = as.data.frame(cbind(time_4_L2a,time_4_L2b$`sum(TEW_mm)`))
 colnames(time_4_L2) = c("plant","treatment","max_TEW","min_TEW","int_TEW")
 time_4_L2  = time_4_L2 %>% mutate(diff_tew = max_TEW-int_TEW)
@@ -1475,6 +1521,8 @@ data_tot1 = data_tot1 %>% mutate(Rain = case_when(data_tot1$year==2012&data_tot1
                                                   data_tot1$year==2015&data_tot1$treatment=="Drought"~FullPrecipLoma1$CumReduced[206]))
 
 data_tot1 = data_tot1 %>% filter(year>2012)
+write.csv(data_tot1, file = "C:/UCI/Project_1 (ecohydrology)/ecohydroloma/datasets/data_tot1.csv")
+data_tot2 <- read.csv("data_tot1.csv")
 
 ggplot() + geom_bar(data=data_tot1,aes(x=year, y=Rain/(4*20)),stat="identity", fill="#2b8cbe",colour="#2b8cbe", width=0.6) + 
   geom_line(data=data_tot1,aes(x=year,y=diff_tew,color=layer), linewidth = 0.8) + scale_y_continuous(sec.axis = sec_axis(~ . * 20),name="mm") + 
@@ -1487,9 +1535,10 @@ data_tot1 = data_tot1 %>% mutate(new_layer = case_when(data_tot1$layer=="0-50"~1
                                                        data_tot1$layer=="150-200"~4))
 
 ggplot() + geom_bar(data=data_tot1,aes(x=year, y=Rain/4),stat="identity", fill="#2b8cbe",colour="#2b8cbe", width=0.6) + 
-  geom_bar(data=data_tot1,aes(x=year,y=diff_tew,fill=as.factor(new_layer)), position="stack", stat="identity") +  
+  geom_bar(data=data_tot1,aes(x=year,y=diff_tew,fill=as.factor(new_layer)), position="stack", stat="identity", width=0.6) +  
   facet_grid(plant~treatment) + theme_bw() + labs(x="", y = "mm") + 
   theme(text = element_text(size=20))
+
 
 # PRECIPITATION ####
 
@@ -1878,19 +1927,34 @@ dataT_1 = dataT_1 %>% filter(Cover != "Litter")
 dataT_1 = dataT_1 %>% filter(Year > 2010)
 
 comp_shrub = ggplot(dataT_1, 
-                    aes(fill=factor(Cover,levels=c("Eucrypta chrysanthemifolia","Lupinus bicolor",
+                    aes(fill=factor(Cover,levels=c("Eucrypta chrysanthemifolia",
                                                    "Bromus madritensis","Elymus condensatus",
-                                                   "Stipa lepida","Salvia mellifera","Malosma laurina",
+                                                   "Salvia mellifera","Malosma laurina",
                                                    "Artemisia californica","Acmispon glaber")), 
                         y=Percentage, x=Year)) + 
   geom_col(position="stack")+facet_wrap(~Treatment) + 
-  labs(x="", y = "Cover proportion (%)") + 
+  labs(x="", y = "Cover (%)") + 
   theme(text = element_text(size=20)) + 
   theme(legend.position="top") + lims(y=c(0,100)) + 
-  scale_fill_manual(values=c("#ef3b2c","#fb6a4a","#006d2c","#41ab5d","#a1d99b","#08306b","#a6bddb",
+  scale_fill_manual(values=c("#ef3b2c","#006d2c","#41ab5d","#08306b","#a6bddb",
                              "#2171b5","#6baed6"),name = "") + 
   geom_bar(stat="identity")
 comp_shrub
+
+comp_shrub2 = ggplot(dataT_1, 
+                    aes(fill=factor(Cover,levels=c("Eucrypta chrysanthemifolia",
+                                                   "Bromus madritensis","Elymus condensatus",
+                                                   "Salvia mellifera","Malosma laurina",
+                                                   "Artemisia californica","Acmispon glaber")), 
+                        y=Percentage, x=Treatment)) + 
+  geom_col(position="stack")+facet_wrap(~Year) + 
+  labs(x="", y = "Cover (%)") + 
+  theme(text = element_text(size=20)) + 
+  theme(legend.position="top") + lims(y=c(0,100)) + 
+  scale_fill_manual(values=c("#ef3b2c","#006d2c","#41ab5d","#08306b","#a6bddb",
+                             "#2171b5","#6baed6"),name = "") + 
+  geom_bar(stat="identity")
+comp_shrub2
 
 # Other covers #####
 

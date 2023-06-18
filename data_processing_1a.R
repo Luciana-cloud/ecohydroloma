@@ -27,6 +27,7 @@ library(lsmeans)
 library(redres)
 library(pals) # for more colors
 library(vegan)
+library(emmeans)
 
 # TEXTURE ANALYSIS ####
 
@@ -2049,65 +2050,251 @@ write.csv(adonispair_treat, "perma_shrub_treatment.csv", row.names=FALSE, quote=
 adonispair_year  <- adonis.pair(distance, as.factor(df_nor1$Year), nper = 1000, corr.method = "fdr")
 write.csv(adonispair_year, "perma_shrub_year.csv", row.names=FALSE, quote=FALSE) 
 
-# Friedman statistics #####
+# Linear two anova with block design ####
 
 df_nor = df_nor %>% filter(Year > 2010)
+df_nor = df_nor %>% mutate(Block = substr(df_nor$Code, 4, 4))
+
+# "BRMA","Bromus madritensis" ####
+fit.BRMA <- anova(model<-lm(log(BRMA+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.BRMA = emmeans(model,pairwise~Treat_W:Year)
+emm.BRMA$contrasts
+
+temp.BRMA  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Bromus madritensis")
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(BRMA))
+temp.BRMA  = temp.BRMA %>% mutate(std = tem_1$`sd(BRMA)`)
+
+ggplot(data=temp.BRMA, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.BRMA$Percentage-temp.BRMA$std<0,0,temp.BRMA$Percentage-temp.BRMA$std), 
+                    ymax=temp.BRMA$Percentage+temp.BRMA$std), width=.2,position=position_dodge(.9)) +
+    labs(x="", y = TeX("Bromus madritensis (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "SAME","Salvia mellifera" ####
+fit.SAME <- anova(model<-lm(log(SAME+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.SAME = emmeans(model,pairwise~Treat_W:Year)
+emm.SAME$contrasts
+
+temp.SAME  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Salvia mellifera")
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(SAME))
+temp.SAME  = temp.SAME %>% mutate(std = tem_1$`sd(SAME)`)
+
+ggplot(data=temp.SAME, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.SAME$Percentage-temp.SAME$std<0,0,temp.SAME$Percentage-temp.SAME$std), 
+                    ymax=temp.SAME$Percentage+temp.SAME$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Salvia mellifera (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "LECO","Elymus condensatus" #####
+fit.LECO <- anova(model<-lm(log(LECO+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.LECO = emmeans(model,pairwise~Treat_W:Year)
+emm.LECO$contrasts
+
+temp.LECO  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Elymus condensatus")
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(LECO))
+temp.LECO  = temp.LECO %>% mutate(std = tem_1$`sd(LECO)`)
+
+ggplot(data=temp.LECO, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.LECO$Percentage-temp.LECO$std<0,0,temp.LECO$Percentage-temp.LECO$std), 
+                    ymax=temp.LECO$Percentage+temp.LECO$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Elymus condensatus (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "bare.ground","Bare ground" ####
+fit.bare <- anova(model<-lm(log(bare.ground+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.bare = emmeans(model,pairwise~Treat_W:Year)
+emm.bare$contrasts
+
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(bare.ground),
+                                                             mean(bare.ground))
+colnames(tem_1) = c("Treatment","Year","std","Percentage")
+temp.bare  = tem_1
+
+temp.bare = temp.bare %>% mutate(Treatment = replace(Treatment, Treatment == "A","added"))
+temp.bare = temp.bare %>% mutate(Treatment = replace(Treatment, Treatment == "X","ambient"))
+temp.bare = temp.bare %>% mutate(Treatment = replace(Treatment, Treatment == "R","drought"))
+
+ggplot(data=temp.bare, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.bare$Percentage-temp.bare$std<0,0,temp.bare$Percentage-temp.bare$std), 
+                    ymax=temp.bare$Percentage+temp.bare$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Bare ground (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "LOSC","Acmispon glaber" ####
+fit.LOSC <- anova(model<-lm(log(LOSC+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.LOSC = emmeans(model,pairwise~Treat_W:Year)
+emm.LOSC$contrasts
+
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(LOSC),
+                                                             mean(LOSC))
+colnames(tem_1) = c("Treatment","Year","std","Percentage")
+temp.LOSC  = tem_1
+temp.LOSC = temp.LOSC %>% mutate(Treatment = replace(Treatment, Treatment == "A","added"))
+temp.LOSC = temp.LOSC %>% mutate(Treatment = replace(Treatment, Treatment == "X","ambient"))
+temp.LOSC = temp.LOSC %>% mutate(Treatment = replace(Treatment, Treatment == "R","drought"))
+
+ggplot(data=temp.LOSC, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.LOSC$Percentage-temp.LOSC$std<0,0,temp.LOSC$Percentage-temp.LOSC$std), 
+                    ymax=temp.LOSC$Percentage+temp.LOSC$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Acmispon glaber (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "MALA","Malosma laurina" #####
+fit.MALA <- anova(model<-lm(log(MALA+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.MALA = emmeans(model,pairwise~Treat_W:Year)
+emm.MALA$contrasts
+
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(MALA),
+                                                             mean(MALA))
+colnames(tem_1) = c("Treatment","Year","std","Percentage")
+temp.MALA  = tem_1
+temp.MALA = temp.MALA %>% mutate(Treatment = replace(Treatment, Treatment == "A","added"))
+temp.MALA = temp.MALA %>% mutate(Treatment = replace(Treatment, Treatment == "X","ambient"))
+temp.MALA = temp.MALA %>% mutate(Treatment = replace(Treatment, Treatment == "R","drought"))
+
+ggplot(data=temp.MALA, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.MALA$Percentage-temp.MALA$std<0,0,temp.MALA$Percentage-temp.MALA$std), 
+                    ymax=temp.MALA$Percentage+temp.MALA$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Malosma laurina (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "ARCA","Artemisia californica" #####
+fit.ARCA <- anova(model1<-lm((ARCA)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.ARCA = emmeans(model1,pairwise~Treat_W:Year)
+emm.ARCA$contrasts
+
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(ARCA),
+                                                             mean(ARCA))
+colnames(tem_1) = c("Treatment","Year","std","Percentage")
+temp.ARCA  = tem_1
+temp.ARCA = temp.ARCA %>% mutate(Treatment = replace(Treatment, Treatment == "A","added"))
+temp.ARCA = temp.ARCA %>% mutate(Treatment = replace(Treatment, Treatment == "X","ambient"))
+temp.ARCA = temp.ARCA %>% mutate(Treatment = replace(Treatment, Treatment == "R","drought"))
+
+ggplot(data=temp.ARCA, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.ARCA$Percentage-temp.ARCA$std<0,0,temp.ARCA$Percentage-temp.ARCA$std), 
+                    ymax=temp.ARCA$Percentage+temp.ARCA$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Artemisia californica (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "litter","Litter" #####
+fit.litter <- anova(model1<-lm((litter)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.litter = emmeans(model1,pairwise~Treat_W:Year)
+emm.litter$contrasts
+
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(litter),
+                                                             mean(litter))
+colnames(tem_1) = c("Treatment","Year","std","Percentage")
+temp.litter  = tem_1
+temp.litter = temp.litter %>% mutate(Treatment = replace(Treatment, Treatment == "A","added"))
+temp.litter = temp.litter %>% mutate(Treatment = replace(Treatment, Treatment == "X","ambient"))
+temp.litter = temp.litter %>% mutate(Treatment = replace(Treatment, Treatment == "R","drought"))
+
+ggplot(data=temp.litter, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.litter$Percentage-temp.litter$std<0,0,temp.litter$Percentage-temp.litter$std), 
+                    ymax=temp.litter$Percentage+temp.litter$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Litter (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# "EUCH","Eucrypta chrysanthemifolia" #####
+fit.EUCH <- anova(model1<-lm((EUCH)~Block+as.factor(Year)*Treat_W,data=df_nor))
+par(mfrow=c(2,2))
+plot(model)
+par(mfrow=c(1,1))
+emm.EUCH = emmeans(model1,pairwise~Treat_W:Year)
+emm.EUCH$contrasts
+
+tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(EUCH),
+                                                             mean(EUCH))
+colnames(tem_1) = c("Treatment","Year","std","Percentage")
+temp.EUCH  = tem_1
+
+ggplot(data=temp.EUCH, aes(x=Year, y=Percentage, fill=Treatment)) + 
+  geom_bar(stat="identity", position=position_dodge()) + 
+  geom_errorbar(aes(ymin=ifelse(temp.EUCH$Percentage-temp.EUCH$std<0,0,temp.EUCH$Percentage-temp.EUCH$std), 
+                    ymax=temp.EUCH$Percentage+temp.EUCH$std), width=.2,position=position_dodge(.9)) +
+  labs(x="", y = TeX("Eucrypta chrysanthemifolia (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+
+# Friedman statistics #####
 # "BRMA","Bromus madritensis"
-BRMA = with(df_nor,friedman(Year,Treat_W,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#BRMA = with(df_nor,friedman(Year,Treat_W,BRMA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
 # ambient and drought = a; added = b
-plot(BRMA)
-
+#plot(BRMA)
 # "LUBI","Lespedeza bicolor"
-LUBI = with(df_nor,friedman(Year,Treat_W,LUBI,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#LUBI = with(df_nor,friedman(Year,Treat_W,LUBI,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
 # ambient and drought and added = a
-plot(LUBI)
-
+#plot(LUBI)
 # "SAME","Salvia mellifera"
-SAME = with(df_nor,friedman(Year,Treat_W,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(SAME)
+#SAME = with(df_nor,friedman(Year,Treat_W,SAME,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(SAME)
 # added = a, ambient = b, drought = c
-
 # "LECO","Elymus condensatus"
-LECO = with(df_nor,friedman(Year,Treat_W,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(LECO)
+#LECO = with(df_nor,friedman(Year,Treat_W,LECO,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(LECO)
 # added = b, ambient,drought = a
-
 # "bare.ground","Bare ground"
-BARE = with(df_nor,friedman(Year,Treat_W,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(BARE)
+#BARE = with(df_nor,friedman(Year,Treat_W,bare.ground,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(BARE)
 # added,ambient = b, drought = a
-
 # "LOSC","Acmispon glaber"
-LOSC = with(df_nor,friedman(Year,Treat_W,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(LOSC)
+#LOSC = with(df_nor,friedman(Year,Treat_W,LOSC,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(LOSC)
 # added,ambient = a, drought = b
-
 # "MALA","Malosma laurina"
-MALA = with(df_nor,friedman(Year,Treat_W,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(MALA)
-boxplot((MALA)~as.character(Year)+Treat_W, data = df_nor)
+#MALA = with(df_nor,friedman(Year,Treat_W,MALA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(MALA)
+#boxplot((MALA)~as.character(Year)+Treat_W, data = df_nor)
 # added = a,ambient = b, drought = c
-
 # "ARCA","Artemisia californica"
-ARCA = with(df_nor,friedman(Year,Treat_W,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(ARCA)
-boxplot((ARCA)~as.character(Year)+Treat_W, data = df_nor)
+#ARCA = with(df_nor,friedman(Year,Treat_W,ARCA,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(ARCA)
+#boxplot((ARCA)~as.character(Year)+Treat_W, data = df_nor)
 # added = ab,ambient = b, drought = a
-
 # "litter","Litter"
-litter = with(df_nor,friedman(Year,Treat_W,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(litter)
-boxplot((litter)~as.character(Year)+Treat_W, data = df_nor)
+#litter = with(df_nor,friedman(Year,Treat_W,litter,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(litter)
+#boxplot((litter)~as.character(Year)+Treat_W, data = df_nor)
 # added,ambient = b, drought = a
-
 # "NALE","Solidago lepida"
-NALE = with(df_nor,friedman(Year,Treat_W,NALE,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(NALE)
-boxplot((NALE)~as.character(Year)+Treat_W, data = df_nor)
+#NALE = with(df_nor,friedman(Year,Treat_W,NALE,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(NALE)
+#boxplot((NALE)~as.character(Year)+Treat_W, data = df_nor)
 # added,ambient,drought = a
-
 # "EUCH","Eucrypta chrysanthemifolia"
-EUCH = with(df_nor,friedman(Year,Treat_W,EUCH,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
-plot(EUCH)
-boxplot((EUCH)~as.character(Year)+Treat_W, data = df_nor)
+#EUCH = with(df_nor,friedman(Year,Treat_W,EUCH,alpha=0.05, group=TRUE,console=TRUE,main=NULL))
+#plot(EUCH)
+#boxplot((EUCH)~as.character(Year)+Treat_W, data = df_nor)
 # added,ambient,drought = a

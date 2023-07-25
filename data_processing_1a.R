@@ -2058,6 +2058,7 @@ df_nor = df_nor %>% mutate(Block = substr(df_nor$Code, 4, 4))
 # "BRMA","Bromus madritensis" ####
 fit.BRMA <- lmer(log(BRMA+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
 parameters::p_value(fit.BRMA)
+summary(glht(fit.BRMA,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 # Pairwise comparison ####
 summary(glht(fit.BRMA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
@@ -2079,6 +2080,7 @@ parameters::p_value(fit.SAME)
 
 # Pairwise comparison ####
 summary(glht(fit.SAME,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.SAME,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 temp.SAME  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Salvia mellifera")
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(SAME))
@@ -2097,6 +2099,7 @@ parameters::p_value(fit.LECO)
 
 # Pairwise comparison ####
 summary(glht(fit.LECO,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.LECO,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 temp.LECO  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Elymus condensatus")
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(LECO))
@@ -2114,6 +2117,7 @@ fit.bare <- lmer(log(bare.ground+1) ~ (Treat_W*as.factor(Year)) + (1|Block), dat
 
 # Pairwise comparison ####
 summary(glht(fit.bare,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.bare,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(bare.ground),
                                                              mean(bare.ground))
@@ -2136,6 +2140,7 @@ fit.LOSC <- lmer(log(LOSC+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_
 
 # Pairwise comparison ####
 summary(glht(fit.LOSC,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.LOSC,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(LOSC),
                                                              mean(LOSC))
@@ -2157,6 +2162,7 @@ fit.MALA <- lmer(log(MALA+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_
 
 # Pairwise comparison ####
 summary(glht(fit.MALA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.MALA,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(MALA),
                                                              mean(MALA))
@@ -2178,6 +2184,7 @@ fit.ARCA <- lmer(ARCA ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
 
 # Pairwise comparison ####
 summary(glht(fit.ARCA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.ARCA,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(ARCA),
                                                              mean(ARCA))
@@ -2199,6 +2206,7 @@ fit.litter <- lmer(litter ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor
 
 # Pairwise comparison ####
 summary(glht(fit.litter,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.litter,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(litter),
                                                              mean(litter))
@@ -2220,6 +2228,7 @@ fit.EUCH <- lmer(EUCH ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
 
 # Pairwise comparison ####
 summary(glht(fit.EUCH,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
+summary(glht(fit.EUCH,lsm(pairwise ~ (Treat_W),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(EUCH),
                                                              mean(EUCH))

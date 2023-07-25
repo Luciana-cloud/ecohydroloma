@@ -2057,6 +2057,7 @@ df_nor = df_nor %>% mutate(Block = substr(df_nor$Code, 4, 4))
 
 # "BRMA","Bromus madritensis" ####
 fit.BRMA <- lmer(log(BRMA+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+parameters::p_value(fit.BRMA)
 
 # Pairwise comparison ####
 summary(glht(fit.BRMA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
@@ -2074,6 +2075,7 @@ ggplot(data=temp.BRMA, aes(x=Year, y=Percentage, fill=Treatment)) +
 
 # "SAME","Salvia mellifera" ####
 fit.SAME <- lmer(log(SAME+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+parameters::p_value(fit.SAME)
 
 # Pairwise comparison ####
 summary(glht(fit.SAME,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
@@ -2091,6 +2093,7 @@ ggplot(data=temp.SAME, aes(x=Year, y=Percentage, fill=Treatment)) +
 
 # "LECO","Elymus condensatus" #####
 fit.LECO <- lmer(log(LECO+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+parameters::p_value(fit.LECO)
 
 # Pairwise comparison ####
 summary(glht(fit.LECO,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))

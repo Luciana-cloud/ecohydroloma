@@ -1652,9 +1652,9 @@ temp4b = temp4b  %>% filter(Year > 2010)
 
 ggplot(data=temp3b, aes(x=Year, y=mean_bio, fill=Treat_W)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=temp3b$mean_bio-temp4b$sd_bio, ymax=temp3b$mean_bio+temp4b$sd_bio), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=temp3b$mean_bio-(temp4b$sd_bio/sqrt(32)), ymax=temp3b$mean_bio+(temp4b$sd_bio/sqrt(32))), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("$Biomass (g/m^2)$")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # SHRUB BIOMASS #####
 
@@ -2040,7 +2040,7 @@ df_nor2.plot<-cbind(df_nor1, NMDS1, NMDS2)
 
 ggplot(data=df_nor2.plot,aes(x=NMDS1,y=NMDS2,color =Treat_W))+geom_point(size = 4) + # scale_x_continuous(limit = c(-1,1)) + 
   annotate("text",label=paste('Stress =',round(nmds$stress,3))) + theme(text = element_text(size=25)) + 
-  scale_color_manual(values = c("#2166ac", "#99d594", "#67a9cf"))
+  scale_color_manual(values = c("#2166ac", "#99d594", "#fc8d62"))
 
 shrub_perm <- with(df_nor1, adonis2(distance~Treat_W*as.factor(Year), data = df_nor1, permutations = 10000, strata = Block))
 shrub_perm
@@ -2056,12 +2056,10 @@ df_nor = df_nor %>% filter(Year > 2010)
 df_nor = df_nor %>% mutate(Block = substr(df_nor$Code, 4, 4))
 
 # "BRMA","Bromus madritensis" ####
-fit.BRMA <- anova(model<-lm(log(BRMA+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.BRMA = emmeans(model,pairwise~Treat_W:Year)
-emm.BRMA$contrasts
+fit.BRMA <- lmer(log(BRMA+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.BRMA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 temp.BRMA  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Bromus madritensis")
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(BRMA))
@@ -2069,18 +2067,16 @@ temp.BRMA  = temp.BRMA %>% mutate(std = tem_1$`sd(BRMA)`)
 
 ggplot(data=temp.BRMA, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.BRMA$Percentage-temp.BRMA$std<0,0,temp.BRMA$Percentage-temp.BRMA$std), 
-                    ymax=temp.BRMA$Percentage+temp.BRMA$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.BRMA$Percentage-temp.BRMA$std/sqrt(8)<0,0,temp.BRMA$Percentage-temp.BRMA$std/sqrt(8)), 
+                    ymax=temp.BRMA$Percentage+temp.BRMA$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
     labs(x="", y = TeX("Bromus madritensis (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "SAME","Salvia mellifera" ####
-fit.SAME <- anova(model<-lm(log(SAME+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.SAME = emmeans(model,pairwise~Treat_W:Year)
-emm.SAME$contrasts
+fit.SAME <- lmer(log(SAME+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.SAME,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 temp.SAME  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Salvia mellifera")
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(SAME))
@@ -2088,18 +2084,16 @@ temp.SAME  = temp.SAME %>% mutate(std = tem_1$`sd(SAME)`)
 
 ggplot(data=temp.SAME, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.SAME$Percentage-temp.SAME$std<0,0,temp.SAME$Percentage-temp.SAME$std), 
-                    ymax=temp.SAME$Percentage+temp.SAME$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.SAME$Percentage-temp.SAME$std/sqrt(8)<0,0,temp.SAME$Percentage-temp.SAME$std/sqrt(8)), 
+                    ymax=temp.SAME$Percentage+temp.SAME$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Salvia mellifera (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "LECO","Elymus condensatus" #####
-fit.LECO <- anova(model<-lm(log(LECO+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.LECO = emmeans(model,pairwise~Treat_W:Year)
-emm.LECO$contrasts
+fit.LECO <- lmer(log(LECO+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.LECO,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 temp.LECO  = dataT %>% filter(Year > 2010) %>% filter(Cover == "Elymus condensatus")
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(LECO))
@@ -2107,18 +2101,16 @@ temp.LECO  = temp.LECO %>% mutate(std = tem_1$`sd(LECO)`)
 
 ggplot(data=temp.LECO, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.LECO$Percentage-temp.LECO$std<0,0,temp.LECO$Percentage-temp.LECO$std), 
-                    ymax=temp.LECO$Percentage+temp.LECO$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.LECO$Percentage-temp.LECO$std/sqrt(8)<0,0,temp.LECO$Percentage-temp.LECO$std/sqrt(8)), 
+                    ymax=temp.LECO$Percentage+temp.LECO$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Elymus condensatus (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "bare.ground","Bare ground" ####
-fit.bare <- anova(model<-lm(log(bare.ground+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.bare = emmeans(model,pairwise~Treat_W:Year)
-emm.bare$contrasts
+fit.bare <- lmer(log(bare.ground+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.bare,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(bare.ground),
                                                              mean(bare.ground))
@@ -2131,18 +2123,16 @@ temp.bare = temp.bare %>% mutate(Treatment = replace(Treatment, Treatment == "R"
 
 ggplot(data=temp.bare, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.bare$Percentage-temp.bare$std<0,0,temp.bare$Percentage-temp.bare$std), 
-                    ymax=temp.bare$Percentage+temp.bare$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.bare$Percentage-temp.bare$std/sqrt(8)<0,0,temp.bare$Percentage-temp.bare$std/sqrt(8)), 
+                    ymax=temp.bare$Percentage+temp.bare$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Bare ground (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "LOSC","Acmispon glaber" ####
-fit.LOSC <- anova(model<-lm(log(LOSC+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.LOSC = emmeans(model,pairwise~Treat_W:Year)
-emm.LOSC$contrasts
+fit.LOSC <- lmer(log(LOSC+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.LOSC,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(LOSC),
                                                              mean(LOSC))
@@ -2154,18 +2144,16 @@ temp.LOSC = temp.LOSC %>% mutate(Treatment = replace(Treatment, Treatment == "R"
 
 ggplot(data=temp.LOSC, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.LOSC$Percentage-temp.LOSC$std<0,0,temp.LOSC$Percentage-temp.LOSC$std), 
-                    ymax=temp.LOSC$Percentage+temp.LOSC$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.LOSC$Percentage-temp.LOSC$std/sqrt(8)<0,0,temp.LOSC$Percentage-temp.LOSC$std/sqrt(8)), 
+                    ymax=temp.LOSC$Percentage+temp.LOSC$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Acmispon glaber (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "MALA","Malosma laurina" #####
-fit.MALA <- anova(model<-lm(log(MALA+1)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.MALA = emmeans(model,pairwise~Treat_W:Year)
-emm.MALA$contrasts
+fit.MALA <- lmer(log(MALA+1) ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.MALA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(MALA),
                                                              mean(MALA))
@@ -2177,18 +2165,16 @@ temp.MALA = temp.MALA %>% mutate(Treatment = replace(Treatment, Treatment == "R"
 
 ggplot(data=temp.MALA, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.MALA$Percentage-temp.MALA$std<0,0,temp.MALA$Percentage-temp.MALA$std), 
-                    ymax=temp.MALA$Percentage+temp.MALA$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.MALA$Percentage-temp.MALA$std/sqrt(8)<0,0,temp.MALA$Percentage-temp.MALA$std/sqrt(8)), 
+                    ymax=temp.MALA$Percentage+temp.MALA$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Malosma laurina (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "ARCA","Artemisia californica" #####
-fit.ARCA <- anova(model1<-lm((ARCA)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.ARCA = emmeans(model1,pairwise~Treat_W:Year)
-emm.ARCA$contrasts
+fit.ARCA <- lmer(ARCA ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.ARCA,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(ARCA),
                                                              mean(ARCA))
@@ -2200,18 +2186,16 @@ temp.ARCA = temp.ARCA %>% mutate(Treatment = replace(Treatment, Treatment == "R"
 
 ggplot(data=temp.ARCA, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.ARCA$Percentage-temp.ARCA$std<0,0,temp.ARCA$Percentage-temp.ARCA$std), 
-                    ymax=temp.ARCA$Percentage+temp.ARCA$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.ARCA$Percentage-temp.ARCA$std/sqrt(8)<0,0,temp.ARCA$Percentage-temp.ARCA$std/sqrt(8)), 
+                    ymax=temp.ARCA$Percentage+temp.ARCA$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Artemisia californica (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "litter","Litter" #####
-fit.litter <- anova(model1<-lm((litter)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.litter = emmeans(model1,pairwise~Treat_W:Year)
-emm.litter$contrasts
+fit.litter <- lmer(litter ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.litter,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(litter),
                                                              mean(litter))
@@ -2223,18 +2207,16 @@ temp.litter = temp.litter %>% mutate(Treatment = replace(Treatment, Treatment ==
 
 ggplot(data=temp.litter, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.litter$Percentage-temp.litter$std<0,0,temp.litter$Percentage-temp.litter$std), 
-                    ymax=temp.litter$Percentage+temp.litter$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.litter$Percentage-temp.litter$std/sqrt(8)<0,0,temp.litter$Percentage-temp.litter$std/sqrt(8)), 
+                    ymax=temp.litter$Percentage+temp.litter$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Litter (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # "EUCH","Eucrypta chrysanthemifolia" #####
-fit.EUCH <- anova(model1<-lm((EUCH)~Block+as.factor(Year)*Treat_W,data=df_nor))
-par(mfrow=c(2,2))
-plot(model)
-par(mfrow=c(1,1))
-emm.EUCH = emmeans(model1,pairwise~Treat_W:Year)
-emm.EUCH$contrasts
+fit.EUCH <- lmer(EUCH ~ (Treat_W*as.factor(Year)) + (1|Block), data = df_nor)
+
+# Pairwise comparison ####
+summary(glht(fit.EUCH,lsm(pairwise ~ (Treat_W*as.factor(Year)),test=adjusted(type="holm"))))
 
 tem_1      = df_nor %>% group_by(Treat_W,Year) %>% summarise(sd(EUCH),
                                                              mean(EUCH))
@@ -2243,10 +2225,10 @@ temp.EUCH  = tem_1
 
 ggplot(data=temp.EUCH, aes(x=Year, y=Percentage, fill=Treatment)) + 
   geom_bar(stat="identity", position=position_dodge()) + 
-  geom_errorbar(aes(ymin=ifelse(temp.EUCH$Percentage-temp.EUCH$std<0,0,temp.EUCH$Percentage-temp.EUCH$std), 
-                    ymax=temp.EUCH$Percentage+temp.EUCH$std), width=.2,position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=ifelse(temp.EUCH$Percentage-temp.EUCH$std/sqrt(8)<0,0,temp.EUCH$Percentage-temp.EUCH$std/sqrt(8)), 
+                    ymax=temp.EUCH$Percentage+temp.EUCH$std/sqrt(8)), width=.2,position=position_dodge(.9)) +
   labs(x="", y = TeX("Eucrypta chrysanthemifolia (%)")) + theme(legend.position="top",text = element_text(size=25)) + 
-  scale_fill_manual(values = c("#2166ac", "#99d594", "#67a9cf"),name = "",labels=c("added", "ambient", "drought"))
+  scale_fill_manual(values = c("#2166ac", "#99d594", "#fc8d62"),name = "",labels=c("added", "ambient", "drought"))
 
 # Friedman statistics #####
 # "BRMA","Bromus madritensis"

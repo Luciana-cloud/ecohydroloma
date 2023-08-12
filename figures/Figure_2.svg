@@ -59,7 +59,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.1519446"
-     inkscape:cx="1002.8511"
+     inkscape:cx="806.22706"
      inkscape:cy="1179.5892"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -684,7 +684,10 @@
        id="g1597"
        transform="matrix(0.35277777,0,0,-0.35277777,206.49495,63.799776)" />
     <g
-       id="g2455">
+       id="g2455"
+       transform="translate(-81.735087,-4.9212493)"
+       inkscape:export-xdpi="300"
+       inkscape:export-ydpi="300">
       <g
          transform="matrix(0.35277777,0,0,-0.35277777,206.49495,63.799776)"
          id="g1129">
